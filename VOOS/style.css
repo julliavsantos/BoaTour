@@ -1,0 +1,690 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: #ffffff;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    color: #172b35;
+}
+.voos-container {
+    width: 700px;
+    padding-left: 40px;
+    padding-top: 50px;
+}
+.voos-container h1 {
+    font-size: 36px;
+    line-height: 1.15;
+    font-weight: 700;
+    margin-bottom: 28px;
+}
+.opcoes {
+    width: 500px;
+    height: auto;
+    padding: 0 0 0 70px;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    margin-top: 10px;
+}
+.opcoes input {
+    display: none;
+}
+.opcoes label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}  
+.opcoes label::before {
+    content: "";
+
+        width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--muted-dark);
+    border-radius: 3px;
+    transition: 0.2s;
+}
+.opcoes input:checked + label::before {
+    background: var(--accent);
+}
+.linha {
+    width: 800px;
+    height: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    margin-top: 10px;
+    padding: 0 0 0 70px;
+    position: relative;
+    overflow: visible;
+}
+.campo {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: auto;
+}
+.campo label {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+.campo input {
+    width: 250px;
+    height: 45px;
+    border-radius: 6px;
+    border: none;
+    background: var(--surface);
+    outline: none;
+    padding: 0 15px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    color: var(--text);
+}
+.sugestoes {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--surface-strong);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    overflow: hidden;
+    max-height: 180px;
+    overflow-y: auto;
+}
+.sugestao {
+    padding: 10px 15px;
+    cursor: pointer;
+    color: var(--text);
+}
+.sugestao:hover {
+    background-color: var(--hover);
+    transition: background-color 0.25s ease;
+}
+.linha img:not(.busca) {
+    width: 65px;
+    margin-top: 20px;
+}
+.linha a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    margin-left: 8px;
+    flex-shrink: 0;
+    color: var(--text);
+}
+.busca {
+    width: 45px;
+    height: 45px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 0;
+
+        display: block;
+
+    transition: 0.2s ease;
+}
+.linha a:hover .busca {
+    transform: scale(1.02);
+}
+#campoRetorno.desativado {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+#campoRetorno.desativado input {
+    background-color: var(--hover);
+    color: var(--muted);
+    cursor: not-allowed;
+}
+#campoRetorno.desativado .abrir-calendario {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.data-campo {
+    position: relative;
+}
+.input-data {
+    width: 250px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.input-data input {
+    width: 100%;
+    height: 100%;
+    padding: 0 15px;
+    border: none;
+    outline: none;
+    background: var(--surface);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    color: var(--heading);
+}
+.input-data input::placeholder {
+    color: var(--muted-dark);
+}
+.btn-calendario {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: var(--surface);
+    cursor: pointer;
+}
+.btn-calendario img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 18px;
+}
+.calendario {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 250px;
+    background: var(--surface-strong);
+    border-radius: 12px;
+    padding: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    display: none;
+}
+.calendario.aberto {
+    display: block;
+}
+.cabecalho-calendario {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.mes-ano {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.navegacao-calendario {
+    display: flex;
+    gap: 5px;
+    color: var(--text);
+}
+.navegacao-calendario button {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: var(--text);
+}
+.navegacao-calendario button:hover {
+    background-color: var(--hover);
+}
+.dias-semana {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 5px;
+    color: var(--text);
+}
+.dias-semana span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted-dark);
+    padding: 5px 0;
+}
+.dias {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    color: var(--muted-light);
+}
+.dia {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--text);
+}
+.dia:hover {
+    background-color: var(--hover);
+}
+.dia.outro-mes {
+    color: var(--muted-light);
+}
+.dia.hoje {
+    border: 1px solid var(--accent-strong);
+    color: var(--accent-strong);
+    font-weight: 700;
+}
+.dia.selecionado {
+    background-color: var(--accent-strong);
+    color: white;
+    font-weight: 700;
+}
+.dia.selecionado:hover {
+    background-color: var(--accent-strong-dark);
+}
+.dia.bloqueado {
+    color: var(--muted-light);
+    cursor: not-allowed;
+}
+.dia.bloqueado:hover {
+    background-color: transparent;
+}
+.rodape-calendario {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eeeeee;
+}
+.rodape-calendario button {
+    border: none; 
+    background: transparent;
+    color: var(--accent-strong);
+    font-family: "Plus Jakarta Sans", sans-serif; 
+    font-size: 12px;
+    cursor: pointer;
+}
+.rodape-calendario button:hover {
+    text-decoration: underline;
+} 
+.campo-passageiros {
+    position: relative;
+    height: auto;
+}
+.campo-passageiros input {
+    cursor: pointer;
+}
+.passageiros-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 360px; 
+    box-sizing: border-box;
+    padding: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 15px 40px rgba(30, 60, 80, 0.15);
+    z-index: 9999;
+    height: auto;
+    max-height: none;
+    opacity: 0;
+        visibility: hidden;
+
+        pointer-events: none;
+
+        transform: translateY(-8px);
+
+        transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+}
+.passageiros-menu.aberto {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+#passageirosMenu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    pointer-events: none;
+
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease,
+        visibility 0.35s ease;
+}
+
+#passageirosMenu.aberto {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+.passageiros-titulo {
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);    
+}
+.classe-titulo {
+    margin-top: 18px;
+    margin-bottom: 10px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.passageiro-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+}
+.passageiro-linha strong {
+    display: block;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.passageiro-linha small {
+    display: block;
+    margin-top: 3px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--muted);
+}
+.contador {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.contador button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--accent);
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+.contador button:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--card);
+    transform: scale(1.02);
+}
+.contador span {
+    min-width: 18px;
+    text-align: center;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.classes {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+.classe-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: var(--surface-alt);
+    text-align: left;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+.classe-option:hover {
+    background: var(--accent)3d;
+    border-color: var(--accent)3d;;
+}
+.classe-option.ativa {
+    background: var(--accent)3d;
+    border-color: var(--accent);
+}
+.classe-option strong {
+    display: block;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+}
+.classe-option small {
+    display: block;
+    margin-top: 2px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 9px;
+    color: var(--muted);
+}
+.classe-option .check {
+    display: none;
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 800;
+}
+.classe-option.ativa .check {
+    display: block;
+}
+.btn-confirmar-passageiros {
+    width: 100%;
+    height: 43px;
+    margin-top: 18px;
+    border: none;
+    border-radius: 11px;
+    background: var(--accent);
+    color: var(--card);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+.btn-confirmar-passageiros:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px var(--accent)3d;
+}
+.ofertas {
+    margin-top: 45px;
+}
+
+.ofertas h2 {
+    font-size: 27px;
+    margin-bottom: 18px;
+}
+
+.oferta {
+    width: 100%;
+    min-height: 72px;
+
+    border: 1px solid #dce5e7;
+    border-radius: 10px;
+
+    padding: 14px 22px;
+    margin-bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+}
+
+.oferta strong {
+    font-size: 16px;
+    color: #172b35;
+}
+
+.oferta p {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #647980;
+}
+
+
+.preco {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.preco strong {
+    color: #087d7c;
+    font-size: 18px;
+}
+
+.preco span {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #667b82;
+}
+
+
+.btn-ofertas {
+    display: block;
+
+    width: 270px;
+    height: 50px;
+
+    margin: 25px auto 0;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #087d7c;
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.btn-ofertas:hover {
+    background-color: #056766;
+}
+/* OFERTAS */
+
+.ofertas {
+    margin-top: 65px;
+    padding-left: 35px;
+    width: 90%;
+}
+
+.ofertas h2 {
+    font-size: 30px;
+    margin-bottom: 18px;
+    
+}
+
+/* CARD DE OFERTA */
+
+.oferta {
+    width: 80%;
+    border: 1px solid #dce5e7;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+
+}
+
+.oferta strong {
+    font-size: 16px;
+    color: #172b35;
+}
+
+.oferta p {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #647980;
+}
+
+/* PREÇO */
+
+.preco {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.preco strong {
+    color: #087d7c;
+    font-size: 18px;
+}
+
+.preco span {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #667b82;
+}
+
+/* BOTÃO MAIS OFERTAS */
+
+.btn-ofertas {
+    display: block;
+    width: 270px;
+    height: 50px;
+    margin: 25px auto 0;
+    border: none;
+    border-radius: 8px;
+    background-color: #087d7c;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.btn-ofertas:hover {
+    background-color: #056766;
+}
+
+.folder {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 25%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.folder img {
+    width: 85%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 50px;
+    margin-top: 20px;
+}

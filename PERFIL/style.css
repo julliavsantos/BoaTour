@@ -1,0 +1,900 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+:root {
+    --bg: #f3f4f7;
+    --bg-soft: #f5f5f5;
+    --surface: #e9ebee;
+    --surface-strong: #d8e6e7;
+    --surface-alt: #f7f9fa;
+    --card: #ffffff;
+    --text: #222222;
+    --heading: #111111;
+    --muted: #777777;
+    --muted-dark: #555555;
+    --muted-light: #b5b5b5;
+    --border: #dce5e9;
+    --hover: #eef3f4;
+    --primary: #355f63;
+    --primary-dark: #264d50;
+    --primary-strong: #126166;
+    --accent: #518d93;
+    --accent-dark: #3f777c;
+    --accent-strong: #0b9995;
+    --accent-strong-dark: #087f7b;
+    --footer-text: #d5e5e5;
+}
+
+body.dark-mode {
+    --bg: #101719;
+    --bg-soft: #151d20;
+    --surface: #202a2d;
+    --surface-strong: #26373a;
+    --surface-alt: #1b2528;
+    --card: #202a2d;
+    --text: #e9f0f1;
+    --heading: #ffffff;
+    --muted: #aebabc;
+    --muted-dark: #c1ccce;
+    --muted-light: #6f7c7f;
+    --border: #364447;
+    --hover: #2b393c;
+    --primary: #518d93;
+    --primary-dark: #3d7378;
+    --primary-strong: #28767b;
+    --accent: #65a5aa;
+    --accent-dark: #4b8d92;
+    --accent-strong: #35aaa5;
+    --accent-strong-dark: #258d89;
+    --footer-text: #d8e6e7;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--bg);
+}
+.container{
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: start;
+}
+.sidebar{
+    width: 17%;
+    height: 100vh;
+    background-color: var(--bg-soft);
+    position: sticky;
+    top: 0px;
+    align-self: start;
+    box-shadow: 0 4px 15px rgba(0,0,0,.20);
+}
+.sidebar-space{
+    height: 60px;
+}
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+.sidebar-links a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    text-decoration: none;
+    color: var(--text);
+    border-radius: 10px;
+    transition: .2s;
+}
+.sidebar-links a:hover {
+    background: var(--surface-strong);
+    transform: translateX(3px);
+}
+.sidebar-links a > span {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #d8e6e7;
+    color: #355f63;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+}
+.sidebar-links a > span > img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #d8e6e7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+}
+.sidebar-links strong {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+}
+.conteudo{
+    width: 83%;
+    height: auto;
+    background-color: var(--surface-alt);
+    border-radius: 5px;
+    padding: 130px 77px;
+    min-width: 0;
+}
+.conteudo h1{
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    align-items: flex-start;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: 0;
+    color: var(--text);
+}
+.quadro{
+    width: 100%;
+    height: 48vh;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.20);
+}
+.banner-perfil {
+    width: 100%;
+    height: 150px;
+    background-image: url("../img/banners/banner1.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px 12px 0 0;
+    transition: background-image 0.3s ease;
+}
+.quadro-top{
+    width: 100%;
+    height: 25vh;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 70px 40px 20px 40px;
+}
+#fotoPerfilMural {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+    display: block;
+}
+.quadro-text{
+     width: auto;
+    flex: 1;
+    min-width: 0;
+    height: auto;
+    text-align: left;
+    margin-left: 25px;
+}
+.quadro-text h1{
+    width: auto;
+    height: 8vh;
+    align-items: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: 0;
+    color: var(--text);
+}
+.quadro-text p{
+    width: 100%;
+    height: auto;
+    align-items: flex-start;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.5;
+    letter-spacing: 1.0;
+    color: var(--text);
+}
+.quadro-bottom{
+    width: 100%;
+    height: 5vh;
+    padding: 0 60px 30px 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: end;
+}
+.quadro-bottom p {
+    font-size: 18px;
+    color: var(--primary);
+    cursor: pointer;
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+.quadro-bottom p:hover {
+    transform: scale(1.08);
+}
+.viagens-text{
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0;
+    box-sizing: border-box;
+}
+.viagens-text p{
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--text);
+}
+.viagens-text h6{
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--primary);
+}
+.viagens-text .prev {
+    margin-left: auto;
+    margin-right: 2px;
+}
+.prev{
+    position: static;
+    background: transparent;
+    color: #535353;
+    border: none;
+    border-radius: 0;
+    padding: 0 3px;
+    margin-top: 0;
+    margin-bottom: 0;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 200;
+    box-shadow: none;
+    transition: ease .3s;
+}
+.prev:hover {
+    transform: scale(1.08);
+}
+.viagens {
+    width: 100%;
+    max-width: 1800px;
+    margin: 30px auto;
+}
+.viagens-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+.card-viagem {
+    background: var(--card);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    cursor: pointer;
+}
+.card-viagem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.imagem-viagem {
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+}
+.imagem-viagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.info-viagem {
+    padding: 15px;
+}
+.info-viagem h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+    color: var(--text)
+}
+.info-viagem p {
+    margin: 0 0 15px;
+    font-size: 13px;
+    color: var(--text);
+}
+.card-viagem02 {
+    background: var(--card);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    cursor: pointer;
+    text-align: center;
+}
+.card-viagem02:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.info-viagem02 {
+    padding: 15px;
+}
+.info-viagem02 h3 {
+    margin: 0 0 7px;
+    font-size: 20px;
+    color: var(--text);
+}
+.modal-notificacoes {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 99999;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-notificacoes.ativo {
+    opacity: 1;
+    visibility: visible;
+}
+.notificacoes {
+    width: 420px;
+    max-height: 550px;
+    padding: 30px;
+    box-sizing: border-box;
+     background: var(--surface-strong);
+    border-radius: 15px;
+    position: relative;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.modal-notificacoes.ativo .notificacoes {
+    opacity: 1;
+    transform: translateY(0);
+}
+.notificacoes h2 {
+    margin: 0 0 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 24px;
+    color: var(--text);
+}
+.notificacao {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(30, 52, 54, 0.15);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.notificacao:last-child {
+    border-bottom: none;
+}
+.icone-notificacao {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #518d93;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+.notificacao strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: var(--text);
+}
+.notificacao p {
+    margin: 0 0 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text);
+}
+.notificacao small {
+    font-size: 10px;
+    color: var(--text);
+}
+.fechar-notificacoes {
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    border: none;
+    background: none;
+    color: var(--text);
+    font-size: 32px;
+    font-weight: 300;
+    cursor: pointer;
+    line-height: 1;
+}
+.fechar-notificacoes:hover {
+    color: #1e3436;
+}
+.modal-editar-perfil {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-strong);
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 99999;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+.modal-editar-perfil.ativo {
+    opacity: 1;
+    visibility: visible;
+}
+.editar-perfil {
+    width: 680px;
+    max-width: 90%;
+    max-height: 90vh;
+    padding: 35px 40px;
+    box-sizing: border-box;
+    background: var(--surface-strong);
+    border-radius: 18px;
+    position: relative;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+.modal-editar-perfil.ativo .editar-perfil {
+    opacity: 1;
+    transform: translateY(0);
+}
+.editar-perfil h2 {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+}
+.subtitulo-editar {
+    margin: 6px 0 25px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+}
+.fechar-editar {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    border: none;
+    background: none;
+    color: var(--text);
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+}
+.fechar-editar:hover {
+    color: #1e3436;
+}
+.banner-perfil-editar {
+    margin-bottom: 25px;
+}
+.banner-perfil-editar > p {
+    margin: 0 0 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+}
+.banners-opcoes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+.banner-opcao {
+    height: 75px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+.banner-opcao img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.banner-opcao:hover {
+    transform: translateY(-2px);
+}
+.banner-opcao.ativo {
+    border-color: #518d93;
+}
+.foto-perfil-editar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(30, 52, 54, 0.15);
+}
+.foto-editar {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+#fotoPerfilEditar {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+    display: block;
+}
+.foto-perfil-editar strong {
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+}
+.btn-foto {
+    padding: 10px 16px;
+    border: 1px solid #518d93;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--accent);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-foto:hover {
+    background: var(--accent);
+    color: white;
+}
+.campos-perfil {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 20px;
+}
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+.campo-completo {
+    grid-column: 1 / -1;
+}
+.campo label {
+    margin-bottom: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+}
+.campo input {
+    width: 100%;
+    height: 45px;
+    padding: 0 13px;
+    box-sizing: border-box;
+    border: 1px solid #c5cdce;
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+.campo input:focus {
+    border-color: #518d93;
+    box-shadow:
+        0 0 0 3px rgba(81, 141, 147, 0.15);
+}
+.botoes-editar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+}
+.btn-cancelar,
+.btn-salvar {
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 7px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-cancelar {
+    border: 1px solid #518d93;
+    background: transparent;
+    color: var(--accent);
+}
+.btn-cancelar:hover {
+    background: var(--accent);
+    color: white;
+}
+.btn-salvar {
+    border: none;
+    background: #518d93;
+    color: white;
+}
+.btn-salvar:hover {
+    background: #3f777c;
+    transform: translateY(-1px);
+}
+.data-campo {
+    position: relative;
+}
+.input-data {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.input-data input {
+    width: 100%;
+    height: 45px;
+    padding: 0 13px;
+    box-sizing: border-box;
+    border: 1px solid #c5cdce;
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+.input-data input::placeholder {
+    color: #555;
+}
+.btn-calendario {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: var(--surface);
+    cursor: pointer;
+}
+.btn-calendario img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+}
+.botoesSair {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.botoesSair button {
+    flex: 1;
+}
+
+.btnCancelar {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    background: #e9ebee;
+    color: #073b40;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btnCancelar:hover {
+    background: #d8e6e7;
+}
+
+/* =========================================
+   MODAL - SAIR DA CONTA
+   ========================================= */
+
+/* Botões de confirmação/cancelamento */
+
+.botoesSair {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.botoesSair button {
+    flex: 1;
+    height: 42px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* BOTÃO CANCELAR */
+
+.btnCancelar {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border) !important;
+}
+
+.btnCancelar:hover {
+    background: var(--hover);
+    transform: translateY(-1px);
+}
+
+
+/* BOTÃO SAIR DA CONTA */
+
+/* =========================================
+   MODAL - SAIR DA CONTA
+   ========================================= */
+
+.botoesSair {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.botoesSair button {
+    width: 100%;
+    height: 42px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Botão cancelar */
+.btnCancelar {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border) !important;
+}
+
+.btnCancelar:hover {
+    background: var(--hover);
+    transform: translateY(-1px);
+}
+
+/* Botão sair */
+.botoesSair .btnLogin {
+    margin: 0;
+}
+
+/* PRIMEIRO MODAL - deixar menor */
+#modalSairConta .login {
+    min-height: auto;
+    height: auto;
+    padding: 30px;
+}
+
+/* SEGUNDO MODAL */
+#modalSenhaSairConta .login {
+    min-height: 300px;
+}
+
+#modalSenhaSairConta .btnLogin {
+    margin-top: 12px;
+}
+
+/* Dark mode */
+body.dark-mode .btnCancelar {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border) !important;
+}
+
+body.dark-mode .btnCancelar:hover {
+    background: var(--hover);
+}
+
+
+/* =========================================
+   MODAL DA SENHA
+   ========================================= */
+
+#modalSenhaSairConta .login {
+    min-height: 300px;
+}
+
+#modalSenhaSairConta .btnLogin {
+    margin-top: 12px;
+}
+
+
+/* =========================================
+   DARK MODE
+   ========================================= */
+
+body.dark-mode .btnCancelar {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border) !important;
+}
+
+body.dark-mode .btnCancelar:hover {
+    background: var(--hover);
+}
+/* Ações adicionais da conta */
+.acoes-conta {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.sem-favoritos {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 500;
+}

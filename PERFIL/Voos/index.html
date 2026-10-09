@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voos - BoaTour</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+     <div class="folder">
+        <img src="../img/banners/Banner voos.png" alt="">
+                
+
+            </div>
+ <div class="voos-container">
+
+    <h1>Encontre os melhores<br>voos para seu destino</h1>
+
+    <!-- TIPOS DE VIAGEM -->
+    <div class="tipo-viagem">
+
+        <label>
+            <input type="radio" name="viagem" checked>
+            <span>Somente ida</span>
+        </label>
+
+        <label>
+            <input type="radio" name="viagem">
+            <span>Ida e volta</span>
+        </label>
+
+    </div>
+
+
+    <!-- ORIGEM E DESTINO -->
+    <div class="linha-campos">
+
+        <div class="campo">
+            <label>Aeroporto - Partida</label>
+
+            <input
+                type="text"
+                value="Frankfurt am Main"
+            >
+        </div>
+
+
+        <!-- AVIÕES -->
+        <div class="icone-aviao">
+            <img src="../img/icones/icone1.png" alt="">
+        </div>
+
+
+        <div class="campo">
+            <label>Aeroporto - Destino</label>
+
+            <input
+                type="text"
+                value="Bangkok"
+            >
+        </div>
+
+    </div>
+
+
+    <!-- DATAS -->
+    <div class="linha-campos">
+
+        <div class="campo campo-data">
+            <label>Data - Partida</label>
+
+            <div class="input-data">
+                <input
+                    type="text"
+                    placeholder="dd/mm/aaaa"
+                >
+
+                <img src="../img/icones/calendario.png" alt="">
+            </div>
+        </div>
+
+
+        <!-- CALENDÁRIO CENTRAL -->
+        <div class="icone-calendario">
+            <img src="../img/icones/icone2.png" alt="">
+        </div>
+
+
+        <div class="campo campo-data retorno">
+            <label>Data - Retorno</label>
+
+            <div class="input-data">
+                <input
+                    type="text"
+                    placeholder="dd/mm/aaaa"
+                >
+
+                <img src="../img/icones/calendario.png" alt="">
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- PASSAGEIROS + BUSCAR -->
+    <div class="linha-final">
+
+        <div class="campo passageiros">
+            <label>Passageiros</label>
+
+            <input
+                type="text"
+                value="1 Passageiro — Econômica"
+            >
+        </div>
+
+
+        <button class="btn-buscar">
+            <img src="../img/icones/busca.png" alt="">
+        </button>
+
+    </div>
+
+</div>
+        <!-- OFERTAS -->
+        <div class="ofertas">
+
+            <h2>Ofertas de voos</h2>
+
+            <div class="oferta">
+                <div>
+                    <strong>São Paulo (GRU) → Lisboa (LIS)</strong>
+                    <p>Ida e volta • Direto</p>
+                </div>
+
+                <div class="preco">
+                    <strong>R$ 2.899</strong>
+                    <span>A partir de</span>
+                </div>
+            </div>
+
+
+            <div class="oferta">
+                <div>
+                    <strong>Rio de Janeiro (GIG) → Miami (MIA)</strong>
+                    <p>Ida e volta • 1 parada</p>
+                </div>
+
+                <div class="preco">
+                    <strong>R$ 2.499</strong>
+                    <span>A partir de</span>
+                </div>
+            </div>
+
+
+            <div class="oferta">
+                <div>
+                    <strong>Curitiba (CWB) → Paris (CDG)</strong>
+                    <p>Ida e volta • 1 parada</p>
+                </div>
+
+                <div class="preco">
+                    <strong>R$ 3.299</strong>
+                    <span>A partir de</span>
+                </div>
+            </div>
+
+
+            <div class="oferta">
+                <div>
+                    <strong>Salvador (SSA) → Orlando (MCO)</strong>
+                    <p>Ida e volta • 1 parada</p>
+                </div>
+
+                <div class="preco">
+                    <strong>R$ 2.799</strong>
+                    <span>A partir de</span>
+                </div>
+            </div>
+
+            <button class="btn-ofertas">
+                Ver mais ofertas
+            </button>
+
+
+           
+
+        </div>
+
+   
+
+</body>
+</html>

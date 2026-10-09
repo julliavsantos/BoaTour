@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="../css/menurodape.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
+</head>
+<body>
+    <div class="nav">
+
+    <div class="logo">
+        <img id="logoBoatour" src="../img/logo/logo.png" alt="BOATOUR">
+    </div>
+
+    <ul class="menu">
+        <li><a href="../index.html#inicio">Início</a></li>
+        <li><a href="../DESTINOS/index.html">Destinos</a></li>
+        <li>Voos</li>
+        <li>Hotéis</li>
+        <li>Atividades</li>
+        <li><a href="../index.html#ofertas">Ofertas</a></li>
+        <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="../index.html#sobre">Sobre Nós</a></li>
+
+        <span><li id="btnEntrar">Entrar</li></span>
+    </ul>
+
+    <div class="perfil-area">
+
+        <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
+            <img class="foto-perfil-header" src="../img/icones/perfil.png" alt="Perfil">
+        </button>
+
+        
+    </div>
+        </div>
+    <div class="perfil-overlay" id="perfilOverlay"></div>
+    <div class="perfil-menu" id="perfilMenu">
+
+            <div class="perfil-topo">
+                <div class="avatar">
+                    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+                </div>
+                <div>
+                    <h3 id="nomePerfil">Olá, viajante!</h3>
+                    <p id="descricaoPerfil">Acesse sua conta</p>
+                </div>
+
+                <button class="fechar-perfil" id="fecharPerfil">
+                    &times;
+                </button>
+
+            </div>
+
+            <div class="perfil-login">
+                <button id="abrirLoginPerfil">
+                    Entrar na minha conta
+                </button>
+            </div>
+
+            <div class="perfil-links">
+                <a href="#viagens">
+                    <span>✈</span>
+                    <div>
+                        <strong>Minhas viagens</strong>
+                        <small>Veja suas reservas</small>
+                    </div>
+                </a>
+                <a href="#favoritos">
+                    <span>❤︎</span>
+                    <div>
+                        <strong>Favoritos</strong>
+                        <small>Destinos salvos</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>⚙</span>
+                    <div>
+                        <strong>Configurações</strong>
+                        <small>Preferências da conta</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>?</span>
+                    <div>
+                        <strong>Central de ajuda</strong>
+                        <small>Precisa de ajuda?</small>
+                    </div>
+                </a>
+
+            </div>
+            <div class="perfil-footer">
+                <p>Viaje com a BoaTour ✈</p>
+            </div>
+        </div>
+
+        <div class="container">
+
+            <div class="sidebar">
+                <div class="sidebar-space"></div>
+                <div class="sidebar-links">
+                
+                <a href="#perfil">
+                    <span><img src="../img/icones/perfil2.png" alt=""></span>
+                    <div>
+                        <strong>Meu Perfil</strong>
+                    </div>
+                </a>
+                <a href="#viagens">
+                    <span><img src="../img/icones/aviao2.png" alt=""></span>
+                    <div>
+                        <strong>Minhas Viagens</strong>
+                    </div>
+                </a>
+                <a href="#favoritos">
+                    <span><img src="../img/icones/coracao.png" alt=""></span>
+                    <div>
+                        <strong>Favoritos</strong>
+                    </div>
+                </a>
+                <a href="../PAGAMENTOS/index.html">
+                    <span><img src="../img/icones/cartao2.png" alt=""></span>
+                    <div>
+                        <strong>Pagamentos</strong>
+                    </div>
+                </a>
+                <a href="#" id="btnNotificacoes">
+                    <span><img src="../img/icones/sino.png" alt=""></span>
+                    <div>
+                        <strong>Notificações</strong>
+                    </div>
+                </a>
+                <a href="#">
+                    <span><img src="../img/icones/engrenagem.png" alt=""></span>
+                    <div>
+                        <strong>Configurações</strong>
+                    </div>
+                </a>
+                <a href="#" id="btnSairConta">
+                    <span><img src="../img/icones/sair.png" alt=""></span>
+                    <div>
+                        <strong>Sair</strong>
+                    </div>
+                </a>
+
+            </div>
+            </div>
+
+            <div class="conteudo">
+                <h1>Meu Perfil</h1>
+
+                <div class="quadro" id="perfil">
+
+    <div class="banner-perfil" id="bannerPerfil"></div>
+
+    <div class="quadro-top">
+
+        <img
+            id="fotoPerfilMural"
+            src="../img/icones/perfil.png"
+            alt=""
+        >
+
+        <div class="quadro-text">
+
+            <h1 id="nomePerfilMural">
+                Viajante
+            </h1>
+
+            <p id="emailPerfilMural">
+                email@gmail.com
+                <br>
+                Cliente desde 2026
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="quadro-bottom">
+
+        <p id="btnEditarPerfil">
+            Editar Perfil
+        </p>
+
+    </div>
+
+                </div>
+                
+                <div class="viagens-text" id="viagens">
+                    <p>Minhas Viagens</p>
+                    <h6 class="prev">Ver todas</h6>
+                </div>
+                <div class="viagens">
+                    
+                    <div class="viagens-grid">
+            <div class="card-viagem">
+                <div class="imagem-viagem">
+                    <img src="../img/ofertas/cancun.jpg" alt="Cancún">
+                </div>
+    
+                <div class="info-viagem">
+                    <h3>Cancún All Inclusive</h3>
+                    <p>13 à 16 de Agosto</p>
+                    <p>Código: 8013343</p>
+                </div>
+            </div>
+
+            <div class="card-viagem">
+                <div class="imagem-viagem">
+                    <img src="../img/ofertas/cancun.jpg" alt="Cancún">
+                </div>
+    
+                <div class="info-viagem">
+                    <h3>Cancún All Inclusive</h3>
+                    <p>13 à 16 de Agosto</p>
+                    <p>Código: 8013343</p>
+                </div>
+            </div>
+
+            <div class="card-viagem">
+                <div class="imagem-viagem">
+                    <img src="../img/ofertas/cancun.jpg" alt="Cancún">
+                </div>
+    
+                <div class="info-viagem">
+                    <h3>Cancún All Inclusive</h3>
+                    <p>13 à 16 de Agosto</p>
+                    <p>Código: 8013343</p>
+                </div>
+            </div>
+
+            <div class="card-viagem">
+                <div class="imagem-viagem">
+                    <img src="../img/ofertas/cancun.jpg" alt="Cancún">
+                </div>
+    
+                <div class="info-viagem">
+                    <h3>Cancún All Inclusive</h3>
+                    <p>13 à 16 de Agosto</p>
+                    <p>Código: 8013343</p>
+                </div>
+            </div>
+                    </div>
+            
+            </div>
+
+                <div class="viagens-text" id="favoritos">
+    <p>Favoritos</p>
+    <h6 class="prev" id="btnVerTodosFavoritos">Ver todos</h6>
+</div>
+
+<div class="viagens">
+    <div class="viagens-grid" id="favoritosGrid">
+        <!-- Os 4 favoritos mais recentes serão inseridos aqui pelo JavaScript -->
+    </div>
+</div>
+    
+        </div>
+        </div>
+
+        
+    <div class="modal-editar-perfil" id="modalEditarPerfil">
+    <div class="editar-perfil">
+
+        <button class="fechar-editar" id="fecharEditarPerfil">
+            &times;
+        </button>
+
+        <h2>Editar Perfil</h2>
+        <p class="subtitulo-editar">
+            Atualize suas informações pessoais e personalize seu perfil.
+        </p>
+        <div class="banner-perfil-editar">
+
+            <p>Banner do perfil</p>
+
+            <div class="banners-opcoes">
+
+                <button class="banner-opcao ativo"
+                        data-banner="../img/banners/banner1.jpg">
+                    <img src="../img/banners/banner1.jpg" alt="Banner 1">
+                </button>
+
+                <button class="banner-opcao"
+                        data-banner="../img/banners/banner2.jpg">
+                    <img src="../img/banners/banner2.jpg" alt="Banner 2">
+                </button>
+
+                <button class="banner-opcao"
+                        data-banner="../img/banners/banner3.jpg">
+                    <img src="../img/banners/banner3.jpg" alt="Banner 3">
+                </button>
+
+                <button class="banner-opcao"
+                        data-banner="../img/banners/banner4.jpg">
+                    <img src="../img/banners/banner4.jpg" alt="Banner 4">
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- FOTO DE PERFIL -->
+        <div class="foto-perfil-editar">
+
+    <div class="foto-editar">
+        <img src="../img/icones/perfil.png" alt="Foto de perfil" id="fotoPerfilEditar">
+    </div>
+
+    <div>
+        <strong>Foto de perfil</strong>
+
+        <button
+            type="button"
+            class="btn-foto"
+            id="btnAlterarFoto"
+        >
+            Alterar foto
+        </button>
+
+        <input
+            type="file"
+            id="inputFotoPerfil"
+            accept="image/png, image/jpeg, image/webp"
+            hidden
+        >
+    </div>
+
+</div>
+
+
+        <!-- CAMPOS -->
+        <div class="campos-perfil">
+
+            <div class="campo">
+                <label for="nomePerfilEditar">Nome completo</label>
+                <input
+                    type="text"
+                    id="nomePerfilEditar"
+                    value="Viajante"
+                >
+            </div>
+
+            <div class="campo">
+                <label for="emailPerfil">E-mail</label>
+                <input
+                    type="email"
+                    id="emailPerfil"
+                    value="email@gmail.com"
+                >
+            </div>
+
+            <div class="campo">
+                <label for="cpfPerfil">CPF</label>
+                <input
+                    type="text"
+                    id="cpfPerfil"
+                    value="000.000.000-00"
+                    disabled
+                >
+            </div>
+
+            <div class="campo">
+                <label for="telefonePerfil">Telefone</label>
+                <input
+                    type="text"
+                    id="telefonePerfil"
+                    value="(48) 99999-9999"
+                >
+            </div>
+
+            <div class="campo campo-completo">
+                <label for="dataNascimentoPerfil">Data de nascimento</label>
+                <input
+                    type="date"
+                    id="dataNascimentoPerfil"
+                    autocomplete="bday"
+                >
+            </div>
+        </div>
+
+        <!-- BOTÕES -->
+        <div class="botoes-editar">
+
+            <button
+                class="btn-cancelar"
+                id="cancelarEditarPerfil"
+                type="button"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="btn-salvar"
+                id="salvarEditarPerfil"
+            >
+                Salvar alterações
+            </button>
+
+        </div>
+
+        <!--
+        <div class="acoes-conta">
+            <button type="button" id="btnAlterarSenha" class="btn-cancelar">
+                Alterar senha
+            </button>
+            <button type="button" id="btnExcluirConta" class="btn-cancelar">
+                Excluir conta
+            </button>
+        </div>
+    -->
+    </div>
+</div>
+
+    <div class="modal-editar-perfil" id="modalAlterarSenha">
+        <div class="editar-perfil">
+            <button class="fechar-editar" id="fecharAlterarSenha" type="button">&times;</button>
+            <h2>Alterar senha</h2>
+            <p class="subtitulo-editar">Use sua senha atual para criar uma nova senha.</p>
+
+            <div class="campos-perfil">
+                <div class="campo campo-completo">
+                    <label for="senhaAtual">Senha atual</label>
+                    <input type="password" id="senhaAtual" autocomplete="current-password">
+                </div>
+                <div class="campo">
+                    <label for="novaSenha">Nova senha</label>
+                    <input type="password" id="novaSenha" autocomplete="new-password">
+                </div>
+                <div class="campo">
+                    <label for="confirmarNovaSenha">Confirmar nova senha</label>
+                    <input type="password" id="confirmarNovaSenha" autocomplete="new-password">
+                </div>
+            </div>
+
+            <div class="botoes-editar">
+                <button class="btn-cancelar" id="cancelarAlterarSenha" type="button">Cancelar</button>
+                <button class="btn-salvar" id="salvarNovaSenha" type="button">Salvar nova senha</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+
+        <div class="footer-texto">
+            <p>Receba ofertas exclusivas!</p>
+            <input type="email" placeholder="email@gmail.com">
+            <button>Inscrever-se</button>
+        </div>
+    
+        <hr>
+    
+        <div class="footer-conteudo">
+    
+            <div class="footer-logo">
+                <img src="../img/logo/logobranca.png" alt="">
+                <p>Sua jornada, nosso prazer!</p>
+    
+                <div class="redes">
+                    <a href="#"><img src="../img/icones/face_icon.svg" alt=""></a>
+                    <a href="#"><img src="../img/icones/insta_icon.svg" alt=""></a>
+                    <a href="#"><img src="../img/icones/tiktok_icon.svg" alt=""></a>
+                </div>
+            </div>
+    
+            <div class="footer-links">
+                <h3>Institucional</h3>
+                <a href="../index.html#sobre">Sobre nós</a>
+                <a href="#">Trabalhe conosco</a>
+                <a href="#">Política de privacidade</a>
+                <a href="#">Termos de uso</a>
+            </div>
+    
+            <div class="footer-contato">
+                <h3>Contato</h3>
+                <p>ⓘ (48) 9999-9999</p>
+                <p>✉ contato@boatour.com.br</p>
+                <p>⌖ São Paulo, SP - Brasil</p>
+            </div>
+    
+        </div>
+    
+    </footer>
+
+    <div class="copy">
+        <div class="copyright">
+         <p>
+            Copyright © 2026 BOATOUR - Todos os direitos reservados
+        </p>
+        <span>•</span>
+        <a href="#">Política de Privacidade</a>
+        <span>•</span>
+        <a href="#">Termos de Uso</a>
+        <span>•</span>
+        <a href="#">Direitos do Titular</a>
+        <p>
+            BOATOUR Turismo e Viagens Ltda.; CNPJ: 00.000.000/0000-00;
+            Av. Principal, nº 000, Centro, Joinville/SC – CEP 00000-000.
+        </p>
+    </div>
+    </div>
+
+    <div class="modal-login" id="modalLogin">
+        <div class="login">
+            <button class="fechar" id="fecharLogin">&times;</button>
+            <h2>Login <span>BoaTour</span></h2>
+            <p>Acesse sua conta e aproveite benefícios exclusivos em suas próximas viagens!</p>
+            <input type="cpf" id="cpfLogin" placeholder="CPF">
+            <input type="password" id="senhaLogin" placeholder="Senha">
+            <button class="btnLogin" id="btnLogin">Entrar</button>
+            <p><a href="#">Esqueci minha senha</a></p>
+            <p>Ainda não possui uma conta? <a href="CADASTRO/index.html">Criar conta</a></p>
+            </div>
+    </div>
+
+    <div class="modal-notificacoes" id="modalNotificacoes">
+    <div class="notificacoes">
+
+        <button class="fechar-notificacoes" id="fecharNotificacoes">
+            &times;
+        </button>
+
+        <h2>Notificações</h2>
+
+        <div class="notificacao">
+            <div class="icone-notificacao" style="color: white; font-size: 24px;">&#x1F56D</div>
+
+            <div>
+                <strong>Novidades na BoaTour!</strong>
+                <p>Confira nossos novos destinos e ofertas especiais.</p>
+                <small>Agora</small>
+            </div>
+        </div>
+
+        <div class="notificacao">
+            <div class="icone-notificacao" style="color: white; font-size: 20px;">&#9992;</div>
+
+            <div>
+                <strong>Prepare sua próxima viagem</strong>
+                <p>Explore destinos incríveis para sua próxima aventura.</p>
+                <small>Há 2 horas</small>
+            </div>
+        </div>
+
+        <div class="notificacao">
+            <div class="icone-notificacao" style="color: white; font-size: 20px;">&#x1F3D9</div>
+
+            <div>
+                <strong>Novas ofertas disponíveis</strong>
+                <p>Aproveite condições especiais para sua próxima viagem.</p>
+                <small>Ontem</small>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-login" id="modalSairConta">
+    <div class="login">
+        <button class="fechar" id="fecharSairConta">&times;</button>
+
+        <h2>Sair da conta <span>BoaTour</span></h2>
+
+        <p>Tem certeza que deseja sair da sua conta?</p>
+
+        <div class="botoesSair">
+            <button type="button" class="btnCancelar" id="cancelarSairConta">
+                Cancelar
+            </button>
+
+            <button class="btnLogin" id="continuarSairConta">
+                Sair da conta
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-login" id="modalSenhaSairConta">
+    <div class="login">
+        <button class="fechar" id="fecharSenhaSairConta">&times;</button>
+
+        <h2>Confirmar saída <span>BoaTour</span></h2>
+
+        <p>Digite sua senha para confirmar a saída da conta.</p>
+
+        <input
+            type="password"
+            id="senhaSairConta"
+            placeholder="Senha"
+        >
+
+        <button class="btnLogin" id="confirmarSairConta">
+            Confirmar saída
+        </button>
+    </div>
+</div>
+
+
+
+    <script src="script.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/modais.js"></script>
+    <script src="../js/darkmodedemais.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menurodape.css">
+    <link rel="icon" type="img" href="img/logo/apenaslogo.png">
+    <title>BoaTour</title>
+</head>
+<body>
+    <!-- MODAL DE BOAS-VINDAS -->
+<div id="modalBoasVindas" class="modal-boas-vindas">
+
+    <div class="modal-boas-vindas-conteudo">
+
+        <button id="fecharBoasVindas" class="fechar-boas-vindas">
+            ×
+        </button>
+
+        <div class="icone-boas-vindas">
+            <img src="img/icones/mascote.png" alt="">
+        </div>
+
+        <h2>Seja bem-vindo(a)!</h2>
+
+        <p id="mensagemBoasVindas">
+            Você ainda tem algumas configurações para ajustar no seu perfil.
+            Deseja finalizá-las agora?
+        </p>
+
+        <div class="botoes-boas-vindas">
+
+            <button id="btnIrPerfil" class="btn-ir-perfil">
+                Sim, me encaminhe ao meu perfil
+            </button>
+
+            <button id="btnNavegar" class="btn-navegar">
+                Não, prefiro navegar por enquanto
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <div class="cont" id="inicio">
+    <div class="container">
+        <div class="nav">
+
+    <div class="logo">
+        <img id="logoBoatour" src="img/logo/logo.png" alt="BOATOUR">
+    </div>
+
+    <ul class="menu">
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="DESTINOS/index.html">Destinos</a></li>
+        <li><a href="VOOS/index.html">Voos</a></li>
+        <li>Hotéis</li>
+        <li>Atividades</li>
+        <li><a href="#ofertas">Ofertas</a></li>
+        <li><a href="TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="#sobre">Sobre Nós</a></li>
+
+        <span><li id="btnEntrar">Entrar</li></span>
+    </ul>
+
+    <div class="perfil-area">
+
+        <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
+            <img class="foto-perfil-header" src="img/icones/perfil.png" alt="Perfil">
+        </button>
+
+        
+    </div>
+        </div>
+    <div class="perfil-overlay" id="perfilOverlay"></div>
+    <div class="perfil-menu" id="perfilMenu">
+
+            <div class="perfil-topo">
+
+    <div class="avatar">
+        <img id="fotoMenuPerfil" class="foto-viajante" src="img/icones/perfil.png" alt="Perfil">
+    </div>
+
+    <div>
+        <h3 id="nomePerfil">Olá, viajante!</h3>
+        <p id="descricaoPerfil">Acesse sua conta</p>
+    </div>
+
+    <button class="fechar-perfil" id="fecharPerfil">
+        &times;
+    </button>
+
+</div>
+
+            <div class="perfil-login">
+                <button id="abrirLoginPerfil">
+                    Entrar na minha conta
+                </button>
+            </div>
+
+            <div class="perfil-links">
+                <a href="PERFIL/index.html#minhasviagens">
+                    <span>✈</span>
+                    <div>
+                        <strong>Minhas viagens</strong>
+                        <small>Veja suas reservas</small>
+                    </div>
+                </a>
+                <a href="PERFIL/index.html#favoritos">
+                    <span>❤︎</span>
+                    <div>
+                        <strong>Favoritos</strong>
+                        <small>Destinos salvos</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>⚙</span>
+                    <div>
+                        <strong>Configurações</strong>
+                        <small>Preferências da conta</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>?</span>
+                    <div>
+                        <strong>Central de ajuda</strong>
+                        <small>Precisa de ajuda?</small>
+                    </div>
+                </a>
+
+            </div>
+            <div class="perfil-footer">
+                <p>Viaje com a BoaTour ✈</p>
+            </div>
+        </div>
+
+        <div class="container02">
+            <h1>Sua jornada,<br> nossa paixão!</h1>
+            <p>Encontre destinos incríveis e viva experiências inesquecíveis.</p>
+        </div>
+
+        <div class="opcoes">
+            <input type="radio" id="SoIda" name="viagem" checked>
+            <label for="SoIda">Somente ida</label>
+
+            <input type="radio" id="IdaVolta" name="viagem">
+            <label for="IdaVolta">Ida e volta</label>
+        </div>
+
+        <div class="linha">
+            <div class="campo">
+            <label>Aeroporto - Partida</label>
+            <input type="text" id="partida" placeholder="Frankfurt am Main" autocomplete="off">
+            <div class="sugestoes" id="sugestoesPartida"></div>
+        </div>
+
+                <img src="img/icones/icone1.png" alt="">
+
+            <div class="campo">
+            <label>Aeroporto - Destino</label>
+            <input type="text" id="destino" placeholder="Bangkok" autocomplete="off">
+            <div class="sugestoes" id="sugestoesDestino"></div>
+        </div>
+        </div>
+
+        <div class="linha">
+
+    <div class="campo data-campo">
+        <label>Data - Partida</label>
+
+        <div class="input-data">
+            <input
+                type="text"
+                id="dataPartida"
+                placeholder="dd/mm/aaaa"
+                maxlength="10"
+                autocomplete="off"
+            >
+
+            <button type="button" class="btn-calendario" id="abrirPartida">
+                <img src="img/icones/calendario.png" alt="Abrir calendário">
+            </button>
+        </div>
+
+        <div class="calendario" id="calendarioPartida"></div>
+    </div>
+
+    <img src="img/icones/icone2.png" alt="">
+
+    <div class="campo data-campo" id="campoRetorno">
+    <label>Data - Retorno</label>
+
+    <div class="input-data">
+        <input
+            type="text"
+            id="dataRetorno"
+            placeholder="dd/mm/aaaa"
+            maxlength="10"
+            autocomplete="off"
+        >
+
+        <button type="button" class="btn-calendario" id="abrirRetorno">
+            <img src="img/icones/calendario.png" alt="Abrir calendário">
+        </button>
+    </div>
+
+    <div class="calendario" id="calendarioRetorno"></div>
+    </div>
+
+        </div>
+
+        <div class="linha">
+    <div class="campo campo-passageiros">
+        <label>Passageiros</label>
+
+        <input
+            type="text"
+            id="passageiros"
+            placeholder="1 Passageiro — Econômica"
+            autocomplete="off"
+            readonly
+        >
+
+        <div class="passageiros-menu" id="passageirosMenu">
+
+            <div class="passageiros-titulo">
+                <span>Quantidade de passageiros</span>
+            </div>
+
+            <div class="passageiro-linha">
+                <div>
+                    <strong>Adultos</strong>
+                    <small>12 anos ou mais</small>
+                </div>
+
+                <div class="contador">
+                    <button type="button" class="menos" data-tipo="adultos">−</button>
+                    <span id="adultosQtd">1</span>
+                    <button type="button" class="mais" data-tipo="adultos">+</button>
+                </div>
+            </div>
+
+            <div class="passageiro-linha">
+                <div>
+                    <strong>Crianças</strong>
+                    <small>2 a 11 anos</small>
+                </div>
+
+                <div class="contador">
+                    <button type="button" class="menos" data-tipo="criancas">−</button>
+                    <span id="criancasQtd">0</span>
+                    <button type="button" class="mais" data-tipo="criancas">+</button>
+                </div>
+            </div>
+
+            <div class="passageiro-linha">
+                <div>
+                    <strong>Bebês</strong>
+                    <small>Menos de 2 anos</small>
+                </div>
+
+                <div class="contador">
+                    <button type="button" class="menos" data-tipo="bebes">−</button>
+                    <span id="bebesQtd">0</span>
+                    <button type="button" class="mais" data-tipo="bebes">+</button>
+                </div>
+            </div>
+
+            <div class="classe-titulo">
+                Classe da viagem
+            </div>
+
+            <div class="classes">
+
+                <button type="button" class="classe-option ativa" data-classe="Econômica">
+                    <div>
+                        <strong>Econômica</strong>
+                        <small>Mais econômica</small>
+                    </div>
+
+                    <span class="check">✓</span>
+                </button>
+
+                <button type="button" class="classe-option" data-classe="Premium Economy">
+                    <div>
+                        <strong>Premium Economy</strong>
+                        <small>Mais espaço e conforto</small>
+                    </div>
+
+                    <span class="check">✓</span>
+                </button>
+
+                <button type="button" class="classe-option" data-classe="Executiva">
+                    <div>
+                        <strong>Executiva</strong>
+                        <small>Conforto e serviços exclusivos</small>
+                    </div>
+
+                    <span class="check">✓</span>
+                </button>
+
+                <button type="button" class="classe-option" data-classe="Primeira Classe">
+                    <div>
+                        <strong>Primeira Classe</strong>
+                        <small>Experiência premium</small>
+                    </div>
+
+                    <span class="check">✓</span>
+                </button>
+
+            </div>
+
+            <button type="button" class="btn-confirmar-passageiros" id="confirmarPassageiros">
+                Confirmar
+            </button>
+
+        </div>
+    </div>
+            <a href="voos.html">
+        <img class="busca" src="img/icones/busca.png" alt="Buscar">
+    </a>
+        </div>
+        </div>
+
+        <div class="galeria">
+    <p>Destinos de praia populares</p>
+
+    <button class="prev">❮</button>
+    <button class="next">❯</button>
+        </div>
+
+        <div class="slider">
+    <div class="slides" id="listaDestinos">
+    </div>
+</div>
+    </div>
+    </div>
+
+    <section class="qualidades">
+      <div class="qualidade">
+        <div class="icon"><img src="img/icones/cartao.png" alt=""></div>
+
+        <div>
+          <h3>Garantia do Melhor Preço</h3>
+          <p>Melhores ofertas para sua viagem.</p>
+        </div>
+      </div>
+      <div class="qualidade">
+        <div class="icon"><img src="img/icones/suporte.png" alt=""></div>
+
+        <div>
+          <h3>Suporte 24/7</h3>
+          <p>Estamos aqui a qualquer momento</p>
+        </div>
+      </div>
+      <div class="qualidade">
+        <div class="icon"><img src="img/icones/cadeado.png" alt=""></div>
+
+        <div>
+          <h3>Reserva segura</h3>
+          <p>Pagamento rápido e seguro</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="container03" id="ofertas">
+        <p>Ofertas imperdíveis<br>para sua próxima viagem <br>
+        <span>Aproveite preços especiais e parcelamentos facilitados!</span></p>
+    </div>   
+
+    <div class="filtros">
+
+    <button class="filtro ativo" data-filtro="todas">
+        Todas as ofertas
+    </button>
+    <button class="filtro" data-filtro="nacional">
+        Nacionais
+    </button>
+    <button class="filtro" data-filtro="internacional">
+        Internacionais
+    </button>
+    <button class="filtro" data-filtro="pacote">
+        Pacotes
+    </button>
+
+</div>
+
+    <section class="ofertas">
+    <div class="ofertas-grid" id="listaOfertas">
+    </div>
+
+    <button class="btn-ofertas" id="btnTodasOfertas">
+        Ver todas as ofertas
+    </button>
+</section>
+
+    <div class="container04" id="sobre">
+        <p>Sobre a BOATOUR<br>
+        <span>A BoaTour é uma agência de turismo que busca tornar o
+            planejamento de viagens mais simples, prático e personalizado.
+            A plataforma reúne informações sobre destinos, voos, hospedagens e 
+            atividades, ajudando o usuário a encontrar opções de acordo com seus 
+            interesses. Dessa forma, a BoaTour utiliza a tecnologia para facilitar 
+            a escolha e o planejamento de viagens.
+        </span></p>
+    </div>   
+
+    <section class="valores">
+      <div class="valor">
+        <div class="icon_valor"><img src="img/icones/missao.png" alt=""></div>
+
+        <div>
+          <h3>Missão</h3>
+          <p>Facilitar o planejamento de viagens de forma prática e personalizada.</p>
+        </div>
+      </div>
+      <div class="valor">
+        <div class="icon_valor"><img src="img/icones/visao.png" alt=""></div>
+
+        <div>
+          <h3>Visão</h3>
+          <p>Ser referência em turismo pela inovação e qualidade.</p>
+        </div>
+      </div>
+      <div class="valor">
+        <div class="icon_valor"><img src="img/icones/valores.png" alt=""></div>
+
+        <div>
+          <h3>Valores</h3>
+          <p>Inovação, qualidade, acessibilidade, personalização e responsabilidade.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="banner">
+        <h1>
+          Nossa equipe de especialistas está pronta para tornar a sua viagem perfeita!
+        </h1>
+
+        <button class="banner-btn">Falar com um especialista</button>
+    </div>
+
+    <section class="estatisticas">
+      <div class="estatistica">
+          <h3>+10K</h3>
+          <p>Clientes satisfeitos</p>
+        </div>
+      </div>
+      <div class="estatistica">
+          <h3>+50</h3>
+          <p>Destinos</p>
+        </div>
+      </div>
+      <div class="estatistica">
+          <h3>+500</h3>
+          <p>Parceiros</p>
+        </div>
+      </div>
+      <div class="estatistica">
+          <h3>24/7</h3>
+          <p>Suporte</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+
+        <div class="footer-texto">
+            <p>Receba ofertas exclusivas!</p>
+            <input type="email" placeholder="email@gmail.com">
+            <button>Inscrever-se</button>
+        </div>
+    
+        <hr>
+    
+        <div class="footer-conteudo">
+    
+            <div class="footer-logo">
+                <img src="img/logo/logobranca.png" alt="">
+                <p>Sua jornada, nosso prazer!</p>
+    
+                <div class="redes">
+                    <a href="#"><img src="img/icones/face_icon.svg" alt=""></a>
+                    <a href="#"><img src="img/icones/insta_icon.svg" alt=""></a>
+                    <a href="#"><img src="img/icones/tiktok_icon.svg" alt=""></a>
+                </div>
+            </div>
+    
+            <div class="footer-links">
+                <h3>Institucional</h3>
+                <a href="#sobre">Sobre nós</a>
+                <a href="#">Trabalhe conosco</a>
+                <a href="#">Política de privacidade</a>
+                <a href="#">Termos de uso</a>
+            </div>
+    
+            <div class="footer-contato">
+                <h3>Contato</h3>
+                <p>ⓘ (48) 99201-9988</p>
+                <p>✉ contato@boatour.com.br</p>
+                <p>⌖ Criciúma, SC - Brasil</p>
+            </div>
+    
+        </div>
+    
+    </footer>
+
+    <div class="copy">
+        <div class="copyright">
+         <p>
+            Copyright © 2026 BOATOUR - Todos os direitos reservados
+        </p>
+        <span>•</span>
+        <a href="#">Política de Privacidade</a>
+        <span>•</span>
+        <a href="#">Termos de Uso</a>
+        <span>•</span>
+        <a href="#">Direitos do Titular</a>
+        <p>
+            BOATOUR Turismo e Viagens Ltda.; CNPJ: 00.000.000/0000-00;
+            Av. Principal, nº 000, Centro, Criciúma/SC – CEP 00000-000.
+        </p>
+    </div>
+    </div>
+
+    <div class="modal-login" id="modalLogin">
+        <div class="login">
+            <button class="fechar" id="fecharLogin">&times;</button>
+            <h2>Login <span>BoaTour</span></h2>
+            <p>Acesse sua conta e aproveite benefícios exclusivos em suas próximas viagens!</p>
+            <input type="cpf" id="cpfLogin" placeholder="CPF">
+            <input type="password" id="senhaLogin" placeholder="Senha">
+            <button class="btnLogin" id="btnLogin">Entrar</button>
+            <p><a href="#">Esqueci minha senha</a></p>
+            <p>Ainda não possui uma conta? <a href="CADASTRO/index.html">Criar conta</a></p>
+            </div>
+    </div>
+
+<div class="modal-oferta" id="modalOferta">
+
+    <div class="oferta-detalhes">
+
+        <button class="fechar-oferta" id="fecharOferta">&times;</button>
+
+        <div class="oferta-detalhes-imagem">
+            <img id="modalImagemOferta" src="" alt="">
+            <span class="modal-desconto" id="modalDesconto">-0%</span>
+        </div>
+
+
+        <div class="oferta-detalhes-conteudo">
+            <span class="modal-categoria" id="modalCategoria">-</span>
+
+            <h2 id="modalTitulo">-</h2>
+            <p class="modal-resumo" id="modalResumo">-</p>
+
+            <div class="modal-ods" id="modalOds"></div>
+            
+            <div class="linha-detalhes">
+        <div>
+        
+        <span>✈</span>
+        <p>Passagem aérea</p>
+    </div>
+
+    <div>
+        <span>🏛</span>
+        <p>Hospedagem</p>
+    </div>
+
+    <div>
+        <span>🎟</span>
+        <p>Passeios</p>
+    </div>
+
+    <div>
+        <span>🗓</span>
+        <p>0 dias</p>
+    </div>
+            </div>
+
+
+            <div class="descricao-oferta">
+                <h3>Sobre esta viagem</h3>
+                <p id="modalDescricao">-</p>
+            </div>
+
+            <div class="preco-modal">
+                <div>
+                    <span>De:</span>
+                    <del id="modalPrecoAntigo">R$ 0,00</del>
+                </div>
+
+                <div>
+                    <span>Por apenas:</span>
+                    <strong id="modalPreco">R$ 0,00</strong>
+                </div>
+            </div>
+
+
+            <button class="btn-comprar" id="btnComprar">Comprar agora</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="modal-login" id="modalSaidaConta">
+
+    <div class="login">
+
+        <button class="fechar" id="fecharSaidaConta">&times;</button>
+        <h2>Até logo!</h2>
+        <p>Você saiu da sua conta com sucesso.</p>
+        <button class="btnLogin" id="continuarSaidaConta">Continuar</button>
+
+    </div>
+
+</div>
+
+
+    <script src="js/script.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/modais.js"></script>
+    <script src="js/ofertas.js"></script>
+    <script src="js/darkmode.js"></script>
+    <script src="js/destinos.js"></script>
+
+    
+</body>
+</html>

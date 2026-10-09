@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamentos</title>
+    <link rel="stylesheet" href="pagamentos.css">
+    <link rel="stylesheet" href="../css/menurodape.css">
+    <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
+</head>
+<body>
+    <div class="nav">
+
+    <div class="logo">
+        <img id="logoBoatour" src="../img/logo/logo.png" alt="BOATOUR">
+    </div>
+
+    <ul class="menu">
+        <li><a href="../index.html#inicio">Início</a></li>
+        <li><a href="../DESTINOS/index.html">Destinos</a></li>
+        <li>Voos</li>
+        <li>Hotéis</li>
+        <li>Atividades</li>
+        <li><a href="../index.html#ofertas">Ofertas</a></li>
+        <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="../index.html#sobre">Sobre Nós</a></li>
+
+        <span><li id="btnEntrar">Entrar</li></span>
+    </ul>
+
+    <div class="perfil-area">
+
+        <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
+            <img  class="foto-perfil-header" src="../img/icones/perfil.png" alt="Perfil">
+        </button>
+
+        
+    </div>
+        </div>
+    <div class="perfil-overlay" id="perfilOverlay"></div>
+    <div class="perfil-menu" id="perfilMenu">
+
+            <div class="perfil-topo">
+                <div class="avatar">
+                    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+                </div>
+                <div>
+                    <h3 id="nomePerfil">Olá, viajante!</h3>
+                    <p id="descricaoPerfil">Acesse sua conta</p>
+                </div>
+
+                <button class="fechar-perfil" id="fecharPerfil">
+                    &times;
+                </button>
+
+            </div>
+
+            <div class="perfil-login">
+                <button id="abrirLoginPerfil">
+                    Entrar na minha conta
+                </button>
+            </div>
+
+            <div class="perfil-links">
+                <a href="../index.html#viagens">
+                    <span>✈</span>
+                    <div>
+                        <strong>Minhas viagens</strong>
+                        <small>Veja suas reservas</small>
+                    </div>
+                </a>
+                <a href="../index.html#favoritos">
+                    <span>❤︎</span>
+                    <div>
+                        <strong>Favoritos</strong>
+                        <small>Destinos salvos</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>⚙</span>
+                    <div>
+                        <strong>Configurações</strong>
+                        <small>Preferências da conta</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>?</span>
+                    <div>
+                        <strong>Central de ajuda</strong>
+                        <small>Precisa de ajuda?</small>
+                    </div>
+                </a>
+
+            </div>
+            <div class="perfil-footer">
+                <p>Viaje com a BoaTour ✈</p>
+            </div>
+        </div>
+
+    <main class="pagamentos">
+        <div class="pagamentos-space">
+
+        </div>
+        <div class="titulo-pagina">
+            <span><a href="../PERFIL/index.html">Minha conta</a></span>
+            <h1>Meus pagamentos</h1>
+            <p>Confira o histórico dos seus pagamentos e reservas.</p>
+        </div>
+
+        <section class="resumo-pagamentos">
+
+            <div class="resumo-card">
+                <span class="icone"><img src="../img/icones/cartao.png" alt=""></span>
+
+                <div>
+                    <p>Total pago</p>
+                    <h2>R$ 4.070,00</h2>
+                </div>
+            </div>
+
+            <div class="resumo-card">
+                <span class="icone"><img src="../img/icones/missao.png" alt=""></span>
+
+                <div>
+                    <p>Pagamentos aprovados</p>
+                    <h2>2</h2>
+                </div>
+            </div>
+
+            <div class="resumo-card">
+                <span class="icone2"><img src="../img/icones/aviao2.png" alt=""></span>
+
+                <div>
+                    <p>Viagens reservadas</p>
+                    <h2>2</h2>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="historico">
+
+            <div class="cabecalho-historico">
+                <h2>Histórico de pagamentos</h2>
+
+                <select id="filtroPagamento">
+                    <option value="todos">Todos</option>
+                    <option value="aprovado">Aprovados</option>
+                    <option value="pendente">Pendentes</option>
+                    <option value="cancelado">Cancelados</option>
+                </select>
+            </div>
+
+            <article class="pagamento-card" data-status="aprovado">
+
+                <div class="destino-imagem">
+                    <img src="../img/ofertas/paris.jpg" alt="Paris">
+                </div>
+
+                <div class="pagamento-info">
+
+                    <div class="pagamento-destino">
+                        <span>Viagem</span>
+                        <h3>Paris, França</h3>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Data</span>
+                        <strong>15/09/2026</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Pagamento</span>
+                        <strong>Pix</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Valor</span>
+                        <strong>R$ 2.620,00</strong>
+                    </div>
+
+                    <div class="status aprovado">
+                        ✓ Pago
+                    </div>
+
+                    <button class="btn-detalhes"
+                            onclick="abrirModal('Paris, França', '15/09/2026', 'Pix', 'R$ 2.620,00', 'BT-45821', 'aprovado')">
+                        Ver detalhes
+                    </button>
+
+                </div>
+
+            </article>
+
+            <article class="pagamento-card" data-status="aprovado">
+
+                <div class="destino-imagem">
+                    <img src="../img/ofertas/riodejaneiro.jpg" alt="Rio de Janeiro">
+                </div>
+
+                <div class="pagamento-info">
+
+                    <div class="pagamento-destino">
+                        <span>Viagem</span>
+                        <h3>Rio de Janeiro</h3>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Data</span>
+                        <strong>10/07/2026</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Pagamento</span>
+                        <strong>Cartão •••• 4521</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Valor</span>
+                        <strong>R$ 1.450,00</strong>
+                    </div>
+
+                    <div class="status aprovado">
+                        ✓ Pago
+                    </div>
+
+                    <button class="btn-detalhes"
+                            onclick="abrirModal('Rio de Janeiro', '10/07/2026', 'Cartão •••• 4521', 'R$ 1.450,00', 'BT-39214', 'aprovado')">
+                        Ver detalhes
+                    </button>
+
+                </div>
+
+            </article>
+
+            <article class="pagamento-card" data-status="pendente">
+
+                <div class="destino-imagem">
+                    <img src="../img/ofertas/gramado.jpg" alt="Gramado">
+                </div>
+
+                <div class="pagamento-info">
+
+                    <div class="pagamento-destino">
+                        <span>Viagem</span>
+                        <h3>Gramado, Brasil</h3>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Data</span>
+                        <strong>20/12/2026</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Pagamento</span>
+                        <strong>Boleto</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Valor</span>
+                        <strong>R$ 1.890,00</strong>
+                    </div>
+
+                    <div class="status pendente">
+                        ! Pendente
+                    </div>
+
+                    <button class="btn-detalhes"
+                            onclick="abrirModal('Gramado, Brasil', '20/12/2026', 'Boleto', 'R$ 1.890,00', 'BT-51032', 'pendente')">
+                        Ver detalhes
+                    </button>
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+
+        <div class="footer-texto">
+            <p>Receba ofertas exclusivas!</p>
+            <input type="email" placeholder="email@gmail.com">
+            <button>Inscrever-se</button>
+        </div>
+    
+        <hr>
+    
+        <div class="footer-conteudo">
+    
+            <div class="footer-logo">
+                <img src="../img/logo/logobranca.png" alt="">
+                <p>Sua jornada, nosso prazer!</p>
+    
+                <div class="redes">
+                    <a href="#"><img src="../img/icones/face_icon.svg" alt=""></a>
+                    <a href="#"><img src="../img/icones/insta_icon.svg" alt=""></a>
+                    <a href="#"><img src="../img/icones/tiktok_icon.svg" alt=""></a>
+                </div>
+            </div>
+    
+            <div class="footer-links">
+                <h3>Institucional</h3>
+                <a href="../index.html#sobre">Sobre nós</a>
+                <a href="#">Trabalhe conosco</a>
+                <a href="#">Política de privacidade</a>
+                <a href="#">Termos de uso</a>
+            </div>
+    
+            <div class="footer-contato">
+                <h3>Contato</h3>
+                <p>ⓘ (48) 9999-9999</p>
+                <p>✉ contato@boatour.com.br</p>
+                <p>⌖ São Paulo, SP - Brasil</p>
+            </div>
+    
+        </div>
+    
+    </footer>
+
+    <div class="copy">
+        <div class="copyright">
+         <p>
+            Copyright © 2026 BOATOUR - Todos os direitos reservados
+        </p>
+        <span>•</span>
+        <a href="#">Política de Privacidade</a>
+        <span>•</span>
+        <a href="#">Termos de Uso</a>
+        <span>•</span>
+        <a href="#">Direitos do Titular</a>
+        <p>
+            BOATOUR Turismo e Viagens Ltda.; CNPJ: 00.000.000/0000-00;
+            Av. Principal, nº 000, Centro, Joinville/SC – CEP 00000-000.
+        </p>
+    </div>
+    </div>
+
+    <div class="modal-login" id="modalLogin">
+        <div class="login">
+            <button class="fechar" id="fecharLogin">&times;</button>
+            <h2>Login <span>BoaTour</span></h2>
+            <p>Acesse sua conta e aproveite benefícios exclusivos em suas próximas viagens!</p>
+            <input type="cpf" id="cpfLogin" placeholder="CPF">
+            <input type="password" id="senhaLogin" placeholder="Senha">
+            <button class="btnLogin" id="btnLogin">Entrar</button>
+            <p><a href="#">Esqueci minha senha</a></p>
+            <p>Ainda não possui uma conta? <a href="../CADASTRO/index.html">Criar conta</a></p>
+            </div>
+    </div>
+
+    <div class="modal-overlay" id="modalPagamento">
+
+        <div class="modal">
+
+            <button class="fechar-modal" onclick="fecharModal()">
+                ×
+            </button>
+
+            <div class="modal-cabecalho">
+
+                <span class="modal-icone"><img src="../img/icones/cartao.png" alt=""></span>
+
+                <div>
+                    <span>Detalhes do pagamento</span>
+                    <h2 id="modalDestino">Paris, França</h2>
+                </div>
+
+            </div>
+
+
+            <div class="detalhes">
+
+                <div class="detalhe">
+                    <span>Código da reserva</span>
+                    <strong id="modalReserva">BT-45821</strong>
+                </div>
+
+                <div class="detalhe">
+                    <span>Data da viagem</span>
+                    <strong id="modalData">15/09/2026</strong>
+                </div>
+
+                <div class="detalhe">
+                    <span>Forma de pagamento</span>
+                    <strong id="modalForma">Pix</strong>
+                </div>
+
+                <div class="detalhe">
+                    <span>Valor</span>
+                    <strong id="modalValor">R$ 2.620,00</strong>
+                </div>
+
+                <div class="detalhe">
+                    <span>Status</span>
+                    <strong id="modalStatus" class="status aprovado">
+                        ✓ Pago
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="modal-acoes">
+
+                <button class="btn-comprovante">
+                    📄 Ver comprovante
+                </button>
+
+                <button class="btn-fechar" onclick="fecharModal()">
+                    Fechar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/modais.js"></script>
+    <script src="../js/darkmodedemais.js"></script>
+</body>
+
+</html>

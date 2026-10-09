@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/menurodape.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Destinos</title>
+</head>
+<body>
+    <div class="nav">
+
+    <div class="logo">
+        <img id="logoBoatour" src="../img/logo/logo.png" alt="BOATOUR">
+    </div>
+
+    <ul class="menu">
+        <li><a href="/index.html#inicio">Início</a></li>
+        <li><a href="index.html">Destinos</a></li>
+        <li>Voos</li>
+        <li>Hotéis</li>
+        <li>Atividades</li>
+        <li><a href="/index.html#ofertas">Ofertas</a></li>
+        <li><a href="/TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="/index.html#sobre">Sobre Nós</a></li>
+
+        <span><li id="btnEntrar">Entrar</li></span>
+    </ul>
+
+    <div class="perfil-area">
+
+        <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
+            <img  class="foto-perfil-header" src="/img/icones/perfil.png" alt="Perfil">
+        </button>
+
+        
+    </div>
+        </div>
+    <div class="perfil-overlay" id="perfilOverlay"></div>
+    <div class="perfil-menu" id="perfilMenu">
+
+            <div class="perfil-topo">
+                <div class="avatar">
+                    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+                </div>
+                <div>
+                    <h3 id="nomePerfil">Olá, viajante!</h3>
+                    <p id="descricaoPerfil">Acesse sua conta</p>
+                </div>
+
+                <button class="fechar-perfil" id="fecharPerfil">
+                    &times;
+                </button>
+
+            </div>
+
+            <div class="perfil-login">
+                <button id="abrirLoginPerfil">
+                    Entrar na minha conta
+                </button>
+            </div>
+
+            <div class="perfil-links">
+                <a href="../PERFIL/index.html#viagens">
+                    <span>✈</span>
+                    <div>
+                        <strong>Minhas viagens</strong>
+                        <small>Veja suas reservas</small>
+                    </div>
+                </a>
+                <a href="../PERFIL/index.html#favoritos">
+                    <span>❤︎</span>
+                    <div>
+                        <strong>Favoritos</strong>
+                        <small>Destinos salvos</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>⚙</span>
+                    <div>
+                        <strong>Configurações</strong>
+                        <small>Preferências da conta</small>
+                    </div>
+                </a>
+                <a href="#">
+                    <span>?</span>
+                    <div>
+                        <strong>Central de ajuda</strong>
+                        <small>Precisa de ajuda?</small>
+                    </div>
+                </a>
+
+            </div>
+            <div class="perfil-footer">
+                <p>Viaje com a BoaTour ✈</p>
+            </div>
+        </div>
+
+        <div class="topo-destinos">
+    <div class="container03" id="ofertas">
+        <p>Destinos incríveis<br>
+            para você explorar <br></p>
+    </div>
+
+    <div class="campo-partida">
+
+    <span class="icone-busca">⌕</span>
+
+    <input
+        type="text"
+        id="partida"
+        placeholder="Buscar por destino, cidade, país..."
+        autocomplete="off"
+    >
+
+    <div class="sugestoes" id="sugestoesPartida"></div>
+
+    </div>
+        </div>
+
+
+    <div class="filtros">
+
+    <button class="filtro ativo" data-filtro="todas">
+        Todos
+    </button>
+    <button class="filtro" data-filtro="Praia">
+        Praias
+    </button>
+    <button class="filtro" data-filtro="Cidade">
+        Cidade
+    </button>
+    <button class="filtro" data-filtro="Natureza">
+        Natureza
+    </button>
+    <button class="filtro" data-filtro="História">
+        História
+    </button>
+    <button class="filtro" data-filtro="Entretenimento">
+        Entretenimento
+    </button>
+    <button class="filtro" data-filtro="Turismo">
+        Turismo
+    </button>
+    <button class="filtro" data-filtro="Cultura">
+        Cultura
+    </button>
+
+</div>
+
+    <section class="destinos">
+    <div class="destinos-grid" id="destinosGrid">
+        <!-- Os destinos serão carregados pelo banco de dados -->
+    </div>
+
+    <button class="btn-ver-mais" id="btnVerMaisDestinos" style="display: none;">Ver mais</button>
+</section>
+
+    <footer class="footer">
+
+        <div class="footer-texto">
+            <p>Receba ofertas exclusivas!</p>
+            <input type="email" placeholder="email@gmail.com">
+            <button>Inscrever-se</button>
+        </div>
+    
+        <hr>
+    
+        <div class="footer-conteudo">
+    
+            <div class="footer-logo">
+                <img src="/img/logo/logobranca.png" alt="">
+                <p>Sua jornada, nosso prazer!</p>
+    
+                <div class="redes">
+                    <a href="#"><img src="/img/icones/face_icon.svg" alt=""></a>
+                    <a href="#"><img src="/img/icones/insta_icon.svg" alt=""></a>
+                    <a href="#"><img src="/img/icones/tiktok_icon.svg" alt=""></a>
+                </div>
+            </div>
+    
+            <div class="footer-links">
+                <h3>Institucional</h3>
+                <a href="#sobre">Sobre nós</a>
+                <a href="#">Trabalhe conosco</a>
+                <a href="#">Política de privacidade</a>
+                <a href="#">Termos de uso</a>
+            </div>
+    
+            <div class="footer-contato">
+                <h3>Contato</h3>
+                <p>ⓘ (48) 99201-9988</p>
+                <p>✉ contato@boatour.com.br</p>
+                <p>⌖ Criciúma, SC - Brasil</p>
+            </div>
+    
+        </div>
+    
+    </footer>
+
+    <div class="copy">
+        <div class="copyright">
+         <p>
+            Copyright © 2026 BOATOUR - Todos os direitos reservados
+        </p>
+        <span>•</span>
+        <a href="#">Política de Privacidade</a>
+        <span>•</span>
+        <a href="#">Termos de Uso</a>
+        <span>•</span>
+        <a href="#">Direitos do Titular</a>
+        <p>
+            BOATOUR Turismo e Viagens Ltda.; CNPJ: 00.000.000/0000-00;
+            Av. Principal, nº 000, Centro, Criciúma/SC – CEP 00000-000.
+        </p>
+    </div>
+    </div>
+
+    <div class="modal-login" id="modalLogin">
+        <div class="login">
+            <button class="fechar" id="fecharLogin">&times;</button>
+            <h2>Login <span>BoaTour</span></h2>
+            <p>Acesse sua conta e aproveite benefícios exclusivos em suas próximas viagens!</p>
+            <input type="cpf" id="cpfLogin" placeholder="CPF">
+            <input type="password" id="senhaLogin" placeholder="Senha">
+            <button class="btnLogin" id="btnLogin">Entrar</button>
+            <p><a href="#">Esqueci minha senha</a></p>
+            <p>Ainda não possui uma conta? <a href="CADASTRO/index.html">Criar conta</a></p>
+            </div>
+    </div>
+
+</div>
+
+
+    <script src="script.js"></script>
+    <script src="/js/menu.js"></script>
+    <script src="/js/modais.js"></script>
+    <script src="/js/ofertas.js"></script>
+    <script src="/js/darkmodedemais.js"></script>
+</body>
+</html>

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/menurodape.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="../img/logo/apenaslogo.png">
+    <title>Configurações | BoaTour</title>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+
+            <div class="logo">
+                <a href="index.html">
+                    <img id="logoBoatour" src="img/logo/logo.png" alt="BOATOUR">
+                </a>
+            </div>
+
+            <ul class="menu">
+                <li><a href="index.html#inicio">Início</a></li>
+                <li><a href="index.html#destinos">Destinos</a></li>
+                <li><a href="voos.html">Voos</a></li>
+                <li><a href="#">Hotéis</a></li>
+                <li><a href="#">Atividades</a></li>
+                <li><a href="index.html#ofertas">Ofertas</a></li>
+                <li>
+                    <a href="TURISMO CONSCIENTE/index.html">
+                        Turismo Consciente
+                    </a>
+                </li>
+                <li><a href="index.html#sobre">Sobre Nós</a></li>
+            </ul>
+
+            <!-- PERFIL -->
+
+            <div class="perfil-area">
+                <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
+                    <img  class="foto-perfil-header" src="img/icones/perfil.png" alt="Perfil">
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <div class="perfil-overlay" id="perfilOverlay"></div>
+
+    <div class="perfil-menu" id="perfilMenu">
+
+        <div class="perfil-topo">
+
+            <div class="avatar">
+                <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+            </div>
+
+            <div>
+                <h3 id="nomePerfil">Olá, viajante!</h3>
+                    <p id="descricaoPerfil">Acesse sua conta</p>
+            </div>
+
+            <button class="fechar-perfil" id="fecharPerfil">
+                &times;
+            </button>
+
+        </div>
+
+
+        <div class="perfil-login">
+            <button id="abrirLoginPerfil">
+                Entrar na minha conta
+            </button>
+        </div>
+
+
+        <div class="perfil-links">
+
+            <a href="#">
+                <span>✈</span>
+
+                <div>
+                    <strong>Minhas viagens</strong>
+                    <small>Veja suas reservas</small>
+                </div>
+            </a>
+
+
+            <a href="#">
+                <span>❤︎</span>
+
+                <div>
+                    <strong>Favoritos</strong>
+                    <small>Destinos salvos</small>
+                </div>
+            </a>
+
+
+            <a href="configuracoes.html" class="ativo">
+                <span>⚙</span>
+
+                <div>
+                    <strong>Configurações</strong>
+                    <small>Preferências da conta</small>
+                </div>
+            </a>
+
+
+            <a href="#">
+                <span>?</span>
+
+                <div>
+                    <strong>Central de ajuda</strong>
+                    <small>Precisa de ajuda?</small>
+                </div>
+            </a>
+
+        </div>
+
+
+        <div class="perfil-footer">
+            <p>Viaje com a BoaTour ✈</p>
+        </div>
+
+    </div>
+
+
+    <!-- ================= CONTEÚDO ================= -->
+
+    <main class="configuracoes-container">
+
+        <div class="configuracoes-cabecalho">
+
+            <div>
+                <span class="configuracoes-subtitulo">
+                    SUA CONTA
+                </span>
+
+                <h1>Configurações</h1>
+
+                <p>
+                    Personalize sua experiência na BoaTour.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="configuracoes-layout">
+
+
+            <!-- ================= MENU LATERAL ================= -->
+
+            <aside class="config-menu">
+
+                <button class="config-link ativo" data-secao="conta">
+                    <span>👤</span>
+
+                    <div>
+                        <strong>Conta</strong>
+                        <small>Dados pessoais</small>
+                    </div>
+                </button>
+
+
+                <button class="config-link" data-secao="aparencia">
+                    <span>🎨</span>
+
+                    <div>
+                        <strong>Aparência</strong>
+                        <small>Visual do site</small>
+                    </div>
+                </button>
+
+
+                <button class="config-link" data-secao="notificacoes">
+                    <span>🔔</span>
+
+                    <div>
+                        <strong>Notificações</strong>
+                        <small>Alertas e ofertas</small>
+                    </div>
+                </button>
+
+
+                <button class="config-link" data-secao="preferencias">
+                    <span>🌎</span>
+
+                    <div>
+                        <strong>Preferências</strong>
+                        <small>Idioma e moeda</small>
+                    </div>
+                </button>
+
+
+                <button class="config-link" data-secao="privacidade">
+                    <span>🔒</span>
+
+                    <div>
+                        <strong>Privacidade</strong>
+                        <small>Segurança da conta</small>
+                    </div>
+                </button>
+
+            </aside>
+
+
+            <!-- ================= ÁREA DAS CONFIGURAÇÕES ================= -->
+
+            <section class="config-conteudo">
+
+
+                <!-- ================= CONTA ================= -->
+
+                <div class="config-secao ativa" id="conta">
+
+                    <div class="secao-titulo">
+                        <div class="icone-secao">👤</div>
+
+                        <div>
+                            <h2>Conta</h2>
+                            <p>Gerencie seus dados pessoais.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="formulario-config">
+
+                        <div class="campo-config">
+                            <label for="nome">
+                                Nome completo
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nome"
+                                placeholder="Digite seu nome"
+                            >
+                        </div>
+
+
+                        <div class="campo-config">
+                            <label for="email">
+                                E-mail
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="seuemail@email.com"
+                            >
+                        </div>
+
+
+                        <div class="campo-config">
+                            <label for="telefone">
+                                Telefone
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="telefone"
+                                placeholder="(00) 00000-0000"
+                            >
+                        </div>
+
+
+                        <div class="campo-config">
+                            <label for="cpf">
+                                CPF
+                            </label>
+
+                            <input
+                                type="text"
+                                id="cpf"
+                                placeholder="000.000.000-00"
+                            >
+                        </div>
+
+                    </div>
+
+
+                    <div class="acoes-config">
+
+                        <button
+                            type="button"
+                            class="btn-salvar"
+                            id="salvarConta"
+                        >
+                            Salvar alterações
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= APARÊNCIA ================= -->
+
+                <div class="config-secao" id="aparencia">
+
+                    <div class="secao-titulo">
+
+                        <div class="icone-secao">
+                            🎨
+                        </div>
+
+                        <div>
+                            <h2>Aparência</h2>
+                            <p>Escolha como a BoaTour será exibida.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="opcao-config">
+
+                        <div class="opcao-info">
+
+                            <div class="opcao-icone">
+                                ☀️
+                            </div>
+
+                            <div>
+                                <strong>Modo claro</strong>
+
+                                <small>
+                                    Utilize o visual claro da BoaTour.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <input
+                            type="radio"
+                            name="tema"
+                            value="claro"
+                            id="temaClaro"
+                        >
+
+                        <label for="temaClaro" class="radio-custom"></label>
+
+                    </div>
+
+
+                    <div class="opcao-config">
+
+                        <div class="opcao-info">
+
+                            <div class="opcao-icone">
+                                🌙
+                            </div>
+
+                            <div>
+                                <strong>Modo escuro</strong>
+
+                                <small>
+                                    Reduza a luminosidade do site.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <input
+                            type="radio"
+                            name="tema"
+                            value="escuro"
+                            id="temaEscuro"
+                        >
+
+                        <label for="temaEscuro" class="radio-custom"></label>
+
+                    </div>
+
+
+                    <div class="opcao-config">
+
+                        <div class="opcao-info">
+
+                            <div class="opcao-icone">
+                                💻
+                            </div>
+
+                            <div>
+                                <strong>Usar configuração do sistema</strong>
+
+                                <small>
+                                    A aparência acompanha seu dispositivo.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <input
+                            type="radio"
+                            name="tema"
+                            value="sistema"
+                            id="temaSistema"
+                        >
+
+                        <label for="temaSistema" class="radio-custom"></label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= NOTIFICAÇÕES ================= -->
+
+                <div class="config-secao" id="notificacoes">
+
+                    <div class="secao-titulo">
+
+                        <div class="icone-secao">
+                            🔔
+                        </div>
+
+                        <div>
+                            <h2>Notificações</h2>
+                            <p>Escolha quais avisos deseja receber.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="opcao-config">
+
+                        <div class="opcao-info">
+
+                            <div class="opcao-icone">
+                                🏷️
+                            </div>
+
+                            <div>
+                                <strong>Ofertas e promoções</strong>
+
+                                <small>
+                                    Receba novidades e ofertas especiais.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="notificacaoOfertas"
+                                checked
+                            >
+
+                            <span class="slider-switch"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="opcao-config">
+
+                        <div class="opcao-info">
+
+                            <div class="opcao-icone">
+                                ✈️
+                            </div>
+
+                            <div>
+                                <strong>Atualizações de viagem</strong>
+
+                                <small>
+                                    Informações sobre suas reservas e viagens.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="notificacaoViagem"
+                                checked
+                            >
+
+                            <span class="slider-switch"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="opcao-config">
+
+                        <div class="opcao-info">
+
+                            <div class="opcao-icone">
+                                🌎
+                            </div>
+
+                            <div>
+                                <strong>Novos destinos</strong>
+
+                                <small>
+                                    Descubra novos lugares e experiências.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="notificacaoDestinos"
+                                checked
+                            >
+
+                            <span class="slider-switch"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= PREFERÊNCIAS ================= -->
+
+                <div class="config-secao" id="preferencias">
+
+                    <div class="secao-titulo">
+
+                        <div class="icone-secao">
+                            🌎
+                        </div>
+
+                        <div>
+                            <h2>Preferências</h2>
+                            <p>Defina suas preferências de navegação.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="formulario-config">
+
+                        <div class="campo-config">
+
+                            <label for="idioma">
+                                Idioma
+                            </label>
+
+                            <select id="idioma">
+
+                                <option value="pt">
+                                    Português (Brasil)
+                                </option>
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="campo-config">
+
+                            <label for="moeda">
+                                Moeda
+                            </label>
+
+                            <select id="moeda">
+
+                                <option value="brl">
+                                    Real brasileiro (R$)
+                                </option>
+
+                                <option value="usd">
+                                    Dólar americano (US$)
+                                </option>
+
+                                <option value="eur">
+                                    Euro (€)
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="acoes-config">
+
+                        <button
+                            type="button"
+                            class="btn-salvar"
+                            id="salvarPreferencias"
+                        >
+                            Salvar preferências
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= PRIVACIDADE ================= -->
+
+                <div class="config-secao" id="privacidade">
+
+                    <div class="secao-titulo">
+
+                        <div class="icone-secao">
+                            🔒
+                        </div>
+
+                        <div>
+                            <h2>Privacidade e segurança</h2>
+
+                            <p>
+                                Controle a segurança e os dados da sua conta.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="seguranca-item">
+
+                        <div>
+                            <strong>Alterar senha</strong>
+
+                            <p>
+                                Atualize sua senha para manter sua conta segura.
+                            </p>
+                        </div>
+
+                        <button class="btn-secundario">
+                            Alterar senha
+                        </button>
+
+                    </div>
+
+
+                    <div class="seguranca-item">
+
+                        <div>
+                            <strong>Política de privacidade</strong>
+
+                            <p>
+                                Saiba como seus dados são utilizados.
+                            </p>
+                        </div>
+
+                        <a href="#" class="btn-secundario">
+                            Visualizar
+                        </a>
+
+                    </div>
+
+
+                    <div class="zona-perigo">
+
+                        <div>
+
+                            <h3>Zona de perigo</h3>
+
+                            <p>
+                                A exclusão da conta é permanente e não poderá
+                                ser desfeita.
+                            </p>
+
+                        </div>
+
+                        <button
+                            class="btn-excluir"
+                            id="btnExcluirConta"
+                        >
+                            Excluir conta
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+        <div class="footer-texto">
+
+            <p>Receba ofertas exclusivas!</p>
+
+            <input
+                type="email"
+                placeholder="email@gmail.com"
+            >
+
+            <button>
+                Inscrever-se
+            </button>
+
+        </div>
+
+
+        <hr>
+
+
+        <div class="footer-conteudo">
+
+            <div class="footer-logo">
+
+                <img
+                    src="img/logo/logobranca.png"
+                    alt="BOATOUR"
+                >
+
+                <p>
+                    Sua jornada, nosso prazer!
+                </p>
+
+                <div class="redes">
+
+                    <a href="#">
+                        <img
+                            src="img/icones/face_icon.svg"
+                            alt="Facebook"
+                        >
+                    </a>
+
+                    <a href="#">
+                        <img
+                            src="img/icones/insta_icon.svg"
+                            alt="Instagram"
+                        >
+                    </a>
+
+                    <a href="#">
+                        <img
+                            src="img/icones/tiktok_icon.svg"
+                            alt="TikTok"
+                        >
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <h3>Institucional</h3>
+
+                <a href="index.html#sobre">
+                    Sobre nós
+                </a>
+
+                <a href="#">
+                    Trabalhe conosco
+                </a>
+
+                <a href="#">
+                    Política de privacidade
+                </a>
+
+                <a href="#">
+                    Termos de uso
+                </a>
+
+            </div>
+
+
+            <div class="footer-contato">
+
+                <h3>Contato</h3>
+
+                <p>ⓘ (48) 99201-9988</p>
+
+                <p>✉ contato@boatour.com.br</p>
+
+                <p>⌖ Criciúma, SC - Brasil</p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <div class="copy">
+
+        <div class="copyright">
+
+            <p>
+                Copyright © 2026 BOATOUR - Todos os direitos reservados
+            </p>
+
+            <span>•</span>
+
+            <a href="#">
+                Política de Privacidade
+            </a>
+
+            <span>•</span>
+
+            <a href="#">
+                Termos de Uso
+            </a>
+
+            <span>•</span>
+
+            <a href="#">
+                Direitos do Titular
+            </a>
+
+            <p>
+                BOATOUR Turismo e Viagens Ltda.;
+                CNPJ: 00.000.000/0000-00;
+                Av. Principal, nº 000, Centro,
+                Criciúma/SC – CEP 00000-000.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= MODAL LOGIN ================= -->
+
+    <div class="modal-login" id="modalLogin">
+
+        <div class="login">
+
+            <button
+                class="fechar"
+                id="fecharLogin"
+            >
+                &times;
+            </button>
+
+            <h2>
+                Login <span>BoaTour</span>
+            </h2>
+
+            <p>
+                Acesse sua conta e aproveite benefícios exclusivos
+                em suas próximas viagens!
+            </p>
+
+            <input
+                type="cpf"
+                id="cpfLogin"
+                placeholder="CPF"
+            >
+
+            <input
+                type="password"
+                id="senhaLogin"
+                placeholder="Senha"
+            >
+
+            <button
+                class="btnLogin"
+                id="btnLogin"
+            >
+                Entrar
+            </button>
+
+            <p>
+                <a href="#">
+                    Esqueci minha senha
+                </a>
+            </p>
+
+            <p>
+                Ainda não possui uma conta?
+                <a href="CADASTRO/index.html">
+                    Criar conta
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= SCRIPTS ================= -->
+
+    <script src="js/menu.js"></script>
+    <script src="js/modais.js"></script>
+    <script src="js/darkmode.js"></script>
+    <script src="js/configuracoes.js"></script>
+
+</body>
+
+</html>

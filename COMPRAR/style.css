@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@media screen and (min-width: 1440px) {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+html {
+    scroll-behavior: smooth;
+}
+html,
+body {
+    overflow-x: hidden;
+}
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--bg);
+}
+.container{
+    width: 100%;
+    height: 15vh;
+    padding-top: 10vh;
+    padding-left: 60px;
+}
+.linha{
+    width: 25%;
+    height: 7vh;
+    display: flex;
+    align-items: center;
+    gap:10px;
+}
+.linha img{
+    width: 75px;
+    height: auto;
+}
+.linha span {
+    height: 2px;
+    background-color: #2f8588;
+    flex: 1;
+}
+.linha p {
+    margin: 0;
+    color: #2f8588;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.titulo{
+    width: 100%;
+    height: 20vh;
+    padding-left: 70px;
+}
+.titulo h1{
+    width: 40%;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 58px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.titulo p{
+    width: 45%;
+    margin-top: 1vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    color: var(--text);
+}
+.conteudo{
+    width: 92%;
+    height: 100vh;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    gap: 25px;
+    margin-top: 1vh;
+}
+.conteudo {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+}
+.conteudo-left{
+    width: 70%;
+    height: 100vh;
+    background-color: var(--surface);
+    border-radius: 40px;
+    border: 1.5px solid var(--border);
+    display: flex;
+    padding: 5px;
+}
+.conteudo-right{
+    width: 30%;
+    height: 100vh;
+    background-color: var(--surface);
+    border-radius: 40px;
+    border: 1.5px solid var(--border);
+}
+.passos {
+    width: 20%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px;
+}
+.passo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.bolinha {
+    width: 50px;
+    height: 50px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    background-color: var(--card);
+}
+.passo-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #52798a;
+}
+.linha-passo {
+    width: 2px;
+    height: 45px;
+    background-color: var(--surface-strong);
+    margin-left: 25px;
+}
+.passo-item.ativo .bolinha {
+    background-color: #2f8588;
+    border-color: #2f8588;
+    color: white;
+}
+.passo-item.ativo p {
+    color: #2f8588;
+    font-weight: 600;
+}
+.linha-divisão {
+    width: 1px;
+    height: 100vh;
+    background-color: var(--surface-strong);
+    margin-left: 25px;
+}
+.informaçoes{
+    width: 100%;
+    height: 100vh;
+}
+.linha-info{
+    width: 70%;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    gap:10px;
+}
+.linha-info img{
+    width: 100px;
+    height: 100px;
+}
+.texto-info {
+    display: flex;
+    flex-direction: column;
+}
+.linha-info h3 {
+    margin: 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.linha-info p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+.campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 20px;
+    padding: 30px;
+}
+.campo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.campo label {
+    margin-bottom: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--heading);
+}
+.campo img {
+    position: absolute;
+    right: 0;
+    top: 70%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+}
+.campo input {
+    width: 100%;
+    height: 45px;
+    padding: 0 13px;
+    box-sizing: border-box;
+    border: 1px solid #c5cdce;
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+.campo input:focus {
+    border-color: #518d93;
+    box-shadow:
+        0 0 0 3px rgba(81, 141, 147, 0.15);
+}
+.linha-divisão2 {
+    width: 93%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 1px;
+    background-color: var(--surface-strong);
+    margin-top: 10px;
+}
+.passageiro{
+    width: 93%;
+    height: 10vh;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+.passageiro img{
+    margin-top: -12.5px;
+    width: 120px;
+    height: 120px;
+}
+.passageiro-info {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+}
+.passageiro-info h3 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.passageiro-info p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+.btn-editar-passageiro {
+    width: 90px;
+    height: 4.5vh;
+    border-radius: 7px ;
+    border: 2px solid var(--border);
+    background: transparent;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: center;
+    margin-right: 30px;
+}
+.btn-editar-passageiro:hover {
+    opacity: .7;
+}
+.btn-adicionar-passageiro {
+    width: 93%;
+    height: 4.5vh;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    box-sizing: border-box;
+    border-radius: 7px;
+    border: 1px solid var(--primary-dark);
+    background: var(--primary-dark);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.texto-botao {
+    transform: translateY(-4px);
+}
+.btn-adicionar-passageiro span {
+    font-size: 30px;
+    font-weight: 300;
+    vertical-align: -3px;
+    margin-right: 3px;
+}
+.btn-adicionar-passageiro:hover {
+    transform: scale(1.01);
+    background: var(--primary-dark);
+    color: white;
+}
+.seguranca{
+    width: 100%;
+    height: 5vh;
+    box-sizing: border-box;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #52798a;
+}
+}

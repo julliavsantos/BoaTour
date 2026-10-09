@@ -1,0 +1,394 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    color: #172b35;
+}
+
+   
+
+.voos-container {
+    width: 700px;
+    padding-left: 40px;
+    padding-top: 50px;
+}
+
+
+.voos-container h1 {
+    font-size: 36px;
+    line-height: 1.15;
+    font-weight: 700;
+    margin-bottom: 28px;
+}
+
+
+.tipo-viagem {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-bottom: 12px;
+}
+
+.tipo-viagem label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #222;
+    cursor: pointer;
+}
+
+.tipo-viagem input {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+
+    border: 1px solid #777;
+    border-radius: 3px;
+
+    background-color: white;
+    cursor: pointer;
+}
+
+.tipo-viagem input:checked {
+    background-color: #579a9b;
+    border-color: #579a9b;
+}
+
+
+.linha-campos {
+    display: grid;
+
+    grid-template-columns: 250px 45px 250px;
+
+    align-items: end;
+
+    gap: 0;
+
+    margin-bottom: 10px;
+}
+
+
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    font-size: 13px;
+    font-weight: 400;
+
+    color: #777;
+
+    margin-bottom: 6px;
+}
+
+.campo input {
+    width: 100%;
+    height: 45px;
+
+    padding: 0 15px;
+
+    border: none;
+    border-radius: 7px;
+
+    outline: none;
+
+    font-family: "Plus Jakarta Sans", sans-serif;
+
+    font-size: 14px;
+
+    color: #777;
+
+    background-color: #e9ebee;
+}
+
+.campo input::placeholder {
+    color: #999;
+}
+
+
+.icone-aviao {
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icone-aviao img {
+    width: 50px;
+    height: auto;
+
+    object-fit: contain;
+}
+
+.input-data {
+    position: relative;
+    width: 100%;
+}
+
+.input-data input {
+    padding-right: 40px;
+}
+
+.input-data img {
+    position: absolute;
+
+    width: 18px;
+    height: 18px;
+
+    right: 13px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    object-fit: contain;
+}
+
+
+.icone-calendario {
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icone-calendario img {
+    width: 72px;
+    height: 22px;
+
+    object-fit: contain;
+}
+
+.retorno {
+    opacity: 0.45;
+}
+
+
+.linha-final {
+    display: flex;
+    align-items: end;
+    width: 545px;
+    margin-top: 2px;
+    gap: 8px;
+}
+
+.passageiros {
+    flex: 1;
+}
+
+
+.btn-buscar {
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 7px;
+
+    background-color: #579a9b;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.2s;
+}
+
+.btn-buscar:hover {
+    background-color: #47898a;
+}
+
+.btn-buscar img {
+    width: 42px;
+    height: 42px;
+
+    object-fit: contain;
+}
+
+.ofertas {
+    margin-top: 45px;
+}
+
+.ofertas h2 {
+    font-size: 27px;
+    margin-bottom: 18px;
+}
+
+.oferta {
+    width: 100%;
+    min-height: 72px;
+
+    border: 1px solid #dce5e7;
+    border-radius: 10px;
+
+    padding: 14px 22px;
+    margin-bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+}
+
+.oferta strong {
+    font-size: 16px;
+    color: #172b35;
+}
+
+.oferta p {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #647980;
+}
+
+
+.preco {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.preco strong {
+    color: #087d7c;
+    font-size: 18px;
+}
+
+.preco span {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #667b82;
+}
+
+
+.btn-ofertas {
+    display: block;
+
+    width: 270px;
+    height: 50px;
+
+    margin: 25px auto 0;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #087d7c;
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.btn-ofertas:hover {
+    background-color: #056766;
+}
+/* OFERTAS */
+
+.ofertas {
+    margin-top: 65px;
+    padding-left: 35px;
+    width: 90%;
+}
+
+.ofertas h2 {
+    font-size: 30px;
+    margin-bottom: 18px;
+    
+}
+
+/* CARD DE OFERTA */
+
+.oferta {
+    width: 80%;
+    border: 1px solid #dce5e7;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+
+}
+
+.oferta strong {
+    font-size: 16px;
+    color: #172b35;
+}
+
+.oferta p {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #647980;
+}
+
+/* PREÇO */
+
+.preco {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.preco strong {
+    color: #087d7c;
+    font-size: 18px;
+}
+
+.preco span {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #667b82;
+}
+
+/* BOTÃO MAIS OFERTAS */
+
+.btn-ofertas {
+    display: block;
+    width: 270px;
+    height: 50px;
+    margin: 25px auto 0;
+    border: none;
+    border-radius: 8px;
+    background-color: #087d7c;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.btn-ofertas:hover {
+    background-color: #056766;
+}
+
+.folder {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 25%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.folder img {
+    width: 85%;
+    height: 95%;
+    object-fit: contain;
+    border-radius: 50px;
+    
+}

@@ -1,0 +1,301 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@media screen and (min-width: 1440px) {
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+html,
+body {
+    overflow-x: hidden;
+}
+body {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+}
+.topo-favoritos {
+    width: 100%;
+    min-height: 22vh;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    padding: 0 70px 10px 70px;
+    background: var(--bg);
+}
+.topo-favoritos h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.1;
+}
+.topo-favoritos p {
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--muted);
+}
+.campo-busca {
+    position: relative;
+    width: 400px;
+    height: 52px;
+    margin: 0;
+    flex-shrink: 0;
+}
+.campo-busca input {
+    width: 100%;
+    height: 52px;
+    padding: 0 45px 0 20px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: var(--surface-strong);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s ease;
+}
+.campo-busca input:focus {
+    border-color: var(--primary);
+    box-shadow:
+    0 0 0 3px rgba(81, 141, 147, 0.12);
+    }
+.campo-busca input::placeholder {
+    color: var(--muted);
+}
+.campo-busca span {
+    position: absolute;
+    right: 17px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 23px;
+    color: var(--muted);
+    pointer-events: none;
+}
+.filtros {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 0 0 10px 70px;
+}
+.filtro {
+    border: none;
+    background: var(--bg);
+    color: var(--text);
+    padding: 9px 20px;
+    border-radius: 18px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow:
+        0 1px 5px rgba(255, 255, 255, 0.4);
+    transition: 0.2s;
+}
+.filtro:hover {
+    background: var(--hover);
+}
+.filtro.ativo {
+    background: var(--primary);
+    color: white;
+}
+.favoritos {
+    width: 90%;
+    max-width: 1800px;
+    min-height: 500px;
+    margin: 30px auto;
+}
+.favoritos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+.card-favorito {
+    height: 370px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    background: var(--card);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    }
+.card-favorito:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.imagem-favorito {
+    height: 190px;
+    position: relative;
+    overflow: hidden;
+}
+.imagem-favorito img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+.card-favorito:hover
+.imagem-favorito img {
+    transform: scale(1.03);
+}
+.card-favorito .info-favorito {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.btn-favorito {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+}
+.btn-favorito img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+.btn-favorito:hover img {
+    transform: scale(1.1);
+}
+.info-favorito {
+    padding: 15px;
+}
+.info-favorito h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+    color: var(--text);
+}
+.localizacao-favorito {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--text);
+}
+.descricao-favorito {
+    margin: 0 0 15px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.preco-favorito {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 15px;
+}
+.preco-favorito strong {
+    font-size: 17px;
+    color: var(--text);
+}
+.btn-ver-ofertas {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-top: 12px;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-ver-ofertas:hover {
+    background: var(--primary-dark);
+}
+.sem-favoritos {
+    width: 100%;
+    min-height: 500px;
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+}
+.sem-favoritos span {
+    font-size: 55px;
+    margin-bottom: 15px;
+}
+.sem-favoritos h2 {
+    margin-bottom: 8px;
+    font-size: 22px;
+    color: var(--heading);
+}
+.sem-favoritos p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 450px;
+}
+.precos-favorito {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    padding-top: 15px;
+}
+
+.preco-anterior-favorito {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.preco-anterior-favorito span,
+.preco-atual-favorito span {
+    font-size: 13px;
+    color: #777;
+}
+
+.preco-anterior-favorito del {
+    font-size: 15px;
+    color: #888;
+}
+
+.preco-atual-favorito {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.preco-atual-favorito strong {
+    font-size: 20px;
+}
+.btn-ver-mais {
+    display: block;
+    margin: 40px auto;
+    padding: 12px 35px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-dark);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-ver-mais:hover {
+    transform: scale(1.05);
+    background: var(--primary-dark);
+    color: white;
+}
+}

@@ -1,0 +1,614 @@
+/* =========================================================
+   CONFIGURAÇÕES - BOATOUR
+   ========================================================= */
+
+.configuracoes-container {
+    width: min(1200px, 92%);
+    margin: 0 auto;
+    padding: 150px 0 80px;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.configuracoes-cabecalho {
+    margin-bottom: 40px;
+}
+
+.configuracoes-subtitulo {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    opacity: 0.65;
+}
+
+.configuracoes-cabecalho h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 700;
+}
+
+.configuracoes-cabecalho p {
+    margin-top: 10px;
+    font-size: 16px;
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+
+.configuracoes-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+
+/* =========================================================
+   MENU LATERAL
+   ========================================================= */
+
+.config-menu {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 18px;
+    padding: 10px;
+    position: sticky;
+    top: 120px;
+}
+
+.config-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    border: none;
+    background: transparent;
+
+    padding: 14px;
+    border-radius: 12px;
+
+    text-align: left;
+    cursor: pointer;
+
+    transition: 0.25s;
+}
+
+.config-link:hover {
+    background: #f5f5f5;
+}
+
+.config-link.ativo {
+    background: #f0f6ff;
+}
+
+.config-link > span {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f5f5f5;
+    border-radius: 10px;
+
+    font-size: 18px;
+}
+
+.config-link.ativo > span {
+    background: #ffffff;
+}
+
+.config-link div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.config-link strong {
+    font-size: 14px;
+}
+
+.config-link small {
+    font-size: 11px;
+    opacity: 0.55;
+}
+
+
+/* =========================================================
+   CONTEÚDO
+   ========================================================= */
+
+.config-conteudo {
+    min-width: 0;
+}
+
+.config-secao {
+    display: none;
+
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 18px;
+
+    padding: 32px;
+}
+
+.config-secao.ativa {
+    display: block;
+}
+
+
+/* =========================================================
+   TÍTULO DAS SEÇÕES
+   ========================================================= */
+
+.secao-titulo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.icone-secao {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f5f7fa;
+    border-radius: 13px;
+
+    font-size: 22px;
+}
+
+.secao-titulo h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.secao-titulo p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    opacity: 0.55;
+}
+
+
+/* =========================================================
+   FORMULÁRIOS
+   ========================================================= */
+
+.formulario-config {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.campo-config {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo-config label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.campo-config input,
+.campo-config select {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 15px;
+
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+.campo-config input:focus,
+.campo-config select:focus {
+    border-color: #888888;
+}
+
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+
+.acoes-config {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 30px;
+}
+
+.btn-salvar {
+    border: none;
+    border-radius: 10px;
+
+    padding: 12px 22px;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+}
+
+.btn-salvar:hover {
+    transform: translateY(-1px);
+    opacity: 0.88;
+}
+
+
+/* =========================================================
+   OPÇÕES
+   ========================================================= */
+
+.opcao-config {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.opcao-config:last-child {
+    border-bottom: none;
+}
+
+.opcao-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.opcao-icone {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f5f5f5;
+    border-radius: 10px;
+
+    font-size: 18px;
+}
+
+.opcao-info div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.opcao-info strong {
+    font-size: 14px;
+}
+
+.opcao-info small {
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+
+/* =========================================================
+   RADIO
+   ========================================================= */
+
+.opcao-config input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+
+    border: 2px solid #cccccc;
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    position: relative;
+}
+
+.opcao-config input[type="radio"]:checked + .radio-custom {
+    border-color: #111111;
+}
+
+.opcao-config input[type="radio"]:checked + .radio-custom::after {
+    content: "";
+
+    position: absolute;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #111111;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+
+/* =========================================================
+   SWITCH
+   ========================================================= */
+
+.switch {
+    position: relative;
+
+    width: 45px;
+    height: 25px;
+
+    display: inline-block;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider-switch {
+    position: absolute;
+    inset: 0;
+
+    background: #d5d5d5;
+
+    border-radius: 30px;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+}
+
+.slider-switch::before {
+    content: "";
+
+    position: absolute;
+
+    width: 19px;
+    height: 19px;
+
+    left: 3px;
+    top: 3px;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    transition: 0.25s;
+}
+
+.switch input:checked + .slider-switch {
+    background: #111111;
+}
+
+.switch input:checked + .slider-switch::before {
+    transform: translateX(20px);
+}
+
+
+/* =========================================================
+   PRIVACIDADE
+   ========================================================= */
+
+.seguranca-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 20px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.seguranca-item strong {
+    font-size: 14px;
+}
+
+.seguranca-item p {
+    margin: 5px 0 0;
+
+    font-size: 12px;
+
+    opacity: 0.55;
+}
+
+.btn-secundario {
+    border: 1px solid #dddddd;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    border-radius: 9px;
+
+    padding: 10px 16px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: 0.2s;
+}
+
+.btn-secundario:hover {
+    background: #f5f5f5;
+}
+
+
+/* =========================================================
+   ZONA DE PERIGO
+   ========================================================= */
+
+.zona-perigo {
+    margin-top: 30px;
+
+    padding: 22px;
+
+    border: 1px solid #eeeeee;
+    border-radius: 13px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.zona-perigo h3 {
+    margin: 0;
+
+    font-size: 15px;
+}
+
+.zona-perigo p {
+    margin: 6px 0 0;
+
+    font-size: 12px;
+
+    opacity: 0.55;
+}
+
+.btn-excluir {
+    border: 1px solid #cfcfcf;
+
+    background: #ffffff;
+
+    color: #b00000;
+
+    border-radius: 9px;
+
+    padding: 10px 16px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.btn-excluir:hover {
+    background: #fafafa;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 820px) {
+
+    .configuracoes-container {
+        padding-top: 120px;
+    }
+
+    .configuracoes-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .config-menu {
+        position: static;
+
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 5px;
+    }
+
+    .config-link {
+        padding: 11px;
+    }
+
+    .formulario-config {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .configuracoes-container {
+        width: 90%;
+        padding-top: 110px;
+        padding-bottom: 50px;
+    }
+
+    .configuracoes-cabecalho h1 {
+        font-size: 30px;
+    }
+
+    .config-menu {
+        grid-template-columns: 1fr;
+    }
+
+    .config-secao {
+        padding: 22px 18px;
+    }
+
+    .secao-titulo h2 {
+        font-size: 19px;
+    }
+
+    .opcao-info {
+        gap: 10px;
+    }
+
+    .opcao-info small {
+        max-width: 190px;
+    }
+
+    .seguranca-item,
+    .zona-perigo {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}
