@@ -1,4 +1,3 @@
-/
 // SLIDER
 document.addEventListener("DOMContentLoaded", () => {
 
