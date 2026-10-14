@@ -728,7 +728,7 @@ body.dark-mode .cont {
     color: var(--text);
 }
 .qualidade:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     background: var(--hover);
     color: white;
 }
@@ -1252,9 +1252,7 @@ body.dark-mode .cont {
     color: var(--text);
     }
 
-/* ===============================
-   DARK MODE - PÁGINA PRINCIPAL
-   =============================== */
+/* --- DARK MODE - PÁGINA PRINCIPAL --- */
 body.dark-mode .cont::before {
     background: linear-gradient(to bottom, transparent, var(--bg-soft));
 }

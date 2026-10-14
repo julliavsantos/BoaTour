@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "dev": "node scripts/start-all.js"
+  },
   "dependencies": {
     "formidable": "^3.5.4",
     "multer": "^2.4.0"

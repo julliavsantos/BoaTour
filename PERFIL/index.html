@@ -6,6 +6,8 @@
     <title>Perfil</title>
     <link rel="stylesheet" href="../css/menurodape.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/modal-theme.css">
+    <link rel="stylesheet" href="../css/assistente.css">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
 </head>
 <body>
@@ -18,14 +20,14 @@
     <ul class="menu">
         <li><a href="../index.html#inicio">Início</a></li>
         <li><a href="../DESTINOS/index.html">Destinos</a></li>
-        <li>Voos</li>
-        <li>Hotéis</li>
-        <li>Atividades</li>
-        <li><a href="../index.html#ofertas">Ofertas</a></li>
+        <li><a href="../VOOS/index.html">Voos</a></li>
+        <li><a href="../HOTEIS/index.html">Hotéis</a></li>
+        <li><a href="../ATIVIDADES/index.html">Atividades</a></li>
+        <li><a href="../OFERTAS/index.html">Ofertas</a></li>
         <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
         <li><a href="../index.html#sobre">Sobre Nós</a></li>
 
-        <span><li id="btnEntrar">Entrar</li></span>
+        <li><button type="button" id="btnEntrar">Entrar</button></li>
     </ul>
 
     <div class="perfil-area">
@@ -76,14 +78,14 @@
                         <small>Destinos salvos</small>
                     </div>
                 </a>
-                <a href="#">
+                <a href="../CONFIGURAÇÕES/index.html">
                     <span>⚙</span>
                     <div>
                         <strong>Configurações</strong>
                         <small>Preferências da conta</small>
                     </div>
                 </a>
-                <a href="#">
+                <a href="http://localhost:3001/">
                     <span>?</span>
                     <div>
                         <strong>Central de ajuda</strong>
@@ -281,25 +283,42 @@
             <div class="banners-opcoes">
 
                 <button class="banner-opcao ativo"
-                        data-banner="../img/banners/banner1.jpg">
-                    <img src="../img/banners/banner1.jpg" alt="Banner 1">
+                        type="button"
+                        aria-pressed="true"
+                        title="Cancún"
+                        data-banner="../img/ofertas/cancun.jpg" data-banner-nome="Cancún">
+                    <img src="../img/ofertas/cancun.jpg" alt="Praia de Cancún">
                 </button>
 
                 <button class="banner-opcao"
-                        data-banner="../img/banners/banner2.jpg">
-                    <img src="../img/banners/banner2.jpg" alt="Banner 2">
+                        type="button"
+                        aria-pressed="false"
+                        title="Fernando de Noronha"
+                        data-banner="../img/destinos/fernando.jpg" data-banner-nome="Fernando de Noronha">
+                    <img src="../img/destinos/fernando.jpg" alt="Praia em Fernando de Noronha">
                 </button>
 
                 <button class="banner-opcao"
-                        data-banner="../img/banners/banner3.jpg">
-                    <img src="../img/banners/banner3.jpg" alt="Banner 3">
+                        type="button"
+                        aria-pressed="false"
+                        title="Foz do Iguaçu"
+                        data-banner="../img/destinos/foz.jpg" data-banner-nome="Foz do Iguaçu">
+                    <img src="../img/destinos/foz.jpg" alt="Cataratas do Iguaçu">
                 </button>
 
                 <button class="banner-opcao"
-                        data-banner="../img/banners/banner4.jpg">
-                    <img src="../img/banners/banner4.jpg" alt="Banner 4">
+                        type="button"
+                        aria-pressed="false"
+                        title="Santorini"
+                        data-banner="../img/ofertas/santorini2.jpg" data-banner-nome="Santorini">
+                    <img src="../img/ofertas/santorini2.jpg" alt="Paisagem de Santorini">
                 </button>
 
+            </div>
+
+            <div class="banner-opcoes-rodape">
+                <small id="bannerSelecionadoTexto" aria-live="polite">Selecionado: Cancún</small>
+                <button type="button" class="btn-ver-banners" id="abrirGaleriaBanners">Ver todos os banners</button>
             </div>
 
         </div>
@@ -417,6 +436,27 @@
     </div>
 </div>
 
+<div class="modal-galeria-banners" id="modalGaleriaBanners" aria-hidden="true">
+    <section class="galeria-banners" role="dialog" aria-modal="true" aria-labelledby="tituloGaleriaBanners">
+        <button type="button" class="fechar-galeria-banners" id="fecharGaleriaBanners" aria-label="Fechar galeria">&times;</button>
+        <h2 id="tituloGaleriaBanners">Escolha seu banner</h2>
+        <p>Toque em uma imagem para ver como fica no seu perfil.</p>
+        <div class="galeria-banners-grade">
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/ofertas/cancun.jpg" data-banner-nome="Cancún"><img src="../img/ofertas/cancun.jpg" alt="Praia de Cancún" loading="lazy"><span>Cancún</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/destinos/fernando.jpg" data-banner-nome="Fernando de Noronha"><img src="../img/destinos/fernando.jpg" alt="Praia em Fernando de Noronha" loading="lazy"><span>Fernando de Noronha</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/destinos/foz.jpg" data-banner-nome="Foz do Iguaçu"><img src="../img/destinos/foz.jpg" alt="Cataratas do Iguaçu" loading="lazy"><span>Foz do Iguaçu</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/ofertas/santorini2.jpg" data-banner-nome="Santorini"><img src="../img/ofertas/santorini2.jpg" alt="Paisagem de Santorini" loading="lazy"><span>Santorini</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/ofertas/maldivas.jpg" data-banner-nome="Maldivas"><img src="../img/ofertas/maldivas.jpg" alt="Mar e bangalôs nas Maldivas" loading="lazy"><span>Maldivas</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/ofertas/bonito.jpg" data-banner-nome="Bonito"><img src="../img/ofertas/bonito.jpg" alt="Águas cristalinas em Bonito" loading="lazy"><span>Bonito</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/ofertas/buenosaires.jpg" data-banner-nome="Buenos Aires"><img src="../img/ofertas/buenosaires.jpg" alt="Buenos Aires" loading="lazy"><span>Buenos Aires</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/destinos/riodejaneiro.jpg" data-banner-nome="Rio de Janeiro"><img src="../img/destinos/riodejaneiro.jpg" alt="Rio de Janeiro" loading="lazy"><span>Rio de Janeiro</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/ofertas/paris.jpg" data-banner-nome="Paris"><img src="../img/ofertas/paris.jpg" alt="Paris" loading="lazy"><span>Paris</span></button>
+            <button class="banner-opcao" type="button" aria-pressed="false" data-banner="../img/ofertas/florianopolis.jpg" data-banner-nome="Florianópolis"><img src="../img/ofertas/florianopolis.jpg" alt="Florianópolis" loading="lazy"><span>Florianópolis</span></button>
+        </div>
+        <button type="button" class="btn-cancelar galeria-banners-concluir" id="concluirGaleriaBanners">Concluir</button>
+    </section>
+</div>
+
     <div class="modal-editar-perfil" id="modalAlterarSenha">
         <div class="editar-perfil">
             <button class="fechar-editar" id="fecharAlterarSenha" type="button">&times;</button>
@@ -514,7 +554,7 @@
             <input type="password" id="senhaLogin" placeholder="Senha">
             <button class="btnLogin" id="btnLogin">Entrar</button>
             <p><a href="#">Esqueci minha senha</a></p>
-            <p>Ainda não possui uma conta? <a href="CADASTRO/index.html">Criar conta</a></p>
+            <p>Ainda não possui uma conta? <a href="../CADASTRO/index.html">Criar conta</a></p>
             </div>
     </div>
 
@@ -607,5 +647,8 @@
     <script src="../js/modais.js"></script>
     <script src="../js/darkmodedemais.js"></script>
     
+    <script src="../js/assistente-flutuante.js"></script>
+
+    <script src="../js/feedback.js"></script>
 </body>
 </html>

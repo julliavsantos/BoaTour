@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Julianinha - Boatur</title>
-    <link rel="stylesheet" href="/css/menurodape.css">
+    <link rel="stylesheet" href="/global-css/menurodape.css">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="icon" type="image/png" href="/global-img/apenaslogo.png">
+    <link rel="stylesheet" href="/global-css/modal-theme.css">
+    <link rel="icon" type="image/png" href="/global-img/logo/apenaslogo.png">
 </head>
  
 <body>
@@ -16,16 +17,16 @@
     </div>
 
     <ul class="menu">
-        <li><a href="/index.html#inicio">Início</a></li>
-        <li>Destinos</li>
-        <li>Voos</li>
-        <li>Hotéis</li>
-        <li>Atividades</li>
-        <li><a href="/index.html#ofertas">Ofertas</a></li>
-        <li><a href="/TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
-        <li><a href="/index.html#sobre">Sobre Nós</a></li>
+        <li><a href="http://localhost:3000/index.html#inicio">Início</a></li>
+        <li><a href="http://localhost:3000/DESTINOS/index.html">Destinos</a></li>
+        <li><a href="http://localhost:3000/VOOS/index.html">Voos</a></li>
+        <li><a href="http://localhost:3000/HOTEIS/index.html">Hotéis</a></li>
+        <li><a href="http://localhost:3000/ATIVIDADES/index.html">Atividades</a></li>
+        <li><a href="http://localhost:3000/OFERTAS/index.html">Ofertas</a></li>
+        <li><a href="http://localhost:3000/TURISMO%20CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="http://localhost:3000/index.html#sobre">Sobre Nós</a></li>
 
-        <span><li id="btnEntrar">Entrar</li></span>
+        <li><button type="button" id="btnEntrar">Entrar</button></li>
     </ul>
 
     <div class="perfil-area">
@@ -62,28 +63,28 @@
             </div>
 
             <div class="perfil-links">
-                <a href="/PERFIL/index.html#minhasviagens">
+                <a href="http://localhost:3000/PERFIL/index.html#viagens">
                     <span>✈</span>
                     <div>
                         <strong>Minhas viagens</strong>
                         <small>Veja suas reservas</small>
                     </div>
                 </a>
-                <a href="/PERFIL/index.html#favoritos">
+                <a href="http://localhost:3000/PERFIL/index.html#favoritos">
                     <span>❤︎</span>
                     <div>
                         <strong>Favoritos</strong>
                         <small>Destinos salvos</small>
                     </div>
                 </a>
-                <a href="#">
+                <a href="http://localhost:3000/CONFIGURA%C3%87%C3%95ES/index.html">
                     <span>⚙</span>
                     <div>
                         <strong>Configurações</strong>
                         <small>Preferências da conta</small>
                     </div>
                 </a>
-                <a href="#">
+                <a href="http://localhost:3001/">
                     <span>?</span>
                     <div>
                         <strong>Central de ajuda</strong>
@@ -247,8 +248,9 @@
 
     <script src="script.js"> </script>
     <script src="darkmodedemais.js"></script>
-    <script src="menu.js"></script>
-    <script src="modais.js"></script>
+    <script src="/global-js/menu.js"></script>
+    <script src="/global-js/modais.js"></script>
 
+    <script src="/global-js/feedback.js"></script>
 </body>
 </html>

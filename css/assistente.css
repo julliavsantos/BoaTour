@@ -1,0 +1,99 @@
+.assistente-flutuante {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 58px;
+    height: 58px;
+    min-height: 58px;
+    padding: 5px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--primary-strong);
+    color: #fff;
+    box-shadow: 0 6px 22px rgb(0 0 0 / 24%);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: width 360ms ease, transform 300ms ease, background-color 300ms ease, box-shadow 300ms ease;
+}
+.assistente-flutuante img {
+    display: block;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff;
+}
+.assistente-flutuante span {
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    white-space: nowrap;
+    transition: max-width 360ms ease, opacity 280ms ease, margin-left 360ms ease;
+}
+.assistente-flutuante:hover {
+    width: 230px;
+    justify-content: flex-start;
+    gap: 11px;
+    padding: 4px 13px 4px 5px;
+    transform: translateY(-4px);
+    background: var(--primary-dark);
+    box-shadow: 0 10px 26px rgb(0 0 0 / 30%);
+}
+.assistente-flutuante:hover span {
+    max-width: 170px;
+    opacity: 1;
+}
+.assistente-flutuante:focus-visible {
+    outline: 3px solid #f4bd50;
+    outline-offset: 4px;
+}
+.assistente-flutuante:focus-visible {
+    width: 230px;
+    justify-content: flex-start;
+    gap: 11px;
+    padding: 4px 13px 4px 5px;
+}
+.assistente-flutuante:focus-visible span {
+    max-width: 170px;
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .assistente-flutuante {
+        right: 16px;
+        bottom: 16px;
+        width: 62px;
+        height: 62px;
+        min-height: 62px;
+        justify-content: center;
+        padding: 5px;
+    }
+
+    .assistente-flutuante img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .assistente-flutuante span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .assistente-flutuante {
+        transition: none;
+    }
+}

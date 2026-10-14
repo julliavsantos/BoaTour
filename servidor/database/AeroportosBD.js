@@ -46,10 +46,10 @@ class AeroportosBD {
 
                 connection.end();
 
-                return;
+                return callback(error, null);
             }
 
-            callback(results);
+            callback(null, results);
 
             connection.end();
 

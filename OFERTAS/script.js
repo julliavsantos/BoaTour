@@ -1,33 +1,20 @@
-const fotoPerfil = document.querySelector(".foto-viajante");
-
-if (fotoPerfil) {
-    fotoPerfil.addEventListener("click", () => {
-        window.location.href = "../PERFIL/index.html";
-    });
-}
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ==========================================
-    // ELEMENTOS DA PÁGINA
-    // ==========================================
+    // --- ELEMENTOS DA PÁGINA ---
 
     const ofertasGrid = document.getElementById("ofertasGrid");
     const campoBusca = document.getElementById("partida");
     const botoesFiltro = document.querySelectorAll(".filtro");
     const btnVerMais = document.getElementById("btnVerMais");
 
-    // ==========================================
-    // VERIFICA SE EXISTE O GRID
-    // ==========================================
+    // --- VERIFICA SE EXISTE O GRID ---
 
     if (!ofertasGrid) {
         return;
     }
 
-    // ==========================================
-    // VARIÁVEIS
-    // ==========================================
+    // --- VARIÁVEIS ---
 
     let todasOfertas = [];
     let filtroAtual = "todas";
@@ -36,9 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let resultadosAtuais = [];
     let favoritosUsuario = [];
 
-    // ==========================================
-    // CARREGAR FAVORITOS DO USUÁRIO
-    // ==========================================
+    // --- CARREGAR FAVORITOS DO USUÁRIO ---
 
     async function carregarFavoritos() {
 
@@ -95,9 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ==========================================
-    // BUSCAR OFERTAS DO SERVIDOR
-    // ==========================================
+    // --- BUSCAR OFERTAS DO SERVIDOR ---
 
     fetch("http://localhost:3000/ofertas")
 
@@ -150,9 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-    // ==========================================
-    // NORMALIZAR TEXTO
-    // ==========================================
+    // --- NORMALIZAR TEXTO ---
 
     function normalizarTexto(texto) {
 
@@ -163,9 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .trim();
     }
 
-    // ==========================================
-    // IDENTIFICAR CATEGORIA DA OFERTA
-    // ==========================================
+    // --- IDENTIFICAR CATEGORIA DA OFERTA ---
 
     function ofertaPertenceCategoria(
         oferta,
@@ -203,9 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ==========================================
-    // APLICAR BUSCA + FILTRO
-    // ==========================================
+    // --- APLICAR BUSCA + FILTRO ---
 
     function aplicarFiltros() {
 
@@ -251,9 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderizarOfertas();
     }
 
-    // ==========================================
-    // RENDERIZAR OFERTAS
-    // ==========================================
+    // --- RENDERIZAR OFERTAS ---
 
     function renderizarOfertas() {
 
@@ -292,9 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Cria os cards
         ofertasVisiveis.forEach(oferta => {
 
-            // ==========================================
-            // VERIFICAR SE A OFERTA É FAVORITA
-            // ==========================================
+            // --- VERIFICAR SE A OFERTA É FAVORITA ---
 
             const ofertaFavoritada =
                 favoritosUsuario.some(favorito =>
@@ -305,9 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     Number(oferta.id)
                 );
 
-            // ==========================================
-            // CRIAR CARD
-            // ==========================================
+            // --- CRIAR CARD ---
 
             const card =
                 document.createElement("div");
@@ -316,17 +287,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 "card-oferta"
             );
 
-            // ==========================================
-            // IMAGEM
-            // ==========================================
+            // --- IMAGEM ---
 
             const imagem =
                 oferta.imagem || "";
 
             console.log("IMAGEM DA OFERTA:", oferta.imagem);
-            // ==========================================
-            // PREÇOS
-            // ==========================================
+            // --- PREÇOS ---
 
             const precoAnterior =
                 Number(
@@ -338,9 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     oferta.preco_atual || 0
                 );
 
-            // ==========================================
-            // CALCULAR DESCONTO
-            // ==========================================
+            // --- CALCULAR DESCONTO ---
 
             let desconto = 0;
 
@@ -359,9 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
             }
 
-            // ==========================================
-            // CATEGORIA
-            // ==========================================
+            // --- CATEGORIA ---
 
             let categoria = "Oferta";
 
@@ -387,9 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 categoria = "Nacional";
             }
 
-            // ==========================================
-            // DATASET PARA O MODAL
-            // ==========================================
+            // --- DATASET PARA O MODAL ---
 
             card.dataset.dias =
                 oferta.dias || "";
@@ -421,9 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             ? "pacote"
                             : "oferta";
 
-            // ==========================================
-            // HTML DO CARD
-            // ==========================================
+            // --- HTML DO CARD ---
 
             card.innerHTML = `
 
@@ -575,9 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
         atualizarBotaoVerMais();
     }
 
-    // ==========================================
-    // FAVORITOS
-    // ==========================================
+    // --- FAVORITOS ---
 
    document.addEventListener("click", async event => {
 
@@ -694,9 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-    // ==========================================
-    // VERIFICAR SE EXISTEM MAIS OFERTAS
-    // ==========================================
+    // --- VERIFICAR SE EXISTEM MAIS OFERTAS ---
 
     function atualizarBotaoVerMais() {
 
@@ -719,9 +674,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ==========================================
-    // BOTÃO VER MAIS
-    // ==========================================
+    // --- BOTÃO VER MAIS ---
 
     if (btnVerMais) {
 
@@ -736,9 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // ==========================================
-    // CAMPO DE BUSCA
-    // ==========================================
+    // --- CAMPO DE BUSCA ---
 
     if (campoBusca) {
 
@@ -754,9 +705,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // ==========================================
-    // BOTÕES DE FILTRO
-    // ==========================================
+    // --- BOTÕES DE FILTRO ---
 
     botoesFiltro.forEach(botao => {
 

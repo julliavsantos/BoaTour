@@ -1,6 +1,90 @@
-// ==========================================================
-// MODAL DE LOGIN / PERFIL
-// ==========================================================
+// --- MODAL DE LOGIN / PERFIL ---
+
+// Solicita login quando alguém tenta adicionar um favorito sem sessão.
+(() => {
+    const tiposFavorito = {
+        destino: { artigo: "um", nome: "destino" },
+        oferta: { artigo: "uma", nome: "oferta" },
+        hotel: { artigo: "um", nome: "hotel" },
+        atividade: { artigo: "uma", nome: "atividade" }
+    };
+
+    let modalFavoritoLogin;
+
+    function criarModalFavoritoLogin() {
+        if (modalFavoritoLogin) return modalFavoritoLogin;
+
+        modalFavoritoLogin = document.createElement("div");
+        modalFavoritoLogin.className = "modal-favorito-login";
+        modalFavoritoLogin.hidden = true;
+        modalFavoritoLogin.setAttribute("role", "dialog");
+        modalFavoritoLogin.setAttribute("aria-modal", "true");
+        modalFavoritoLogin.setAttribute("aria-labelledby", "tituloFavoritoLogin");
+        modalFavoritoLogin.innerHTML = `
+            <section class="modal-favorito-login__painel">
+                <button type="button" class="modal-favorito-login__fechar" aria-label="Fechar">&times;</button>
+                <div class="modal-favorito-login__icone">
+                    <img src="/img/icones/mascote02.png" alt="">
+                </div>
+                <h2 id="tituloFavoritoLogin">Entre na sua conta</h2>
+                <p class="modal-favorito-login__mensagem"></p>
+                <div class="modal-favorito-login__acoes">
+                    <button type="button" class="modal-favorito-login__abrir-login">Ir para login</button>
+                    <a class="modal-favorito-login__cadastro">Ainda não tenho conta cadastrada</a>
+                </div>
+            </section>
+        `;
+        document.body.appendChild(modalFavoritoLogin);
+
+        const fechar = () => { modalFavoritoLogin.hidden = true; };
+        modalFavoritoLogin.querySelector(".modal-favorito-login__fechar")
+            .addEventListener("click", fechar);
+        modalFavoritoLogin.addEventListener("click", evento => {
+            if (evento.target === modalFavoritoLogin) fechar();
+        });
+        modalFavoritoLogin.querySelector(".modal-favorito-login__abrir-login")
+            .addEventListener("click", () => {
+                fechar();
+                document.getElementById("modalLogin")?.classList.add("ativo");
+                document.getElementById("cpfLogin")?.focus();
+            });
+
+        const linkCadastro = document.querySelector(
+            '#modalLogin a[href*="CADASTRO/index.html"]'
+        );
+        modalFavoritoLogin.querySelector(".modal-favorito-login__cadastro").href =
+            linkCadastro?.href || new URL("/CADASTRO/index.html", window.location.origin).href;
+
+        document.addEventListener("keydown", evento => {
+            if (evento.key === "Escape" && !modalFavoritoLogin.hidden) fechar();
+        });
+
+        return modalFavoritoLogin;
+    }
+
+    window.addEventListener("click", evento => {
+        const alvo = evento.target instanceof Element ? evento.target : null;
+        const botao = alvo?.closest(".btn-favorito");
+        if (!botao) return;
+
+        const imagem = botao.querySelector("img");
+        const estaFavoritado = imagem?.src.includes("favoritado.png");
+        if (localStorage.getItem("boatourSessionToken") || estaFavoritado) return;
+
+        evento.preventDefault();
+        evento.stopImmediatePropagation();
+
+        const tipo = tiposFavorito[botao.dataset.tipo] || {
+            artigo: "um(a)",
+            nome: botao.dataset.tipo || "item"
+        };
+        const modal = criarModalFavoritoLogin();
+        modal.querySelector(".modal-favorito-login__mensagem").textContent =
+            `Para adicionar ${tipo.artigo} ${tipo.nome} aos favoritos, você precisa estar em uma conta.`;
+        modal.hidden = false;
+        modal.querySelector(".modal-favorito-login__abrir-login").focus();
+    }, true);
+})();
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -15,9 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const senhaLogin = document.getElementById("senhaLogin");
 
 
-    // ======================================================
-    // MODAL DE LOGIN
-    // ======================================================
+    // --- MODAL DE LOGIN ---
 
     if (modalLogin && fecharLogin) {
 
@@ -75,9 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ======================================================
-    // MENU DE PERFIL
-    // ======================================================
+    // --- MENU DE PERFIL ---
 
     const btnPerfil = document.getElementById("btnPerfil");
     const perfilMenu = document.getElementById("perfilMenu");
@@ -160,9 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ======================================================
-    // LOGIN
-    // ======================================================
+    // --- LOGIN ---
 
     if (
         btnLogin &&
@@ -182,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!cpf) {
 
-                    alert("Digite seu CPF.");
+                    window.boatourFieldError(cpfLogin, "Informe seu CPF.");
                     cpfLogin.focus();
 
                     return;
@@ -199,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (cpfLimpo.length !== 11) {
 
-                    alert("Digite um CPF válido.");
+                    window.boatourFieldError(cpfLogin, "Digite um CPF válido.");
                     cpfLogin.focus();
 
                     return;
@@ -211,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!senha) {
 
-                    alert("Digite sua senha.");
+                    window.boatourFieldError(senhaLogin, "Informe sua senha.");
                     senhaLogin.focus();
 
                     return;
@@ -252,8 +330,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Erro
 
                     if (resultado.error) {
-
-                        alert(resultado.error);
+                        if (/cpf|senha|usuário|usuario|cadastrad/i.test(resultado.error)) {
+                            window.boatourFieldError(senhaLogin, "CPF ou senha incorretos. Confira os dados e tente novamente.");
+                        } else {
+                            alert(resultado.error);
+                        }
 
                         return;
 
@@ -264,6 +345,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (resultado.message) {
 
+                        window.boatourClearFieldError(cpfLogin);
+                        window.boatourClearFieldError(senhaLogin);
                         alert(resultado.message);
 
 
@@ -285,6 +368,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             );
 
                         }
+
+                        // Notifica páginas que precisam reagir ao login na mesma aba.
+                        window.dispatchEvent(new CustomEvent("boatour:login", {
+                            detail: { usuario: resultado.usuario }
+                        }));
 
 
                         console.log(
@@ -343,9 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// ==========================================================
-// MODAL DAS OFERTAS
-// ==========================================================
+// --- MODAL DAS OFERTAS ---
 
 const modalOferta =
     document.getElementById("modalOferta");
@@ -381,9 +467,7 @@ const modalOds =
     document.getElementById("modalOds");
 
 
-// ==========================================================
-// INFORMAÇÕES DO MODAL
-// ==========================================================
+// --- INFORMAÇÕES DO MODAL ---
 
 const modalPassagem =
     document.querySelector(
@@ -406,9 +490,7 @@ const modalDias =
     );
 
 
-// ==========================================================
-// CLIQUE NOS CARDS
-// ==========================================================
+// --- CLIQUE NOS CARDS ---
 //
 // IMPORTANTE:
 // Existe APENAS UM listener aqui.
@@ -422,9 +504,7 @@ document.addEventListener(
     function (event) {
 
 
-        // ==================================================
-        // NÃO ABRIR O MODAL AO CLICAR NO FAVORITO
-        // ==================================================
+        // --- NÃO ABRIR O MODAL AO CLICAR NO FAVORITO ---
 
         const botaoFavorito =
             event.target.closest(".btn-favorito");
@@ -440,9 +520,7 @@ document.addEventListener(
 }
 
 
-        // ==================================================
-        // PROCURA O CARD
-        // ==================================================
+        // --- PROCURA O CARD ---
 
         const card =
             event.target.closest(".card-oferta");
@@ -457,9 +535,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // PEGA INFORMAÇÕES DO CARD
-        // ==================================================
+        // --- PEGA INFORMAÇÕES DO CARD ---
 
         const imagem =
             card.querySelector(
@@ -490,9 +566,7 @@ document.addEventListener(
             );
 
 
-        // ==================================================
-        // IMAGEM
-        // ==================================================
+        // --- IMAGEM ---
 
         if (
             imagem &&
@@ -508,9 +582,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // DESCONTO
-        // ==================================================
+        // --- DESCONTO ---
 
         if (
             desconto &&
@@ -523,9 +595,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // TÍTULO
-        // ==================================================
+        // --- TÍTULO ---
 
         if (
             titulo &&
@@ -538,9 +608,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // RESUMO
-        // ==================================================
+        // --- RESUMO ---
 
         if (
             resumo &&
@@ -553,9 +621,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // PREÇO ANTIGO
-        // ==================================================
+        // --- PREÇO ANTIGO ---
 
         if (
             precoAntigo &&
@@ -568,9 +634,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // PREÇO ATUAL
-        // ==================================================
+        // --- PREÇO ATUAL ---
 
         if (
             preco &&
@@ -583,9 +647,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // DESCRIÇÃO
-        // ==================================================
+        // --- DESCRIÇÃO ---
 
         const descricao =
             card.dataset.descricao;
@@ -602,9 +664,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // ODS
-        // ==================================================
+        // --- ODS ---
 
         const ods8 =
             Number(
@@ -660,9 +720,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // CATEGORIA
-        // ==================================================
+        // --- CATEGORIA ---
 
         const categoria =
             card.dataset.categoria;
@@ -707,9 +765,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // PASSAGEM AÉREA
-        // ==================================================
+        // --- PASSAGEM AÉREA ---
 
         const passagem =
             card.dataset.passagem;
@@ -734,9 +790,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // HOSPEDAGEM
-        // ==================================================
+        // --- HOSPEDAGEM ---
 
         const hospedagem =
             card.dataset.hospedagem;
@@ -761,9 +815,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // PASSEIOS
-        // ==================================================
+        // --- PASSEIOS ---
 
         const passeios =
             card.dataset.passeios;
@@ -788,9 +840,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // QUANTIDADE DE DIAS
-        // ==================================================
+        // --- QUANTIDADE DE DIAS ---
 
         const dias =
             card.dataset.dias;
@@ -812,9 +862,7 @@ document.addEventListener(
         }
 
 
-        // ==================================================
-        // ABRE O MODAL
-        // ==================================================
+        // --- ABRE O MODAL ---
 
         if (modalOferta) {
 
@@ -831,9 +879,7 @@ document.addEventListener(
 );
 
 
-// ==========================================================
-// FECHAR MODAL PELO X
-// ==========================================================
+// --- FECHAR MODAL PELO X ---
 
 if (fecharOferta) {
 
@@ -858,9 +904,7 @@ if (fecharOferta) {
 }
 
 
-// ==========================================================
-// FECHAR CLICANDO FORA
-// ==========================================================
+// --- FECHAR CLICANDO FORA ---
 
 if (modalOferta) {
 
@@ -888,9 +932,7 @@ if (modalOferta) {
 }
 
 
-// ==========================================================
-// FECHAR COM ESC
-// ==========================================================
+// --- FECHAR COM ESC ---
 
 document.addEventListener(
     "keydown",
@@ -915,9 +957,7 @@ document.addEventListener(
 );
 
 
-// ==========================================================
-// ATUALIZA MENU DO USUÁRIO
-// ==========================================================
+// --- ATUALIZA MENU DO USUÁRIO ---
 
 document.addEventListener(
     "DOMContentLoaded",

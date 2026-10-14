@@ -175,37 +175,20 @@ BOATOUR/
 
 ## 🚀 Como executar o projeto
 
-### 1. Clone o repositório
+Instale as dependências de cada serviço uma vez:
 
 ```bash
-git clone URL_DO_SEU_REPOSITORIO
+npm install --prefix servidor
+npm install --prefix CHATBOT
 ```
 
-### 2. Entre na pasta
+Na raiz do projeto, inicie a API e o chatbot juntos:
 
 ```bash
-cd BOATOUR
+npm run dev
 ```
 
-### 3. Instale as dependências
-
-Caso o projeto utilize Node.js:
-
-```bash
-npm install
-```
-
-### 4. Inicie o servidor
-
-```bash
-node server.js
-```
-
-### 5. Acesse no navegador
-
-```text
-http://localhost:3000
-```
+Isso inicia a API BoaTour em `http://localhost:3000` e o chatbot em `http://localhost:3001`. Para abrir as páginas do site, use o Live Server na raiz do projeto (porta 5500). O Ollama também precisa estar ativo para o bot responder.
 
 ---
 

@@ -1,13 +1,5 @@
-const fotoPerfil = document.querySelector(".foto-viajante");
 
-if (fotoPerfil) {
-    fotoPerfil.addEventListener("click", () => {
-        window.location.href = "../PERFIL/index.html";
-    });
-}
-// ==========================================
-// MOSTRAR / OCULTAR SENHA
-// ==========================================
+// --- MOSTRAR / OCULTAR SENHA ---
 
 document.querySelectorAll(".mostrar-senha").forEach(botao => {
 
@@ -36,9 +28,7 @@ document.querySelectorAll(".mostrar-senha").forEach(botao => {
 });
 
 
-// ==========================================
-// CADASTRO DE USUÁRIO
-// ==========================================
+// --- CADASTRO DE USUÁRIO ---
 
 const btnCadastro =
     document.getElementById("btnCadastro");
@@ -82,13 +72,11 @@ if (btnCadastro) {
             senhaCadastroConfirmar.value;
 
 
-        // ==========================================
-        // VALIDAÇÕES
-        // ==========================================
+        // --- VALIDAÇÕES ---
 
         if (!nome) {
 
-            alert("Digite seu nome completo.");
+            window.boatourFieldError(nomeCadastro, "Informe seu nome completo.");
 
             nomeCadastro.focus();
 
@@ -98,7 +86,7 @@ if (btnCadastro) {
 
         if (!cpf) {
 
-            alert("Digite seu CPF.");
+            window.boatourFieldError(cpfCadastro, "Informe seu CPF.");
 
             cpfCadastro.focus();
 
@@ -113,7 +101,7 @@ if (btnCadastro) {
 
         if (cpfLimpo.length !== 11) {
 
-            alert("Digite um CPF válido.");
+            window.boatourFieldError(cpfCadastro, "Digite um CPF válido.");
 
             cpfCadastro.focus();
 
@@ -123,7 +111,7 @@ if (btnCadastro) {
 
         if (!email) {
 
-            alert("Digite seu e-mail.");
+            window.boatourFieldError(emailCadastro, "Informe seu e-mail.");
 
             emailCadastro.focus();
 
@@ -133,7 +121,7 @@ if (btnCadastro) {
 
         if (!senha) {
 
-            alert("Digite uma senha.");
+            window.boatourFieldError(senhaCadastro, "Informe uma senha.");
 
             senhaCadastro.focus();
 
@@ -143,9 +131,7 @@ if (btnCadastro) {
 
         if (senha.length < 6) {
 
-            alert(
-                "A senha deve ter pelo menos 6 caracteres."
-            );
+            window.boatourFieldError(senhaCadastro, "A senha precisa ter pelo menos 6 caracteres.");
 
             senhaCadastro.focus();
 
@@ -155,9 +141,7 @@ if (btnCadastro) {
 
         if (!senhaConfirmar) {
 
-            alert(
-                "Confirme sua senha."
-            );
+            window.boatourFieldError(senhaCadastroConfirmar, "Confirme sua senha.");
 
             senhaCadastroConfirmar.focus();
 
@@ -167,9 +151,7 @@ if (btnCadastro) {
 
         if (senha !== senhaConfirmar) {
 
-            alert(
-                "As senhas não são iguais."
-            );
+            window.boatourFieldError(senhaCadastroConfirmar, "As senhas não são iguais.");
 
             senhaCadastroConfirmar.focus();
 
@@ -187,9 +169,7 @@ if (btnCadastro) {
         }
 
 
-        // ==========================================
-        // ENVIA PARA O SERVIDOR
-        // ==========================================
+        // --- ENVIA PARA O SERVIDOR ---
 
         try {
 
@@ -226,21 +206,31 @@ if (btnCadastro) {
                 await resposta.json();
 
 
-            // ==========================================
-            // ERRO
-            // ==========================================
+            // --- ERRO ---
 
             if (resultado.error) {
-
-                alert(resultado.error);
+                if (/cpf.*e-?mail|e-?mail.*cpf/i.test(resultado.error)) {
+                    window.boatourFieldError(cpfCadastro, resultado.error);
+                    window.boatourFieldError(emailCadastro, resultado.error);
+                    return;
+                }
+                const campoErro = /cpf/i.test(resultado.error)
+                    ? cpfCadastro
+                    : /e-?mail/i.test(resultado.error)
+                        ? emailCadastro
+                        : /senha/i.test(resultado.error)
+                            ? senhaCadastro
+                            : /nome/i.test(resultado.error)
+                                ? nomeCadastro
+                                : null;
+                if (campoErro) window.boatourFieldError(campoErro, resultado.error);
+                else alert(resultado.error);
 
                 return;
             }
 
 
-            // ==========================================
-            // CADASTRO REALIZADO
-            // ==========================================
+            // --- CADASTRO REALIZADO ---
 
             if (resultado.message) {
 

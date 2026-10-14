@@ -17,9 +17,7 @@ class VoosBD {
     }
 
 
-    // ==========================================
-    // BUSCA TODOS OS VOOS
-    // ==========================================
+    // --- BUSCA TODOS OS VOOS ---
 
     static buscaVoos(callback) {
 
@@ -51,9 +49,7 @@ class VoosBD {
     })
 }
 
-    // ==========================================
-    // BUSCA E FILTRA OS VOOS
-    // ==========================================
+    // --- BUSCA E FILTRA OS VOOS ---
 
     static filtrarVoos(filtros, callback) {
 
@@ -68,9 +64,7 @@ class VoosBD {
         const valores = []
 
 
-        // ==========================================
-        // PESQUISA
-        // ==========================================
+        // --- PESQUISA ---
 
         if (filtros.pesquisa) {
 
@@ -94,9 +88,7 @@ class VoosBD {
         }
 
 
-        // ==========================================
-        // ORIGEM
-        // ==========================================
+        // --- ORIGEM ---
 
         if (filtros.origem) {
 
@@ -110,9 +102,7 @@ class VoosBD {
         }
 
 
-        // ==========================================
-        // DESTINO
-        // ==========================================
+        // --- DESTINO ---
 
         if (filtros.destino) {
 
@@ -126,9 +116,7 @@ class VoosBD {
         }
 
 
-        // ==========================================
-        // DATA
-        // ==========================================
+        // --- DATA ---
 
         if (filtros.data) {
 
@@ -142,9 +130,7 @@ class VoosBD {
         }
 
 
-        // ==========================================
-        // PREÇO MÍNIMO
-        // ==========================================
+        // --- PREÇO MÍNIMO ---
 
         if (
             filtros.precoMin !== undefined &&
@@ -161,9 +147,7 @@ class VoosBD {
         }
 
 
-        // ==========================================
-        // PREÇO MÁXIMO
-        // ==========================================
+        // --- PREÇO MÁXIMO ---
 
         if (
             filtros.precoMax !== undefined &&
@@ -180,9 +164,7 @@ class VoosBD {
         }
 
 
-        // ==========================================
-        // ORDENAÇÃO
-        // ==========================================
+        // --- ORDENAÇÃO ---
 
         sql += `
             ORDER BY data_saida, horario_saida
@@ -203,10 +185,10 @@ class VoosBD {
 
                     connection.end()
 
-                    return
+                    return callback(error, null)
                 }
 
-                callback(results)
+                callback(null, results)
 
                 connection.end()
             }
@@ -214,9 +196,7 @@ class VoosBD {
     }
 
 
-    // ==========================================
-    // BUSCA UM VOO PELO ID
-    // ==========================================
+    // --- BUSCA UM VOO PELO ID ---
 
     static getVooById(id, callback) {
 

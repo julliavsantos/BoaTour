@@ -1,0 +1,515 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+/* ==========================================
+   VARIÁVEIS (mesmas do restante do site)
+   ========================================== */
+
+:root {
+    --bg: #f3f4f7;
+    --surface: #e9ebee;
+    --surface-strong: #d8e6e7;
+    --card: #ffffff;
+    --text: #222222;
+    --heading: #111111;
+    --muted: #777777;
+    --border: #dce5e9;
+    --hover: #eef3f4;
+    --primary: #355f63;
+    --primary-dark: #264d50;
+    --primary-strong: #126166;
+    --accent: #518d93;
+    --accent-dark: #3f777c;
+    --accent-strong: #0b9995;
+    --erro: #d64545;
+    --sucesso: #1f9d6b;
+    --sombra: 0 25px 60px rgba(7, 59, 64, 0.35);
+}
+
+body.dark-mode {
+    --bg: #101719;
+    --surface: #202a2d;
+    --surface-strong: #26373a;
+    --card: #1b2528;
+    --text: #e9f0f1;
+    --heading: #ffffff;
+    --muted: #aebabc;
+    --border: #364447;
+    --hover: #2b393c;
+    --primary: #518d93;
+    --primary-dark: #3d7378;
+    --primary-strong: #28767b;
+    --accent: #65a5aa;
+    --accent-dark: #4b8d92;
+    --accent-strong: #35aaa5;
+    --erro: #ff7b7b;
+    --sucesso: #4cd49a;
+    --sombra: 0 25px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* ==========================================
+   BASE
+   ========================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--text);
+    background: linear-gradient(135deg, #0f4c50, #124f53, #073b40);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode {
+    background: linear-gradient(135deg, #0a1315, #0e1d20, #081214);
+}
+
+/* ==========================================
+   FUNDO DECORATIVO
+   ========================================== */
+
+.pagina {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    overflow: hidden;
+}
+
+.pagina::before,
+.pagina::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.pagina::before {
+    width: 380px;
+    height: 380px;
+    top: -120px;
+    left: -100px;
+    background: #0b9995;
+}
+
+.pagina::after {
+    width: 320px;
+    height: 320px;
+    right: -90px;
+    bottom: -110px;
+    background: #518d93;
+}
+
+/* ==========================================
+   CARTÃO
+   ========================================== */
+
+.cartao {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    padding: 40px 36px 34px;
+    background: var(--card);
+    border-radius: 22px;
+    box-shadow: var(--sombra);
+    text-align: center;
+    animation: entrar 0.5s ease both;
+    transition: background-color 0.3s ease;
+}
+
+@keyframes entrar {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo {
+    display: block;
+    height: 42px;
+    margin: 0 auto 22px;
+    object-fit: contain;
+}
+
+/* ==========================================
+   INDICADOR DE ETAPAS
+   ========================================== */
+
+.passos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 26px;
+}
+
+.passo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color 0.3s ease;
+}
+
+.passo span {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background: var(--surface);
+    color: var(--muted);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.passo.ativo {
+    color: var(--text);
+}
+
+.passo.ativo span {
+    background: var(--accent);
+    color: #fff;
+}
+
+.passo.feito span {
+    background: var(--sucesso);
+    color: #fff;
+}
+
+.passos .linha {
+    width: 34px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--border);
+}
+
+/* ==========================================
+   ETAPAS
+   ========================================== */
+
+.etapa {
+    animation: entrar 0.4s ease both;
+}
+
+.icone-etapa {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    background: var(--hover);
+}
+
+.icone-etapa svg {
+    width: 32px;
+    height: 32px;
+}
+
+.icone-etapa.ok {
+    color: var(--sucesso);
+}
+
+.icone-etapa.erro {
+    color: var(--erro);
+}
+
+h1 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--heading);
+}
+
+.descricao {
+    margin-bottom: 26px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+.descricao strong {
+    color: var(--text);
+    font-weight: 600;
+    word-break: break-all;
+}
+
+/* ==========================================
+   CÓDIGO DE 6 DÍGITOS
+   ========================================== */
+
+.codigo-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.codigo-inputs input {
+    width: 52px;
+    height: 62px;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--heading);
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    caret-color: var(--accent);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.codigo-inputs input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(81, 141, 147, 0.18);
+    transform: translateY(-2px);
+}
+
+.codigo-inputs input.preenchido {
+    border-color: var(--accent);
+    background: var(--hover);
+}
+
+.codigo-inputs.erro input {
+    border-color: var(--erro);
+    box-shadow: 0 0 0 4px rgba(214, 69, 69, 0.15);
+}
+
+.codigo-inputs.erro {
+    animation: tremer 0.4s ease;
+}
+
+@keyframes tremer {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-8px); }
+    40%      { transform: translateX(8px); }
+    60%      { transform: translateX(-5px); }
+    80%      { transform: translateX(5px); }
+}
+
+/* ==========================================
+   CAMPOS DE SENHA
+   ========================================== */
+
+.campo {
+    margin-bottom: 14px;
+    text-align: left;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.campo-senha {
+    position: relative;
+}
+
+.campo-senha input {
+    width: 100%;
+    height: 50px;
+    padding: 0 48px 0 16px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo-senha input::placeholder {
+    color: var(--muted);
+}
+
+.campo-senha input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(81, 141, 147, 0.18);
+}
+
+.campo-senha input.erro {
+    border-color: var(--erro);
+}
+
+.mostrar-senha {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.mostrar-senha:hover {
+    background: var(--hover);
+}
+
+/* ==========================================
+   MENSAGENS
+   ========================================== */
+
+.mensagem {
+    min-height: 20px;
+    margin: 6px 0 14px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--erro);
+}
+
+.mensagem.sucesso {
+    color: var(--sucesso);
+}
+
+/* ==========================================
+   BOTÕES
+   ========================================== */
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+    background: var(--accent);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(81, 141, 147, 0.35);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.btn:focus-visible,
+.link:focus-visible,
+.mostrar-senha:focus-visible {
+    outline: 3px solid rgba(81, 141, 147, 0.5);
+    outline-offset: 2px;
+}
+
+.reenviar {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.link {
+    border: none;
+    background: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.link:hover:not(:disabled) {
+    color: var(--accent-dark);
+    text-decoration: underline;
+}
+
+.link:disabled {
+    color: var(--muted);
+    cursor: not-allowed;
+}
+
+.voltar {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.voltar:hover {
+    color: var(--accent);
+}
+
+/* ==========================================
+   RESPONSIVO
+   ========================================== */
+
+@media (max-width: 480px) {
+    .cartao {
+        padding: 32px 22px 28px;
+        border-radius: 18px;
+    }
+
+    h1 {
+        font-size: 21px;
+    }
+
+    .codigo-inputs {
+        gap: 7px;
+    }
+
+    .codigo-inputs input {
+        width: 44px;
+        height: 54px;
+        font-size: 21px;
+        border-radius: 10px;
+    }
+
+    .passo b {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}

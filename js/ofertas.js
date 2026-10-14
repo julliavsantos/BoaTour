@@ -72,9 +72,7 @@ carregarFavoritos().then(() => {
         lista.innerHTML = '';
 
 
-        // ==========================================
-        // CRIA OS CARDS
-        // ==========================================
+        // --- CRIA OS CARDS ---
 
         ofertas.forEach(oferta => {
 
@@ -88,16 +86,12 @@ carregarFavoritos().then(() => {
         );
 
 
-            // ==========================================
-            // IMAGEM
-            // ==========================================
+            // --- IMAGEM ---
 
             const imagem = oferta.imagem || "";
 
 
-            // ==========================================
-            // PREÇOS
-            // ==========================================
+            // --- PREÇOS ---
 
             const precoAnterior =
                 Number(oferta.preco_anterior || 0);
@@ -106,9 +100,7 @@ carregarFavoritos().then(() => {
                 Number(oferta.preco_atual || 0);
 
 
-            // ==========================================
-            // CALCULAR DESCONTO
-            // ==========================================
+            // --- CALCULAR DESCONTO ---
 
             let desconto = 0;
 
@@ -126,9 +118,7 @@ carregarFavoritos().then(() => {
             }
 
 
-            // ==========================================
-            // CATEGORIA
-            // ==========================================
+            // --- CATEGORIA ---
 
             let categoria = "oferta";
 
@@ -156,9 +146,7 @@ carregarFavoritos().then(() => {
             }
 
 
-            // ==========================================
-            // DATASET DO CARD
-            // ==========================================
+            // --- DATASET DO CARD ---
 
             card.dataset.dias =
                 oferta.dias || "";
@@ -193,9 +181,7 @@ carregarFavoritos().then(() => {
                     : "nao";
 
 
-            // ==========================================
-            // HTML DO CARD
-            // ==========================================
+            // --- HTML DO CARD ---
 
              card.innerHTML = `
 
@@ -340,9 +326,7 @@ carregarFavoritos().then(() => {
             `;
 
 
-            // ==========================================
-            // ADICIONA O CARD AO GRID
-            // ==========================================
+            // --- ADICIONA O CARD AO GRID ---
 
             lista.appendChild(card);
 
@@ -472,9 +456,7 @@ carregarFavoritos().then(() => {
 
 });
 
-        // ==========================================
-        // AGORA OS CARDS JÁ EXISTEM
-        // ==========================================
+        // --- AGORA OS CARDS JÁ EXISTEM ---
 
         const filtros =
             document.querySelectorAll('.filtro');
@@ -483,9 +465,7 @@ carregarFavoritos().then(() => {
             document.querySelectorAll('.card-oferta');
 
 
-        // ==========================================
-        // FUNÇÃO DE FILTRAR
-        // ==========================================
+        // --- FUNÇÃO DE FILTRAR ---
 
         function filtrarOfertas(filtroSelecionado) {
 
@@ -501,11 +481,7 @@ carregarFavoritos().then(() => {
                     oferta.getAttribute('data-destaque');
 
 
-                // ==========================================
-                // TODAS
-                // SOMENTE DESTAQUES
-                // MÁXIMO 8
-                // ==========================================
+                // --- TODAS · SOMENTE DESTAQUES · MÁXIMO 8 ---
 
                 if (filtroSelecionado === 'todas') {
 
@@ -527,10 +503,7 @@ carregarFavoritos().then(() => {
                 }
 
 
-                // ==========================================
-                // CATEGORIAS
-                // MÁXIMO 8
-                // ==========================================
+                // --- CATEGORIAS · MÁXIMO 8 ---
 
                 else {
 
@@ -556,9 +529,7 @@ carregarFavoritos().then(() => {
         }
 
 
-        // ==========================================
-        // CLIQUE NOS FILTROS
-        // ==========================================
+        // --- CLIQUE NOS FILTROS ---
 
         filtros.forEach(filtro => {
 
@@ -585,9 +556,7 @@ carregarFavoritos().then(() => {
         });
 
 
-        // ==========================================
-        // FILTRO INICIAL
-        // ==========================================
+        // --- FILTRO INICIAL ---
 
         filtrarOfertas('todas');
 
@@ -595,9 +564,7 @@ carregarFavoritos().then(() => {
     })
 
 
-    // ==========================================
-    // ERRO
-    // ==========================================
+    // --- ERRO ---
 
     .catch(error => {
 

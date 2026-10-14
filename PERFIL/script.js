@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function salvarLocal(usuario) {
         if (usuario) {
             localStorage.setItem("boatourUsuario", JSON.stringify(usuario));
+            window.dispatchEvent(new CustomEvent("boatour:profile-updated", { detail: { usuario } }));
         }
     }
 
@@ -59,10 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (usuario.foto_perfil) window.atualizarFotosPerfil(usuario.foto_perfil);
 
-        if (usuario.banner_perfil) {
-            const bannerPerfil = document.getElementById("bannerPerfil");
-            if (bannerPerfil) bannerPerfil.style.backgroundImage = `url("${usuario.banner_perfil}")`;
-        }
+        selecionarBanner(usuario.banner_perfil || "../img/ofertas/cancun.jpg");
     }
 
     async function sincronizarUsuario() {
@@ -90,9 +88,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ==========================================
-    // NOTIFICAÇÕES
-    // ==========================================
+    // Atualiza o quadro com o mesmo usuário recebido pelo login, sem recarregar a página.
+    window.addEventListener("boatour:login", async (evento) => {
+        const usuario = evento.detail?.usuario || getUsuario();
+        preencherPerfil(usuario);
+        await carregarFavoritosPerfil();
+    });
+
+    // --- NOTIFICAÇÕES ---
     const btnNotificacoes = document.getElementById("btnNotificacoes");
     const modalNotificacoes = document.getElementById("modalNotificacoes");
     const fecharNotificacoes = document.getElementById("fecharNotificacoes");
@@ -110,13 +113,70 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === modalNotificacoes) modalNotificacoes.classList.remove("ativo");
     });
 
-    // ==========================================
-    // EDITAR PERFIL
-    // ==========================================
+    // --- EDITAR PERFIL ---
     const btnEditarPerfil = document.getElementById("btnEditarPerfil");
     const modalEditarPerfil = document.getElementById("modalEditarPerfil");
     const fecharEditarPerfil = document.getElementById("fecharEditarPerfil");
     const cancelarEditarPerfil = document.getElementById("cancelarEditarPerfil");
+    const modalGaleriaBanners = document.getElementById("modalGaleriaBanners");
+    const abrirGaleriaBanners = document.getElementById("abrirGaleriaBanners");
+
+    function selecionarBanner(caminho) {
+        const normalizar = valor => String(valor || "").replace(/^(\.\.\/)+/, "").replace(/^\/+/, "");
+        // Migra automaticamente as escolhas antigas para opções de destinos/ofertas.
+        const substitutosAntigos = {
+            "img/banners/banner1.jpg": "../img/destinos/riodejaneiro.jpg",
+            "img/banners/banner2.jpg": "../img/destinos/fernando.jpg",
+            "img/banners/banner3.jpg": "../img/ofertas/bonito.jpg",
+            "img/banners/banner4.jpg": "../img/ofertas/santorini2.jpg",
+            "img/banners/banner.png": "../img/ofertas/cancun.jpg",
+            "img/banners/bannerconsciente.jpg": "../img/ofertas/bonito.jpg",
+            "img/banners/fundo.png": "../img/destinos/fernando.jpg",
+            "img/banners/fundo02.png": "../img/ofertas/maldivas.jpg",
+            "img/banners/fundo03.png": "../img/ofertas/bonito.jpg",
+            "img/banners/aviao.png": "../img/ofertas/buenosaires.jpg"
+        };
+        const caminhoAtualizado = substitutosAntigos[normalizar(caminho)] || caminho;
+        const selecionado = normalizar(caminhoAtualizado);
+        let opcaoSelecionada;
+        document.querySelectorAll(".banner-opcao").forEach(opcao => {
+            const ativo = normalizar(opcao.dataset.banner) === selecionado;
+            opcao.classList.toggle("ativo", ativo);
+            opcao.setAttribute("aria-pressed", String(ativo));
+            if (ativo) opcaoSelecionada = opcao;
+        });
+
+        const bannerPerfil = document.getElementById("bannerPerfil");
+        if (bannerPerfil && caminhoAtualizado) bannerPerfil.style.backgroundImage = `url("${caminhoAtualizado}")`;
+
+        const textoSelecionado = document.getElementById("bannerSelecionadoTexto");
+        if (textoSelecionado && opcaoSelecionada) {
+            const nome = opcaoSelecionada.dataset.bannerNome
+                || opcaoSelecionada.title
+                || opcaoSelecionada.querySelector("img")?.alt
+                || "Banner escolhido";
+            textoSelecionado.textContent = `Selecionado: ${nome}`;
+        }
+    }
+
+    function fecharGaleriaBanners() {
+        modalGaleriaBanners?.classList.remove("ativo");
+        modalGaleriaBanners?.setAttribute("aria-hidden", "true");
+    }
+
+    abrirGaleriaBanners?.addEventListener("click", () => {
+        modalGaleriaBanners?.classList.add("ativo");
+        modalGaleriaBanners?.setAttribute("aria-hidden", "false");
+        requestAnimationFrame(() => modalGaleriaBanners?.querySelector(".banner-opcao.ativo")?.focus());
+    });
+    document.getElementById("fecharGaleriaBanners")?.addEventListener("click", fecharGaleriaBanners);
+    document.getElementById("concluirGaleriaBanners")?.addEventListener("click", fecharGaleriaBanners);
+    modalGaleriaBanners?.addEventListener("click", event => {
+        if (event.target === modalGaleriaBanners) fecharGaleriaBanners();
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && modalGaleriaBanners?.classList.contains("ativo")) fecharGaleriaBanners();
+    });
 
     btnEditarPerfil?.addEventListener("click", () => {
         preencherPerfil(getUsuario());
@@ -124,6 +184,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function fecharEdicao() {
+        selecionarBanner(getUsuario()?.banner_perfil || "../img/ofertas/cancun.jpg");
+        fecharGaleriaBanners();
         modalEditarPerfil?.classList.remove("ativo");
         const input = document.getElementById("inputFotoPerfil");
         if (input) input.value = "";
@@ -136,24 +198,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === modalEditarPerfil) fecharEdicao();
     });
 
-    // ==========================================
-    // BANNERS
-    // ==========================================
+    // --- BANNERS ---
     document.querySelectorAll(".banner-opcao").forEach(banner => {
         banner.addEventListener("click", () => {
-            document.querySelectorAll(".banner-opcao").forEach(item => item.classList.remove("ativo"));
-            banner.classList.add("ativo");
-
-            const bannerPerfil = document.getElementById("bannerPerfil");
-            if (bannerPerfil) {
-                bannerPerfil.style.backgroundImage = `url("${banner.dataset.banner}")`;
-            }
+            selecionarBanner(banner.dataset.banner);
+            if (modalGaleriaBanners?.contains(banner)) fecharGaleriaBanners();
         });
     });
 
-    // ==========================================
-    // FOTO
-    // ==========================================
+    // --- FOTO ---
     const btnAlterarFoto = document.getElementById("btnAlterarFoto");
     const inputFotoPerfil = document.getElementById("inputFotoPerfil");
     const fotoPerfilEditar = document.getElementById("fotoPerfilEditar");
@@ -187,9 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
         leitor.readAsDataURL(arquivo);
     });
 
-    // ==========================================
-    // SALVAR DADOS + FOTO
-    // ==========================================
+    // --- SALVAR DADOS + FOTO ---
     document.getElementById("salvarEditarPerfil")?.addEventListener("click", async e => {
         e.preventDefault();
 
@@ -206,9 +257,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const telefone = document.getElementById("telefonePerfil")?.value.trim() || "";
         const dataNascimento = document.getElementById("dataNascimentoPerfil")?.value || null;
 
-        if (!nome || nome.length < 3) return alert("Digite um nome válido.");
-        if (!email || !email.includes("@")) return alert("Digite um e-mail válido.");
-        if (cpf.length !== 11) return alert("Digite um CPF válido.");
+        const campoNome = document.getElementById("nomePerfilEditar");
+        const campoEmail = document.getElementById("emailPerfil");
+        const campoCpf = document.getElementById("cpfPerfil");
+        if (!nome || nome.length < 3) return window.boatourFieldError(campoNome, "Digite um nome válido.");
+        if (!email || !email.includes("@")) return window.boatourFieldError(campoEmail, "Digite um e-mail válido.");
+        if (cpf.length !== 11) return window.boatourFieldError(campoCpf, "Digite um CPF válido.");
 
         const headers = {
             "Content-Type": "application/json",
@@ -231,7 +285,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const dados = await respostaDados.json();
 
             if (!respostaDados.ok || dados.error) {
-                return alert(dados.error || "Não foi possível salvar seus dados.");
+                const mensagem = dados.error || "Não foi possível salvar seus dados.";
+                if (/e-?mail/i.test(mensagem)) return window.boatourFieldError(campoEmail, mensagem);
+                if (/cpf/i.test(mensagem)) return window.boatourFieldError(campoCpf, mensagem);
+                if (/nome/i.test(mensagem)) return window.boatourFieldError(campoNome, mensagem);
+                return alert(mensagem);
             }
 
             salvarLocal(dados.usuario);
@@ -288,9 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ==========================================
-    // ALTERAR SENHA
-    // ==========================================
+    // --- ALTERAR SENHA ---
     document.getElementById("btnAlterarSenha")?.addEventListener("click", () => {
         document.getElementById("modalAlterarSenha")?.classList.add("ativo");
         document.getElementById("senhaAtual")?.focus();
@@ -310,9 +366,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const novaSenha = document.getElementById("novaSenha")?.value;
         const confirmar = document.getElementById("confirmarNovaSenha")?.value;
 
-        if (!senhaAtual || !novaSenha) return alert("Preencha os campos de senha.");
-        if (novaSenha.length < 6) return alert("A nova senha deve ter pelo menos 6 caracteres.");
-        if (novaSenha !== confirmar) return alert("As novas senhas não são iguais.");
+        if (!senhaAtual) return window.boatourFieldError("senhaAtual", "Informe sua senha atual.");
+        if (!novaSenha) return window.boatourFieldError("novaSenha", "Informe a nova senha.");
+        if (novaSenha.length < 6) return window.boatourFieldError("novaSenha", "A nova senha precisa ter pelo menos 6 caracteres.");
+        if (novaSenha !== confirmar) return window.boatourFieldError("confirmarNovaSenha", "As novas senhas não são iguais.");
 
         try {
             const resposta = await fetch(`${API}/usuarios/senha`, {
@@ -328,7 +385,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             const resultado = await resposta.json();
-            if (!resposta.ok || resultado.error) return alert(resultado.error || "Não foi possível alterar a senha.");
+            if (!resposta.ok || resultado.error) {
+                if (/senha atual|senha incorreta/i.test(resultado.error || "")) {
+                    return window.boatourFieldError("senhaAtual", resultado.error);
+                }
+                return alert(resultado.error || "Não foi possível alterar a senha.");
+            }
 
             document.getElementById("modalAlterarSenha")?.classList.remove("ativo");
             ["senhaAtual", "novaSenha", "confirmarNovaSenha"].forEach(id => {
@@ -341,81 +403,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ==========================================
-    // SAIR
-    // ==========================================
-    const btnSairConta = document.getElementById("btnSairConta");
-    const modalSairConta = document.getElementById("modalSairConta");
-    const fecharSairConta = document.getElementById("fecharSairConta");
-    const cancelarSairConta = document.getElementById("cancelarSairConta");
-    const continuarSairConta = document.getElementById("continuarSairConta");
-
-    const modalSenhaSairConta = document.getElementById("modalSenhaSairConta");
-    const fecharSenhaSairConta = document.getElementById("fecharSenhaSairConta");
-    const confirmarSairConta = document.getElementById("confirmarSairConta");
-    const senhaSairConta = document.getElementById("senhaSairConta");
-
-    btnSairConta?.addEventListener("click", () => modalSairConta?.classList.add("ativo"));
-    fecharSairConta?.addEventListener("click", () => modalSairConta?.classList.remove("ativo"));
-    cancelarSairConta?.addEventListener("click", () => modalSairConta?.classList.remove("ativo"));
-
-    continuarSairConta?.addEventListener("click", () => {
-        modalSairConta?.classList.remove("ativo");
-        modalSenhaSairConta?.classList.add("ativo");
-        if (senhaSairConta) {
-            senhaSairConta.value = "";
-            senhaSairConta.focus();
-        }
-    });
-
-    fecharSenhaSairConta?.addEventListener("click", () => {
-        modalSenhaSairConta?.classList.remove("ativo");
-        if (senhaSairConta) senhaSairConta.value = "";
-    });
-
-    confirmarSairConta?.addEventListener("click", async () => {
-        const token = getToken();
-        const senha = senhaSairConta?.value;
-
-        if (!senha) return alert("Digite sua senha para continuar.");
-
-        try {
-            const resposta = await fetch(`${API}/confirmar-senha`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Session-Token": token
-                },
-                body: JSON.stringify({ senha })
-            });
-
-            const resultado = await resposta.json();
-            if (!resposta.ok || resultado.error) return alert(resultado.error || "Senha incorreta.");
-
-            await fetch(`${API}/logout`, {
-                method: "POST",
-                headers: { "X-Session-Token": token }
-            });
-
-            localStorage.removeItem("boatourUsuario");
-            localStorage.removeItem("boatourSessionToken");
-            window.location.href = "../index.html?saiu=sucesso";
-        } catch {
-            alert("Não foi possível sair da conta.");
-        }
-    });
-
-    // ==========================================
-    // EXCLUIR CONTA
-    // ==========================================
+    // --- EXCLUIR CONTA ---
     document.getElementById("btnExcluirConta")?.addEventListener("click", async () => {
         const token = getToken();
         if (!token) return alert("Sua sessão expirou.");
 
-        const senha = prompt("Para excluir sua conta, digite sua senha:");
+        const senha = await window.boatourPrompt(
+            "Para excluir sua conta, confirme sua senha. Esta ação não poderá ser desfeita."
+        );
         if (!senha) return;
 
-        if (!confirm("Essa ação excluirá sua conta. Deseja continuar?")) return;
+        if (!await window.boatourConfirm("Deseja realmente excluir sua conta?")) return;
 
         try {
             const resposta = await fetch(`${API}/usuarios/me`, {
@@ -433,23 +431,28 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.removeItem("boatourUsuario");
             localStorage.removeItem("boatourSessionToken");
             alert("Sua conta foi excluída.");
-            window.location.href = "../index.html";
+            window.setTimeout(() => {
+                window.location.href = "../index.html";
+            }, 900);
         } catch {
             alert("Não foi possível conectar ao servidor.");
         }
     });
 
-    // ==========================================
-    // INICIALIZAÇÃO
-    // ==========================================
+    // --- INICIALIZAÇÃO ---
     (async () => {
         const usuario = await sincronizarUsuario();
         preencherPerfil(usuario);
     })();
 });
-// ==========================================
-// FAVORITOS NO PERFIL
-// ==========================================
+// --- FAVORITOS NO PERFIL ---
+
+function obterImagemFavorito(caminho) {
+    const valor = String(caminho || '').trim();
+    if (!valor) return '';
+    if (/^(https?:|data:|\/)/i.test(valor)) return valor;
+    return `../${valor.replace(/^\.\//, '')}`;
+}
 
 async function carregarFavoritosPerfil() {
     const grid = document.getElementById('favoritosGrid');
@@ -500,14 +503,18 @@ async function carregarFavoritosPerfil() {
             return;
         }
 
-        // Busca destinos e ofertas
-        const [respostaDestinos, respostaOfertas] = await Promise.all([
+        // Busca os dados dos quatro tipos de favoritos
+        const [respostaDestinos, respostaOfertas, respostaHoteis, respostaAtividades] = await Promise.all([
             fetch('http://localhost:3000/destinos'),
-            fetch('http://localhost:3000/ofertas')
+            fetch('http://localhost:3000/ofertas'),
+            fetch('http://localhost:3000/hoteis'),
+            fetch('http://localhost:3000/atividades')
         ]);
 
         const destinos = await respostaDestinos.json();
         const ofertas = await respostaOfertas.json();
+        const hoteis = await respostaHoteis.json();
+        const atividades = await respostaAtividades.json();
 
         // Apenas os 4 favoritos mais recentes
         const favoritosRecentes = favoritos.slice(0, 4);
@@ -520,9 +527,7 @@ async function carregarFavoritosPerfil() {
             let imagem = '';
             let nome = '';
 
-            // ==============================
-            // DESTINO
-            // ==============================
+            // --- DESTINO ---
 
             if (favorito.tipo === 'destino') {
 
@@ -537,9 +542,7 @@ async function carregarFavoritosPerfil() {
                 }
             }
 
-            // ==============================
-            // OFERTA
-            // ==============================
+            // --- OFERTA ---
 
             else if (favorito.tipo === 'oferta') {
 
@@ -554,9 +557,29 @@ async function carregarFavoritosPerfil() {
                 }
             }
 
-            // ==============================
-            // SE O ITEM EXISTIR
-            // ==============================
+            else if (favorito.tipo === 'hotel') {
+                item = hoteis.find(
+                    hotel => Number(hotel.id_hotel) === Number(favorito.id_item)
+                );
+
+                if (item) {
+                    nome = item.nome_hotel || 'Hotel';
+                    imagem = obterImagemFavorito(item.imagem_principal);
+                }
+            }
+
+            else if (favorito.tipo === 'atividade') {
+                item = atividades.find(
+                    atividade => Number(atividade.id_atividade) === Number(favorito.id_item)
+                );
+
+                if (item) {
+                    nome = item.nome_atividade || 'Atividade';
+                    imagem = obterImagemFavorito(item.imagem_principal);
+                }
+            }
+
+            // --- SE O ITEM EXISTIR ---
 
             if (item) {
 

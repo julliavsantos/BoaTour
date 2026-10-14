@@ -17,9 +17,7 @@ class DestinoBD {
     }
 
 
-    // ==========================================
-    // BUSCA TODOS OS DESTINOS + CATEGORIAS
-    // ==========================================
+    // --- BUSCA TODOS OS DESTINOS + CATEGORIAS ---
 
     static getDestinos(callback) {
 
@@ -79,9 +77,7 @@ GROUP BY destinos.id_destino
     }
 
 
-    // ==========================================
-    // BUSCA SOMENTE AS PRAIAS POPULARES
-    // ==========================================
+    // --- BUSCA SOMENTE AS PRAIAS POPULARES ---
 
     static getPraiasPopulares(callback) {
 
@@ -143,9 +139,7 @@ GROUP BY destinos.id_destino
     }
 
 
-    // ==========================================
-    // BUSCA UM DESTINO PELO ID
-    // ==========================================
+    // --- BUSCA UM DESTINO PELO ID ---
 
     static getDestinoById(id, callback) {
 

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir senha - BoaTour</title>
+    <link rel="icon" type="image/png" href="../img/logo/apenaslogo.png">
+    <link rel="stylesheet" href="trocaSenha.css">
+</head>
+<body>
+
+<main class="pagina">
+    <section class="cartao">
+
+        <img class="logo" id="logoBoatour" src="../img/logo/logo.png" alt="BoaTour">
+
+        <!-- Indicador de etapas -->
+        <div class="passos" id="passos">
+            <div class="passo ativo" id="passo1"><span>1</span><b>Código</b></div>
+            <div class="linha"></div>
+            <div class="passo" id="passo2"><span>2</span><b>Nova senha</b></div>
+        </div>
+
+        <!-- ETAPA 1: digitar o código -->
+        <div class="etapa" id="etapaCodigo">
+            <div class="icone-etapa">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2.5"></rect>
+                    <path d="M3.5 7.5 12 13l8.5-5.5"></path>
+                </svg>
+            </div>
+
+            <h1>Digite o código</h1>
+            <p class="descricao">
+                Para redefinir a sua senha, digite o <strong>código de 6 dígitos</strong>
+                que enviamos para <strong id="emailMascarado"></strong>. Ele vale por 10 minutos.
+            </p>
+
+            <div class="codigo-inputs" id="codigoInputs">
+                <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Dígito 1">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 2">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 3">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 4">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 5">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 6">
+            </div>
+
+            <p class="mensagem" id="msgCodigo" role="alert"></p>
+
+            <button type="button" class="btn" id="btnConfirmarCodigo">Confirmar</button>
+
+            <p class="reenviar">
+                Não recebeu?
+                <button type="button" class="link" id="btnReenviar" disabled>Reenviar código</button>
+            </p>
+
+            <a class="voltar" href="index.html">← Voltar ao login</a>
+        </div>
+
+        <!-- ETAPA 2: nova senha (aparece depois que o código é validado) -->
+        <div class="etapa" id="etapaSenha" hidden>
+            <div class="icone-etapa ok">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4.5" y="10.5" width="15" height="10" rx="2.5"></rect>
+                    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path>
+                </svg>
+            </div>
+
+            <h1>Crie sua nova senha</h1>
+            <p class="descricao">Código confirmado! Agora escolha uma nova senha com pelo menos 6 caracteres.</p>
+
+            <div class="campo">
+                <label for="novaSenha">Nova senha</label>
+                <div class="campo-senha">
+                    <input type="password" id="novaSenha" placeholder="Digite a nova senha" autocomplete="new-password">
+                    <button type="button" class="mostrar-senha" data-target="novaSenha" aria-label="Mostrar senha">👁</button>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="confirmarSenha">Confirmar nova senha</label>
+                <div class="campo-senha">
+                    <input type="password" id="confirmarSenha" placeholder="Repita a nova senha" autocomplete="new-password">
+                    <button type="button" class="mostrar-senha" data-target="confirmarSenha" aria-label="Mostrar senha">👁</button>
+                </div>
+            </div>
+
+            <p class="mensagem" id="msgSenha" role="alert"></p>
+
+            <button type="button" class="btn" id="btnSalvarSenha">Salvar nova senha</button>
+        </div>
+
+        <!-- ETAPA 3: sucesso -->
+        <div class="etapa" id="etapaSucesso" hidden>
+            <div class="icone-etapa ok">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="m8 12.5 2.8 2.8L16 9.8"></path>
+                </svg>
+            </div>
+
+            <h1>Senha alterada!</h1>
+            <p class="descricao">Sua senha foi redefinida com sucesso. Agora é só entrar com a nova senha.</p>
+
+            <a class="btn" href="index.html?login=1">Ir para o login</a>
+        </div>
+
+        <!-- Sem solicitação em andamento -->
+        <div class="etapa" id="etapaSemEmail" hidden>
+            <div class="icone-etapa erro">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7.5v5.5"></path>
+                    <circle cx="12" cy="16.5" r="0.6" fill="currentColor"></circle>
+                </svg>
+            </div>
+
+            <h1>Solicitação não encontrada</h1>
+            <p class="descricao">Não encontramos um pedido de recuperação de senha em andamento. Volte ao login e clique em "Esqueci minha senha".</p>
+
+            <a class="btn" href="index.html?login=1">Voltar ao login</a>
+        </div>
+
+    </section>
+</main>
+
+<script src="trocaSenha.js"></script>
+</body>
+</html>

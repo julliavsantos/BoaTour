@@ -71,6 +71,7 @@ body{
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    
 }
 body.dark-mode{
       background-image: url(../img/banners/fundo03darkmode.png);

@@ -11,6 +11,8 @@ const UsuariosBD = require('./database/UsuariosBD');
 const FavoritosBD = require('./database/FavoritosBD');
 const AeroportosBD = require('./database/AeroportosBD');
 const VoosBD = require('./database/VoosBD');
+const HotelBD = require('./database/HoteisBD');
+const AtividadesBD = require('./database/AtividadesBD');
 
 const PORT = 3000;
 const sessions = new Map();
@@ -97,57 +99,106 @@ function buscaOfertas(res) {
 }
 
 
+ // HOTÉIS
+function buscaHoteis(res) {
+    HotelBD.getHoteis((erro, hoteis) => {
+        if (erro) {
+            console.error('Erro ao buscar hotéis:', erro);
+            return json(res, 500, {
+                error: 'Erro ao buscar hotéis.'
+            });
+        }
+
+        return json(res, 200, hoteis);
+    });
+}
+
+function buscaHotelPorId(res, id) {
+    if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+        return json(res, 400, {
+            error: 'ID do hotel inválido.'
+        });
+    }
+
+    HotelBD.getHotelById(Number(id), (erro, hotel) => {
+        if (erro) {
+            console.error('Erro ao buscar hotel:', erro);
+            return json(res, 500, {
+                error: 'Erro ao buscar hotel.'
+            });
+        }
+
+        if (!hotel) {
+            return json(res, 404, {
+                error: 'Hotel não encontrado.'
+            });
+        }
+
+        return json(res, 200, hotel);
+    });
+}
+
+function buscaFotosHotel(res, id) {
+    if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+        return json(res, 400, {
+            error: 'ID do hotel inválido.'
+        });
+    }
+
+    HotelBD.getFotosByHotelId(Number(id), (erro, fotos) => {
+        if (erro) {
+            console.error('Erro ao buscar fotos do hotel:', erro);
+            return json(res, 500, {
+                error: 'Erro ao buscar fotos do hotel.'
+            });
+        }
+
+        return json(res, 200, fotos);
+    });
+}
+
+
 // AEROPORTOS
 function buscarAeroportos(req, res) {
+    AeroportosBD.getAeroportos((erro, aeroportos) => {
+        if (erro) {
+            console.error('Erro ao buscar aeroportos:', erro);
+            return json(res, 500, { error: 'Erro ao buscar aeroportos.' });
+        }
 
-    AeroportosBD.getAeroportos(function(aeroportos) {
-
-        res.writeHead(200, {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:5500'
-        });
-
-        res.end(JSON.stringify(aeroportos));
-
+        return json(res, 200, aeroportos);
     });
-
 }
 
 
 // VOOS 
 function buscaVoos(res, query) {
-    const origem = query.origem;
-    const destino = query.destino;
-    const data = query.data;
+    const filtros = {
+        pesquisa: query.pesquisa,
+        origem: query.origem,
+        destino: query.destino,
+        data: query.data,
+        precoMin: query.precoMin,
+        precoMax: query.precoMax
+    };
+    const possuiFiltros = Object.values(filtros).some(
+        valor => valor !== undefined && valor !== ''
+    );
 
-    if (origem && destino && data) {
-        return VoosBD.filtrarVoos(
-            origem,
-            destino,
-            data,
-            (erro, voos) => {
-                if (erro) {
-                    console.error('Erro ao buscar voos:', erro);
-                    return json(res, 500, {
-                        error: 'Erro ao buscar voos.'
-                    });
-                }
-
-                return json(res, 200, voos);
-            }
-        );
-    }
-
-    VoosBD.buscaVoos((erro, voos) => {
+    const responder = (erro, voos) => {
         if (erro) {
             console.error('Erro ao buscar voos:', erro);
-            return json(res, 500, {
-                error: 'Erro ao buscar voos.'
-            });
+            return json(res, 500, { error: 'Erro ao buscar voos.' });
         }
 
         return json(res, 200, voos);
-    });
+    };
+
+    if (possuiFiltros) {
+        return VoosBD.filtrarVoos(filtros, responder);
+    }
+
+    return VoosBD.buscaVoos(responder);
 }
 
 
@@ -484,7 +535,10 @@ function servirArquivoPublico(res, pathname) {
     const arquivo = path.normalize(path.join(__dirname, '..', pathname));
     const raiz = path.normalize(path.join(__dirname, '..'));
 
-    if (!arquivo.startsWith(raiz)) return json(res, 403, { error: 'Acesso negado.' });
+    const caminhoRelativo = path.relative(raiz, arquivo);
+    if (caminhoRelativo.startsWith('..') || path.isAbsolute(caminhoRelativo)) {
+        return json(res, 403, { error: 'Acesso negado.' });
+    }
 
     const extensao = path.extname(arquivo).toLowerCase();
     const tipos = {
@@ -522,6 +576,19 @@ function listarFavoritos(req, res) {
     );
 }
 
+function buscaAtividades(res) {
+
+    AtividadesBD.getAtividades((erro, atividades) => {
+
+        if (erro) {
+            return json(res, 500, {
+                error: 'Erro ao buscar atividades.'
+            });
+        }
+
+        return json(res, 200, atividades);
+    });
+}
 
 // ROTAS
 const callback = (req, res) => {
@@ -533,7 +600,12 @@ const callback = (req, res) => {
     }
 
     const rota = url.parse(req.url, true);
-    const p = rota.pathname;
+    let p;
+    try {
+        p = decodeURIComponent(rota.pathname);
+    } catch {
+        return json(res, 400, { error: 'Caminho inválido.' });
+    }
 
     // Usuários
     if (req.method === 'POST' && (p === '/registro' || p === '/usuarios/cadastro')) {
@@ -593,6 +665,26 @@ const callback = (req, res) => {
     if (req.method === 'GET' && p === '/destinos') return buscaDestinos(res);
     if (req.method === 'GET' && p === '/destinos/praias-populares') return buscaPraiasPopulares(res);
     if (req.method === 'GET' && p === '/ofertas') return buscaOfertas(res);
+
+    if (req.method === 'GET' && p === '/atividades') {
+    return buscaAtividades(res);
+}
+    // HOTÉIS
+    if (req.method === 'GET' && p === '/hoteis') {
+        return buscaHoteis(res);
+    }
+
+    const fotosHotelMatch = p.match(/^\/hoteis\/(\d+)\/fotos$/);
+
+    if (req.method === 'GET' && fotosHotelMatch) {
+        return buscaFotosHotel(res, fotosHotelMatch[1]);
+    }
+
+    const hotelMatch = p.match(/^\/hoteis\/(\d+)$/);
+
+    if (req.method === 'GET' && hotelMatch) {
+        return buscaHotelPorId(res, hotelMatch[1]);
+    }
 
     //aeroportos
     if (req.method === 'GET' && p === '/aeroportos') {

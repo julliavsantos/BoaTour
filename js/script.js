@@ -1,13 +1,4 @@
-// FOTO DE PERFIL
-const fotoPerfil = document.querySelector(".foto-viajante");
-
-if (fotoPerfil) {
-    fotoPerfil.addEventListener("click", () => {
-        window.location.href = "PERFIL/index.html";
-    });
-}
-
-
+/
 // SLIDER
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -100,7 +91,8 @@ async function carregarAeroportos() {
             throw new Error("Erro ao buscar aeroportos");
         }
 
-        aeroportos = await resposta.json();
+        const dados = await resposta.json();
+        aeroportos = Array.isArray(dados) ? dados : [];
 
         console.log("Aeroportos carregados:", aeroportos);
 
@@ -124,18 +116,50 @@ async function carregarAeroportos() {
 // iniciar
 carregarAeroportos();
 
+const linkBuscaVoosHome = document.getElementById("linkBuscaVoosHome");
+if (linkBuscaVoosHome) {
+    const buscarVoosDaHome = evento => {
+        evento.preventDefault();
+        const parametros = new URLSearchParams();
+        const origem = document.getElementById("partida")?.value.trim();
+        const destino = document.getElementById("destino")?.value.trim();
+        const data = document.getElementById("dataPartida")?.value.trim();
+
+        if (origem) parametros.set("origem", origem);
+        if (destino) parametros.set("destino", destino);
+        if (data) parametros.set("data", data);
+
+        const query = parametros.toString();
+        window.location.href = `VOOS/index.html${query ? `?${query}` : ""}`;
+    };
+
+    linkBuscaVoosHome.addEventListener("click", buscarVoosDaHome);
+    ["partida", "destino", "dataPartida"].forEach(id => {
+        document.getElementById(id)?.addEventListener("keydown", evento => {
+            if (evento.key === "Enter") buscarVoosDaHome(evento);
+        });
+    });
+}
+
 function configurarAutocomplete(input, lista) {
     if (!input || !lista) return;
 
     input.addEventListener("input", function () {
-        const texto = input.value.toLowerCase();
+        const normalizar = valor => String(valor || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLocaleLowerCase("pt-BR")
+            .trim();
+        const texto = normalizar(input.value);
         lista.innerHTML = "";
         if (texto === "") {
             return;
         }
         const resultados = aeroportos.filter(function (aeroporto) {
-    return aeroporto.nome.toLowerCase().includes(texto);
-});
+            return [aeroporto.nome, aeroporto.cidade, aeroporto.pais,
+                aeroporto.codigo_iata || aeroporto.iata]
+                .some(valor => normalizar(valor).includes(texto));
+        });
 
 
         resultados.forEach(function (aeroporto) {
@@ -145,12 +169,15 @@ function configurarAutocomplete(input, lista) {
 
             opcao.classList.add("sugestao");
 
-            opcao.textContent = aeroporto.nome;
+            const nome = String(aeroporto.nome || aeroporto.cidade || "Aeroporto");
+            const cidade = String(aeroporto.cidade || "");
+            const codigo = String(aeroporto.codigo_iata || aeroporto.iata || "");
+            opcao.textContent = `${nome}${cidade && cidade !== nome ? ` — ${cidade}` : ""}${codigo ? ` (${codigo})` : ""}`;
 
 
             opcao.addEventListener("click", function () {
 
-                input.value = aeroporto.nome;
+                input.value = cidade || nome;
 
                 lista.innerHTML = "";
 
@@ -164,18 +191,6 @@ function configurarAutocomplete(input, lista) {
     });
 
 }
-
-configurarAutocomplete(
-    document.getElementById("partida"),
-    document.getElementById("sugestoesPartida")
-);
-
-configurarAutocomplete(
-    document.getElementById("destino"),
-    document.getElementById("sugestoesDestino")
-);
-
-
 
 // CALENDÁRIO PERSONALIZADO
 
@@ -688,7 +703,8 @@ function criarCalendario(tipo) {
                     )
                 ) {
 
-                    alert(
+                    window.boatourFieldError(
+                        dataRetorno,
                         "A data de retorno não pode ser anterior à data de partida."
                     );
 
@@ -902,11 +918,7 @@ function configurarDigitacao(input, tipo) {
 
             if (!data) {
 
-                alert(
-                    "Digite uma data válida."
-                );
-
-                input.value = "";
+                window.boatourFieldError(input, "Digite uma data válida.");
 
                 return;
 
@@ -933,11 +945,10 @@ function configurarDigitacao(input, tipo) {
                     )
                 ) {
 
-                    alert(
+                    window.boatourFieldError(
+                        input,
                         "A data de retorno não pode ser anterior à data de partida."
                     );
-
-                    input.value = "";
 
                     return;
 

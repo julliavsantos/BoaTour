@@ -1,0 +1,207 @@
+/* --- Estilos compartilhados dos modais --- */
+.modal-login,
+.modal-favorito-login,
+.modal-oferta,
+.modal-boas-vindas,
+.modal-notificacoes,
+.modal-editar-perfil,
+#modalSaidaConta {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: rgba(0, 0, 0, .55);
+}
+
+.modal-oferta {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.modal-oferta.ativo { display: flex; }
+
+.login,
+.modal-favorito-login__painel,
+.oferta-detalhes,
+.modal-boas-vindas-conteudo,
+.notificacoes,
+.editar-perfil {
+    background: var(--card);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.oferta-detalhes {
+    position: relative;
+    display: grid;
+    grid-template-columns: 45% 55%;
+    width: min(950px, 100%);
+    max-height: 90vh;
+    overflow: hidden;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+}
+
+.oferta-detalhes-imagem { position: relative; min-height: 420px; }
+.oferta-detalhes-imagem img { width: 100%; height: 100%; object-fit: cover; }
+.oferta-detalhes-conteudo { padding: 36px; overflow-y: auto; }
+.modal-desconto {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+}
+.fechar-oferta {
+    position: absolute;
+    z-index: 2;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--surface-strong);
+    color: var(--text);
+    font-size: 27px;
+    cursor: pointer;
+}
+.modal-categoria { color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.modal-resumo { color: var(--text); line-height: 1.6; }
+.linha-detalhes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 16px 0;
+    border-block: 1px solid var(--border);
+}
+.linha-detalhes p,
+.descricao-oferta p,
+.preco-modal span,
+.preco-modal del { color: var(--muted); }
+.preco-modal { display: flex; justify-content: space-between; align-items: end; gap: 16px; }
+.preco-modal div { display: flex; flex-direction: column; }
+.preco-modal strong { color: var(--primary-dark); font-size: 26px; }
+.modal-oferta .btn-comprar {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.login *,
+.modal-favorito-login__painel *,
+.oferta-detalhes *,
+.modal-boas-vindas-conteudo *,
+.notificacoes *,
+.editar-perfil * {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.login h2,
+.modal-favorito-login__painel h2,
+.oferta-detalhes-conteudo h2,
+.modal-boas-vindas-conteudo h2,
+.notificacoes h2,
+.editar-perfil h2,
+#modalSaidaConta h2 {
+    color: var(--primary-dark);
+}
+
+.login p,
+.modal-favorito-login__painel p,
+.oferta-detalhes-conteudo p,
+.modal-boas-vindas-conteudo p,
+.notificacoes p,
+.editar-perfil p,
+#modalSaidaConta p {
+    color: var(--text);
+}
+
+.modal-favorito-login__fechar,
+.fechar,
+.fechar-oferta,
+.fechar-boas-vindas,
+.fechar-notificacoes,
+.fechar-editar,
+#modalSaidaConta #fecharSaidaConta {
+    color: var(--muted);
+    transition: color .2s ease, transform .2s ease;
+}
+
+.modal-favorito-login__fechar:hover,
+.fechar:hover,
+.fechar-oferta:hover,
+.fechar-boas-vindas:hover,
+.fechar-notificacoes:hover,
+.fechar-editar:hover,
+#modalSaidaConta #fecharSaidaConta:hover {
+    color: var(--primary-dark);
+    transform: scale(1.08);
+}
+
+.btnLogin,
+.modal-favorito-login__acoes button,
+.btn-ir-perfil,
+.btn-comprar,
+#modalSaidaConta #continuarSaidaConta {
+    border: 0;
+    background: var(--primary);
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.btnLogin:hover,
+.modal-favorito-login__acoes button:hover,
+.btn-ir-perfil:hover,
+.btn-comprar:hover,
+#modalSaidaConta #continuarSaidaConta:hover {
+    background: var(--primary-dark);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.modal-favorito-login__acoes a,
+.btn-navegar {
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    color: var(--primary-dark);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.modal-favorito-login__acoes a:hover,
+.btn-navegar:hover {
+    background: var(--surface-strong);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.login input,
+.modal-favorito-login__painel button,
+.oferta-detalhes button,
+.modal-boas-vindas-conteudo button,
+#modalSaidaConta button {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+@media (max-width: 640px) {
+    .modal-oferta { padding: 10px; }
+    .oferta-detalhes {
+        grid-template-columns: minmax(0, 1fr);
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+    .oferta-detalhes-imagem { min-height: 200px; }
+    .oferta-detalhes-conteudo { padding: 22px; }
+}

@@ -1,14 +1,17 @@
-const fotoPerfil = document.querySelector(".foto-viajante");
 
-if (fotoPerfil) {
-    fotoPerfil.addEventListener("click", () => {
-        window.location.href = "../../PERFIL/index.html";
-    });
-}
 document.addEventListener("DOMContentLoaded", () => {
 
     const input = document.getElementById("mensagem");
     const chat = document.getElementById("chat");
+
+    const adicionarMensagem = (autor, mensagem, classe) => {
+        const bloco = document.createElement("p");
+        bloco.className = `mensagem ${classe}`;
+        const nome = document.createElement("strong");
+        nome.textContent = `${autor}:`;
+        bloco.append(nome, document.createTextNode(` ${mensagem}`));
+        chat.appendChild(bloco);
+    };
 
 
     window.enviar = async function () {
@@ -19,12 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        chat.innerHTML += `
-            <p class="mensagem usuario">
-                <strong>Você:</strong>
-                ${mensagem}
-            </p>
-        `;
+        adicionarMensagem("Você", mensagem, "usuario");
 
         input.value = "";
 
@@ -44,29 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
             });
 
+            const dados = await resposta.json().catch(() => ({}));
             if (!resposta.ok) {
-                throw new Error("Erro na resposta do servidor");
+                adicionarMensagem("Julianinha", dados.resposta || dados.error || "O assistente está temporariamente indisponível.", "bot");
+            } else {
+                adicionarMensagem("Julianinha", dados.resposta || "Não recebi uma resposta do servidor.", "bot");
             }
-
-            const dados = await resposta.json();
-
-            chat.innerHTML += `
-                <p class="mensagem bot">
-                    <strong>Julianinha:</strong>
-                    ${dados.resposta}
-                </p>
-            `;
 
         } catch (erro) {
 
-            console.error("Erro:", erro);
+            console.error("Erro ao consultar o assistente:", erro);
 
-            chat.innerHTML += `
-                <p class="mensagem bot">
-                    <strong>Julianinha:</strong>
-                    Não consegui conectar ao servidor.
-                </p>
-            `;
+            adicionarMensagem("Julianinha", "Não consegui conectar ao servidor.", "bot");
         }
 
         chat.scrollTop = chat.scrollHeight;

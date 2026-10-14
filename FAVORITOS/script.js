@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     let favoritosOriginais = [];
     let destinos = [];
     let ofertas = [];
+    let hoteis = [];
+    let atividades = [];
     let buscaAtual = "";
     let quantidadeVisivel = 8;
 
@@ -18,9 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // ==========================================
-    // TOKEN
-    // ==========================================
+    // --- TOKEN ---
 
     const sessionToken =
         localStorage.getItem("boatourSessionToken");
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 <p>
                     Entre na sua conta para acessar
-                    os destinos e ofertas salvos.
+                    os destinos, ofertas, hotéis e atividades salvos.
                 </p>
             </div>
         `;
@@ -45,9 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // ==========================================
-    // FUNÇÃO PARA NORMALIZAR TEXTO
-    // ==========================================
+    // --- FUNÇÃO PARA NORMALIZAR TEXTO ---
 
     function normalizarTexto(texto) {
 
@@ -59,9 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     }
 
-    // ==========================================
-    // BUSCAR FAVORITOS
-    // ==========================================
+    // --- BUSCAR FAVORITOS ---
 
     try {
 
@@ -96,46 +92,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             favoritosOriginais
         );
 
-        // ==========================================
-        // NENHUM FAVORITO
-        // ==========================================
+        // --- NENHUM FAVORITO ---
 
-        if (favoritosOriginais.length === 0) {
+        // --- BUSCAR DESTINOS E OFERTAS ---
 
-            favoritosGrid.innerHTML = `
-                <div class="sem-favoritos">
-
-                    <span>♡</span>
-
-                    <h3>
-                        Você ainda não tem favoritos
-                    </h3>
-
-                    <p>
-                        Explore nossos destinos e ofertas
-                        e salve seus favoritos aqui.
-                    </p>
-
-                </div>
-            `;
-
-            return;
-        }
-
-        // ==========================================
-        // BUSCAR DESTINOS E OFERTAS
-        // ==========================================
-
-        const [resDestinos, resOfertas] =
+        const [resDestinos, resOfertas, resHoteis, resAtividades] =
             await Promise.all([
 
                 fetch(
                     "http://localhost:3000/destinos"
                 ),
 
-                fetch(
-                    "http://localhost:3000/ofertas"
-                )
+                fetch("http://localhost:3000/ofertas"),
+                fetch("http://localhost:3000/hoteis"),
+                fetch("http://localhost:3000/atividades")
 
             ]);
 
@@ -145,12 +115,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         ofertas =
             await resOfertas.json();
 
+        hoteis = await resHoteis.json();
+        atividades = await resAtividades.json();
+
         console.log("DESTINOS:", destinos);
         console.log("OFERTAS:", ofertas);
 
-        // ==========================================
-        // MOSTRAR FAVORITOS
-        // ==========================================
+        // --- MOSTRAR FAVORITOS ---
 
         filtrarFavoritos();
 
@@ -174,10 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 
-    // ==========================================
-    // FILTRAR FAVORITOS
-    // PESQUISA + TIPO
-    // ==========================================
+    // --- FILTRAR FAVORITOS · PESQUISA + TIPO ---
 
     function filtrarFavoritos() {
 
@@ -186,9 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const favoritosFiltrados =
         favoritosOriginais.filter(favorito => {
 
-            // ==============================
-            // FILTRO POR TIPO
-            // ==============================
+            // --- FILTRO POR TIPO ---
 
             if (
                 filtroAtual !== "todos" &&
@@ -199,9 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const id = Number(favorito.id_item);
 
-            // ==============================
-            // DESTINO
-            // ==============================
+            // --- DESTINO ---
 
             if (favorito.tipo === "destino") {
 
@@ -225,9 +189,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return textoDestino.includes(busca);
             }
 
-            // ==============================
-            // OFERTA
-            // ==============================
+            // --- OFERTA ---
 
             if (favorito.tipo === "oferta") {
 
@@ -251,6 +213,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return textoOferta.includes(busca);
             }
 
+            if (favorito.tipo === "hotel") {
+                const hotel = hoteis.find(item => Number(item.id_hotel) === id);
+                if (!hotel) return false;
+                return normalizarTexto(`${hotel.nome_hotel} ${hotel.quarto_hotel} ${hotel.descricao_hotel} ${hotel.cidade} ${hotel.pais} ${hotel.endereco}`).includes(busca);
+            }
+
+            if (favorito.tipo === "atividade") {
+                const atividade = atividades.find(item => Number(item.id_atividade) === id);
+                if (!atividade) return false;
+                return normalizarTexto(`${atividade.nome_atividade} ${atividade.descricao_atividade} ${atividade.categoria} ${atividade.local_atividade} ${atividade.nome_destino} ${atividade.cidade_destino} ${atividade.pais_destino}`).includes(busca);
+            }
+
             return false;
         });
 
@@ -262,19 +236,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 }
 
 
-    // ==========================================
-    // RENDERIZAR FAVORITOS
-    // ==========================================
+    // --- RENDERIZAR FAVORITOS ---
 
     function renderizarFavoritos(lista) {
 
     favoritosGrid.innerHTML = "";
 
-    // ==============================
-    // NENHUM RESULTADO
-    // ==============================
+    // --- NENHUM RESULTADO ---
 
     if (lista.length === 0) {
+        const mensagem = favoritosOriginais.length === 0
+            ? "Você ainda não tem favoritos. Explore destinos, ofertas, hotéis e atividades para salvar seus preferidos."
+            : "Tente ajustar a busca ou o filtro selecionado.";
 
         favoritosGrid.innerHTML = `
             <div class="sem-favoritos">
@@ -285,9 +258,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     Nenhum favorito encontrado
                 </h3>
 
-                <p>
-                    Tente pesquisar outro destino ou oferta.
-                </p>
+                    <p>${mensagem}</p>
 
             </div>
         `;
@@ -297,16 +268,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // ==============================
-    // PEGAR SOMENTE OS VISÍVEIS
-    // ==============================
+    // --- PEGAR SOMENTE OS VISÍVEIS ---
 
     const favoritosVisiveis =
         lista.slice(0, quantidadeVisivel);
 
-    // ==============================
-    // CRIAR CARDS
-    // ==============================
+    // --- CRIAR CARDS ---
 
     favoritosVisiveis.forEach(favorito => {
 
@@ -348,15 +315,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
+        if (favorito.tipo === "hotel") {
+            const hotel = hoteis.find(item => Number(item.id_hotel) === id);
+            if (hotel) criarCardHotel(hotel, favoritosGrid);
+        }
+
+        if (favorito.tipo === "atividade") {
+            const atividade = atividades.find(item => Number(item.id_atividade) === id);
+            if (atividade) criarCardAtividade(atividade, favoritosGrid);
+        }
+
     });
 
     atualizarBotaoVerMais();
 }
 
 
-    // ==========================================
-    // PESQUISA
-    // ==========================================
+    // --- PESQUISA ---
 
     if (campoBusca) {
 
@@ -371,9 +346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 }
 
 
-    // ==========================================
-    // BOTÕES DE FILTRO
-    // ==========================================
+    // --- BOTÕES DE FILTRO ---
 
     botoesFiltro.forEach(botao => {
 
@@ -413,9 +386,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
 
-    // ==========================================
-    // CARD DESTINO
-    // ==========================================
+    // --- CARD DESTINO ---
 
     function criarCardDestino(
         destino,
@@ -507,9 +478,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 
-    // ==========================================
-    // CARD OFERTA
-    // ==========================================
+    // --- CARD OFERTA ---
 
     function criarCardOferta(
         oferta,
@@ -667,10 +636,61 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     }
 
+    function caminhoImagem(caminho) {
+        const valor = String(caminho || "").trim();
+        if (!valor) return "";
+        if (/^(https?:|data:|\/)/i.test(valor)) return valor;
+        return `../${valor.replace(/^\.\//, "")}`;
+    }
 
-    // ==========================================
-    // REMOVER FAVORITO
-    // ==========================================
+    function criarCardHotel(hotel, container) {
+        const preco = Number(hotel.preco_diaria || 0);
+        const card = document.createElement("div");
+        card.className = "card-favorito";
+        const imagem = caminhoImagem(hotel.imagem_principal);
+        const localizacao = [hotel.cidade, hotel.pais].filter(Boolean).join(", ");
+        card.innerHTML = `
+            <button class="btn-favorito" type="button" data-tipo="hotel" data-id="${hotel.id_hotel}" aria-label="Remover dos favoritos">
+                <img src="/img/icones/favoritado.png" alt="Remover dos favoritos">
+            </button>
+            <div class="imagem-favorito">
+                ${imagem ? `<img src="${imagem}" alt="${hotel.nome_hotel || "Hotel"}" loading="lazy">` : `<div class="imagem-indisponivel">Imagem indisponível</div>`}
+            </div>
+            <div class="info-favorito">
+                <span class="tipo-favorito">Hotel</span>
+                <h3>${hotel.nome_hotel || "Hotel"}</h3>
+                <p>${localizacao || hotel.endereco || ""}</p>
+                <p>${hotel.descricao_hotel || hotel.quarto_hotel || "Confira os detalhes deste hotel."}</p>
+                <div class="preco-favorito"><strong>${preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong><span> por diária</span></div>
+            </div>`;
+        container.appendChild(card);
+    }
+
+    function criarCardAtividade(atividade, container) {
+        const preco = Number(atividade.preco || 0);
+        const card = document.createElement("div");
+        card.className = "card-favorito";
+        const imagem = caminhoImagem(atividade.imagem_principal);
+        const local = atividade.nome_destino || atividade.local_atividade || atividade.cidade_destino || "";
+        card.innerHTML = `
+            <button class="btn-favorito" type="button" data-tipo="atividade" data-id="${atividade.id_atividade}" aria-label="Remover dos favoritos">
+                <img src="/img/icones/favoritado.png" alt="Remover dos favoritos">
+            </button>
+            <div class="imagem-favorito">
+                ${imagem ? `<img src="${imagem}" alt="${atividade.nome_atividade || "Atividade"}" loading="lazy">` : `<div class="imagem-indisponivel">Imagem indisponível</div>`}
+            </div>
+            <div class="info-favorito">
+                <span class="tipo-favorito">${atividade.categoria || "Atividade"}</span>
+                <h3>${atividade.nome_atividade || "Atividade"}</h3>
+                <p>${local}${atividade.duracao ? ` • ${atividade.duracao}` : ""}</p>
+                <p>${atividade.descricao_atividade || "Confira os detalhes desta atividade."}</p>
+                <div class="preco-favorito"><strong>${preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong><span> por pessoa</span></div>
+            </div>`;
+        container.appendChild(card);
+    }
+
+
+    // --- REMOVER FAVORITO ---
 
     favoritosGrid.addEventListener(
         "click",
@@ -841,12 +861,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return texto.includes(busca);
             }
 
+            if (favorito.tipo === "hotel") {
+                const hotel = hoteis.find(item => Number(item.id_hotel) === id);
+                return Boolean(hotel) && normalizarTexto(`${hotel.nome_hotel} ${hotel.quarto_hotel} ${hotel.descricao_hotel} ${hotel.cidade} ${hotel.pais} ${hotel.endereco}`).includes(busca);
+            }
+
+            if (favorito.tipo === "atividade") {
+                const atividade = atividades.find(item => Number(item.id_atividade) === id);
+                return Boolean(atividade) && normalizarTexto(`${atividade.nome_atividade} ${atividade.descricao_atividade} ${atividade.categoria} ${atividade.local_atividade} ${atividade.nome_destino} ${atividade.cidade_destino} ${atividade.pais_destino}`).includes(busca);
+            }
+
             return false;
         });
 
-    // ==========================================
-    // MOSTRAR / ESCONDER BOTÃO
-    // ==========================================
+    // --- MOSTRAR / ESCONDER BOTÃO ---
 
     if (
         quantidadeVisivel <
@@ -930,6 +958,16 @@ if (btnVerMaisFavoritos) {
                             `);
 
                         return texto.includes(busca);
+                    }
+
+                    if (favorito.tipo === "hotel") {
+                        const hotel = hoteis.find(item => Number(item.id_hotel) === id);
+                        return Boolean(hotel) && normalizarTexto(`${hotel.nome_hotel} ${hotel.quarto_hotel} ${hotel.descricao_hotel} ${hotel.cidade} ${hotel.pais} ${hotel.endereco}`).includes(busca);
+                    }
+
+                    if (favorito.tipo === "atividade") {
+                        const atividade = atividades.find(item => Number(item.id_atividade) === id);
+                        return Boolean(atividade) && normalizarTexto(`${atividade.nome_atividade} ${atividade.descricao_atividade} ${atividade.categoria} ${atividade.local_atividade} ${atividade.nome_destino} ${atividade.cidade_destino} ${atividade.pais_destino}`).includes(busca);
                     }
 
                     return false;

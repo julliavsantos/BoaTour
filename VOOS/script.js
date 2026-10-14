@@ -1,36 +1,38 @@
-// ==========================================
-// FOTO DE PERFIL
-// ==========================================
-
-const fotoPerfil = document.querySelector(".foto-viajante");
-
-if (fotoPerfil) {
-
-    fotoPerfil.addEventListener("click", () => {
-
-        window.location.href = "../PERFIL/index.html";
-
-    });
-
-}
-
-
-// ==========================================
-// VARIÁVEIS GERAIS
-// ==========================================
-
 let aeroportos = [];
 
 let todosVoos = [];
 
-let quantidadeVisivel = 8;
+let quantidadeVisivel = 6;
 
 let filtroPrecoAtual = "todos";
+let requisicaoVoosAtual = 0;
+
+function normalizarBuscaVoo(valor) {
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR")
+        .trim();
+}
+
+function resolverLocalAeroporto(valor) {
+    const busca = normalizarBuscaVoo(valor);
+    if (!busca) return "";
+
+    const aeroporto = aeroportos.find(item => {
+        const codigo = item.codigo_iata || item.iata;
+        return [item.cidade, item.nome, codigo].some(
+            campo => normalizarBuscaVoo(campo) === busca
+        );
+    });
+
+    return aeroporto
+        ? String(aeroporto.cidade || aeroporto.nome || valor).trim()
+        : valor.trim();
+}
 
 
-// ==========================================
-// ELEMENTOS DA PÁGINA
-// ==========================================
+// --- ELEMENTOS DA PÁGINA ---
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".btn-buscar");
 
     const btnVerMais =
-        document.querySelector(".btn-ofertas");
+        document.querySelector(".btn-ver-mais");
 
     const campoPartida =
         document.getElementById("partida");
@@ -59,25 +61,36 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("passageiros");
 
 
-    // ======================================
-    // SE NÃO ESTIVER NA PÁGINA DE VOOS
-    // ======================================
+    // --- SE NÃO ESTIVER NA PÁGINA DE VOOS ---
 
     if (!listaVoos) {
         return;
     }
 
+    const parametrosIniciais = new URLSearchParams(window.location.search);
+    const origemInicial = parametrosIniciais.get("origem");
+    const destinoInicial = parametrosIniciais.get("destino");
+    const dataInicial = parametrosIniciais.get("data");
+    if (origemInicial && campoPartida) campoPartida.value = origemInicial;
+    if (destinoInicial && campoDestino) campoDestino.value = destinoInicial;
+    if (dataInicial && campoDataPartida) campoDataPartida.value = dataInicial;
 
-    // ======================================
-    // BUSCAR VOOS INICIALMENTE
-    // ======================================
+    let temporizadorBuscaVoos;
+    const agendarBuscaVoos = () => {
+        clearTimeout(temporizadorBuscaVoos);
+        temporizadorBuscaVoos = setTimeout(() => {
+            quantidadeVisivel = 6;
+            carregarVoos();
+        }, 300);
+    };
+
+
+    // --- BUSCAR VOOS INICIALMENTE ---
 
     carregarVoos();
 
 
-    // ======================================
-    // BOTÃO BUSCAR
-    // ======================================
+    // --- BOTÃO BUSCAR ---
 
     if (btnBuscar) {
 
@@ -86,9 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
             function (evento) {
 
                 evento.preventDefault();
-
-                quantidadeVisivel = 8;
-
+                clearTimeout(temporizadorBuscaVoos);
+                quantidadeVisivel = 6;
                 carregarVoos();
 
             }
@@ -97,9 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ======================================
-    // BOTÃO VER MAIS
-    // ======================================
+    // --- BOTÃO VER MAIS ---
 
     if (btnVerMais) {
 
@@ -107,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             function () {
 
-                quantidadeVisivel += 8;
+                quantidadeVisivel += 6;
 
                 renderizarVoos();
 
@@ -117,9 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ======================================
-    // FILTROS DE PREÇO
-    // ======================================
+    // --- FILTROS DE PREÇO ---
 
     
 const botoesFiltro = document.querySelectorAll(".filtro");
@@ -128,78 +136,45 @@ botoesFiltro.forEach(botao => {
     botao.addEventListener("click", function () {
         botoesFiltro.forEach(btn => {
             btn.classList.remove("ativo");
+            btn.setAttribute("aria-pressed", "false");
         });
 
         botao.classList.add("ativo");
+        botao.setAttribute("aria-pressed", "true");
+        filtroPrecoAtual = botao.dataset.preco || "todos";
 
-        // Lê o atributo data-filtro do HTML
-        filtroPrecoAtual = botao.dataset.filtro || "todos";
-
-        quantidadeVisivel = 8;
-
-        aplicarFiltrosLocais();
+        quantidadeVisivel = 6;
+        renderizarVoos();
     });
 });
 
 
 
-    // ======================================
-    // SELECIONAR DESTINO/PARTIDA
-    // ======================================
+    // --- SELECIONAR DESTINO/PARTIDA ---
 
-    if (campoPartida) {
+    [campoPartida, campoDestino, campoDataPartida].forEach(campo => {
+        campo?.addEventListener("input", agendarBuscaVoos);
+        campo?.addEventListener("change", agendarBuscaVoos);
+    });
 
-        campoPartida.addEventListener(
-            "change",
-            () => {
-
-                quantidadeVisivel = 8;
-
-            }
-        );
-
-    }
-
-
-    if (campoDestino) {
-
-        campoDestino.addEventListener(
-            "change",
-            () => {
-
-                quantidadeVisivel = 8;
-
-            }
-        );
-
-    }
-
-
-    // ======================================
-    // DATA
-    // ======================================
-
-    if (campoDataPartida) {
-
-        campoDataPartida.addEventListener(
-            "change",
-            () => {
-
-                quantidadeVisivel = 8;
-
-            }
-        );
-
-    }
+    [campoPartida, campoDestino, campoDataPartida].forEach(campo => {
+        campo?.addEventListener("keydown", evento => {
+            if (evento.key !== "Enter") return;
+            evento.preventDefault();
+            clearTimeout(temporizadorBuscaVoos);
+            quantidadeVisivel = 6;
+            carregarVoos();
+        });
+    });
 
 });
 
 
-// ==========================================
-// CARREGAR VOOS
-// ==========================================
+// --- CARREGAR VOOS ---
 
 async function carregarVoos() {
+
+    const requisicaoAtual = ++requisicaoVoosAtual;
 
     const listaVoos =
         document.getElementById("listaVoos");
@@ -212,31 +187,27 @@ async function carregarVoos() {
 
     try {
 
-        // ==================================
-        // PEGAR VALORES DOS INPUTS
-        // ==================================
+        // --- PEGAR VALORES DOS INPUTS ---
 
-        const partida =
-            document.getElementById("partida")?.value.trim() || "";
+        const partida = resolverLocalAeroporto(
+            document.getElementById("partida")?.value || ""
+        );
 
-        const destino =
-            document.getElementById("destino")?.value.trim() || "";
+        const destino = resolverLocalAeroporto(
+            document.getElementById("destino")?.value || ""
+        );
 
         const dataTexto =
             document.getElementById("dataPartida")?.value.trim() || "";
 
 
-        // ==================================
-        // CONVERTER DATA
-        // ==================================
+        // --- CONVERTER DATA ---
 
         const data =
             converterDataParaBanco(dataTexto);
 
 
-        // ==================================
-        // MONTAR PARÂMETROS
-        // ==================================
+        // --- MONTAR PARÂMETROS ---
 
         const parametros =
             new URLSearchParams();
@@ -272,53 +243,7 @@ async function carregarVoos() {
         }
 
 
-        // ==================================
-        // FILTRO DE PREÇO
-        // ==================================
-
-        if (filtroPrecoAtual === "500") {
-
-            parametros.append(
-                "precoMax",
-                "500"
-            );
-
-        }
-
-
-        else if (filtroPrecoAtual === "1000") {
-
-            parametros.append(
-                "precoMax",
-                "1000"
-            );
-
-        }
-
-
-        else if (filtroPrecoAtual === "3000") {
-
-            parametros.append(
-                "precoMax",
-                "3000"
-            );
-
-        }
-
-
-        else if (filtroPrecoAtual === "3000+") {
-
-            parametros.append(
-                "precoMin",
-                "3000.01"
-            );
-
-        }
-
-
-        // ==================================
-        // BUSCAR NO SERVIDOR
-        // ==================================
+        // --- BUSCAR NO SERVIDOR ---
 
         let url =
             "http://localhost:3000/voos";
@@ -353,9 +278,11 @@ async function carregarVoos() {
 
         }
 
+        const voosRecebidos = await resposta.json();
+        if (requisicaoAtual !== requisicaoVoosAtual) return;
 
-        todosVoos =
-            await resposta.json();
+        todosVoos = Array.isArray(voosRecebidos) ? voosRecebidos : [];
+        todosVoos.sort((vooA, vooB) => Number(vooA.preco) - Number(vooB.preco));
 
 
         console.log(
@@ -364,13 +291,15 @@ async function carregarVoos() {
         );
 
 
-        quantidadeVisivel = 8;
+        quantidadeVisivel = 6;
 
 
         renderizarVoos();
 
 
     } catch (erro) {
+
+        if (requisicaoAtual !== requisicaoVoosAtual) return;
 
         console.error(
             "Erro ao carregar voos:",
@@ -400,9 +329,7 @@ async function carregarVoos() {
 }
 
 
-// ==========================================
-// CONVERTER DATA PARA O BANCO
-// ==========================================
+// --- CONVERTER DATA PARA O BANCO ---
 
 function converterDataParaBanco(texto) {
 
@@ -462,9 +389,7 @@ function converterDataParaBanco(texto) {
 }
 
 
-// ==========================================
-// FORMATAR DATA PARA EXIBIÇÃO
-// ==========================================
+// --- FORMATAR DATA PARA EXIBIÇÃO ---
 
 function formatarDataVoo(data) {
     if (!data) {
@@ -487,9 +412,7 @@ function formatarDataVoo(data) {
 }
 
 
-// ==========================================
-// FORMATAR PREÇO
-// ==========================================
+// --- FORMATAR PREÇO ---
 
 function formatarPreco(preco) {
 
@@ -505,9 +428,7 @@ function formatarPreco(preco) {
 }
 
 
-// ==========================================
-// TEXTO DAS ESCALAS
-// ==========================================
+// --- TEXTO DAS ESCALAS ---
 
 function formatarEscalas(escalas) {
 
@@ -534,9 +455,7 @@ function formatarEscalas(escalas) {
 }
 
 
-// ==========================================
-// RENDERIZAR VOOS
-// ==========================================
+// --- RENDERIZAR VOOS ---
 
 function renderizarVoos() {
 
@@ -552,14 +471,11 @@ function renderizarVoos() {
     listaVoos.innerHTML = "";
 
 
-    // ======================================
-    // NENHUM RESULTADO
-    // ======================================
+    // --- NENHUM RESULTADO ---
 
-    if (
-        !Array.isArray(todosVoos) ||
-        todosVoos.length === 0
-    ) {
+    const voosFiltrados = obterVoosFiltrados();
+
+    if (voosFiltrados.length === 0) {
 
         listaVoos.innerHTML = `
             <div class="sem-voos">
@@ -584,20 +500,16 @@ function renderizarVoos() {
     }
 
 
-    // ======================================
-    // VOOS VISÍVEIS
-    // ======================================
+    // --- VOOS VISÍVEIS ---
 
     const voosVisiveis =
-        todosVoos.slice(
+        voosFiltrados.slice(
             0,
             quantidadeVisivel
         );
 
 
-    // ======================================
-    // CRIAR CARDS
-    // ======================================
+    // --- CRIAR CARDS ---
 
     voosVisiveis.forEach(voo => {
 
@@ -609,9 +521,7 @@ function renderizarVoos() {
         card.classList.add("oferta");
 
 
-        // ==================================
-        // ORIGEM / DESTINO
-        // ==================================
+        // --- ORIGEM / DESTINO ---
 
         const origem =
             voo.origem || "Origem";
@@ -621,9 +531,7 @@ function renderizarVoos() {
             voo.destino || "Destino";
 
 
-        // ==================================
-        // DATA
-        // ==================================
+        // --- DATA ---
 
         const data =
             formatarDataVoo(
@@ -631,9 +539,7 @@ function renderizarVoos() {
             );
 
 
-        // ==================================
-        // ESCALAS
-        // ==================================
+        // --- ESCALAS ---
 
         const escalas =
             formatarEscalas(
@@ -641,9 +547,7 @@ function renderizarVoos() {
             );
 
 
-        // ==================================
-        // PREÇO
-        // ==================================
+        // --- PREÇO ---
 
         const preco =
             formatarPreco(
@@ -651,68 +555,49 @@ function renderizarVoos() {
             );
 
 
-        // ==================================
-        // COMPANHIA
-        // ==================================
+        // --- COMPANHIA ---
 
         const companhia =
             voo.companhia_aerea ||
             "Companhia aérea";
 
+        const imagem = String(
+            voo.imagem || voo.foto || voo.logo_companhia || ""
+        ).trim();
+        const imagemUrl = imagem
+            ? (/^(https?:|data:|\/)/i.test(imagem)
+                ? imagem
+                : `../${imagem.replace(/^\.\//, "")}`)
+            : "";
 
-        // ==================================
-        // CARD
-        // ==================================
+
+        // --- CARD ---
 
         card.innerHTML = `
+            ${imagemUrl ? `
+                <div class="imagem-voo">
+                    <img src="${imagemUrl}" alt="${companhia}" loading="lazy">
+                </div>
+            ` : ""}
 
-            <div>
-
-                <strong>
-                    ${origem} → ${destino}
-                </strong>
-
-                <p>
-                    ${data} • ${escalas}
-                </p>
-
-                <small>
-                    ${companhia}
-                </small>
-
+            <div class="voo-info">
+                <span class="categoria-voo">Voo · ${companhia}</span>
+                <strong class="rota-voo">${origem} → ${destino}</strong>
+                <p>${data} <span aria-hidden="true">•</span> ${escalas}</p>
+                <small>${companhia}</small>
             </div>
-
 
             <div class="preco">
-
-                ${
-                    voo.preco_anterior
-                        ? `
-                            <span class="preco-anterior">
-                                R$ ${formatarPreco(
-                                    voo.preco_anterior
-                                )}
-                            </span>
-                        `
-                        : ""
-                }
-
-                <strong>
-                    R$ ${preco}
-                </strong>
-
-                <span>
-                    A partir de
-                </span>
-
+                ${voo.preco_anterior ? `
+                    <span class="preco-anterior">R$ ${formatarPreco(voo.preco_anterior)}</span>
+                ` : ""}
+                <strong>R$ ${preco}</strong>
+                <span class="preco-legenda">A partir de</span>
             </div>
-
         `;
 
 
-        // ==================================
-        // DADOS DO CARD
-        // ==================================
+        // --- DADOS DO CARD ---
 
         card.dataset.id =
             voo.id_voo;
@@ -733,32 +618,26 @@ function renderizarVoos() {
             voo.companhia_aerea || "";
 
 
-        // ==================================
-        // ADICIONAR NA LISTA
-        // ==================================
+        // --- ADICIONAR NA LISTA ---
 
         listaVoos.appendChild(card);
 
     });
 
 
-    // ======================================
-    // ATUALIZAR BOTÃO
-    // ======================================
+    // --- ATUALIZAR BOTÃO ---
 
     atualizarBotaoVerMais();
 
 }
 
 
-// ==========================================
-// BOTÃO VER MAIS
-// ==========================================
+// --- BOTÃO VER MAIS ---
 
 function atualizarBotaoVerMais() {
 
     const btnVerMais =
-        document.querySelector(".btn-ofertas");
+        document.querySelector(".btn-ver-mais");
 
 
     if (!btnVerMais) {
@@ -768,7 +647,7 @@ function atualizarBotaoVerMais() {
 
     if (
         quantidadeVisivel <
-        todosVoos.length
+        obterVoosFiltrados().length
     ) {
 
         btnVerMais.style.display =
@@ -784,9 +663,7 @@ function atualizarBotaoVerMais() {
 }
 
 
-// ==========================================
-// AEROPORTOS
-// ==========================================
+// --- AEROPORTOS ---
 
 async function carregarAeroportos() {
 
@@ -807,8 +684,8 @@ async function carregarAeroportos() {
         }
 
 
-        aeroportos =
-            await resposta.json();
+        const dados = await resposta.json();
+        aeroportos = Array.isArray(dados) ? dados : [];
 
 
         console.log(
@@ -844,9 +721,7 @@ async function carregarAeroportos() {
 carregarAeroportos();
 
 
-// ==========================================
-// AUTOCOMPLETE
-// ==========================================
+// --- AUTOCOMPLETE ---
 
 function configurarAutocomplete(
     input,
@@ -862,10 +737,7 @@ function configurarAutocomplete(
         "input",
         function () {
 
-            const texto =
-                input.value
-                    .toLowerCase()
-                    .trim();
+            const texto = normalizarBuscaVoo(input.value);
 
 
             lista.innerHTML = "";
@@ -880,28 +752,19 @@ function configurarAutocomplete(
                 aeroportos.filter(
                     function (aeroporto) {
 
-                        const nome =
-                            String(
-                                aeroporto.nome || ""
-                            ).toLowerCase();
-
-
-                        const cidade =
-                            String(
-                                aeroporto.cidade || ""
-                            ).toLowerCase();
-
-
-                        const iata =
-                            String(
-                                aeroporto.iata || ""
-                            ).toLowerCase();
+                        const nome = normalizarBuscaVoo(aeroporto.nome);
+                        const cidade = normalizarBuscaVoo(aeroporto.cidade);
+                        const pais = normalizarBuscaVoo(aeroporto.pais);
+                        const iata = String(
+                            aeroporto.codigo_iata || aeroporto.iata || ""
+                        );
 
 
                         return (
                             nome.includes(texto) ||
                             cidade.includes(texto) ||
-                            iata.includes(texto)
+                            pais.includes(texto) ||
+                            normalizarBuscaVoo(iata).includes(texto)
                         );
 
                     }
@@ -923,17 +786,24 @@ function configurarAutocomplete(
                         );
 
 
-                        opcao.textContent =
-                            `${aeroporto.nome} (${aeroporto.iata})`;
+                        const codigoIata = String(
+                            aeroporto.codigo_iata || aeroporto.iata || ""
+                        ).trim();
+                        const cidade = String(aeroporto.cidade || "").trim();
+                        const nome = String(aeroporto.nome || cidade || "Aeroporto").trim();
+                        const pais = String(aeroporto.pais || "").trim();
+                        const local = [cidade, pais].filter(Boolean).join(", ");
+                        opcao.textContent = `${nome}${local && local !== nome ? ` — ${local}` : ""}${codigoIata ? ` (${codigoIata})` : ""}`;
 
 
                         opcao.addEventListener(
                             "click",
                             function () {
 
-                                input.value =
-                                    aeroporto.nome +
-                                    ` (${aeroporto.iata})`;
+                                // Os registros de voos usam cidade/origem/destino;
+                                // selecionar a cidade mantém a busca compatível com eles.
+                                input.value = cidade || nome;
+                                input.dispatchEvent(new Event("change", { bubbles: true }));
 
 
                                 lista.innerHTML = "";
@@ -955,9 +825,7 @@ function configurarAutocomplete(
 }
 
 
-// ==========================================
-// FECHAR SUGESTÕES AO CLICAR FORA
-// ==========================================
+// --- FECHAR SUGESTÕES AO CLICAR FORA ---
 
 document.addEventListener(
     "click",
@@ -1003,9 +871,7 @@ document.addEventListener(
 );
 
 
-// ==========================================
-// CALENDÁRIO PERSONALIZADO
-// ==========================================
+// --- CALENDÁRIO PERSONALIZADO ---
 
 // Data de hoje
 
@@ -1073,9 +939,7 @@ const meses = [
 ];
 
 
-// ==========================================
-// FORMATAR DATA
-// ==========================================
+// --- FORMATAR DATA ---
 
 function formatarData(data) {
 
@@ -1100,9 +964,7 @@ function formatarData(data) {
 }
 
 
-// ==========================================
-// CONVERTER DATA
-// ==========================================
+// --- CONVERTER DATA ---
 
 function converterData(texto) {
 
@@ -1166,9 +1028,7 @@ function converterData(texto) {
 }
 
 
-// ==========================================
-// MESMA DATA
-// ==========================================
+// --- MESMA DATA ---
 
 function mesmaData(
     data1,
@@ -1191,9 +1051,7 @@ function mesmaData(
 }
 
 
-// ==========================================
-// DATA ANTES
-// ==========================================
+// --- DATA ANTES ---
 
 function antesDe(
     data1,
@@ -1208,9 +1066,7 @@ function antesDe(
 }
 
 
-// ==========================================
-// CRIAR CALENDÁRIO
-// ==========================================
+// --- CRIAR CALENDÁRIO ---
 
 function criarCalendario(tipo) {
 
@@ -1262,9 +1118,7 @@ function criarCalendario(tipo) {
     calendario.innerHTML = "";
 
 
-    // ======================================
-    // CABEÇALHO
-    // ======================================
+    // --- CABEÇALHO ---
 
     const cabecalho =
         document.createElement("div");
@@ -1297,9 +1151,7 @@ function criarCalendario(tipo) {
     );
 
 
-    // ======================================
-    // BOTÃO ANTERIOR
-    // ======================================
+    // --- BOTÃO ANTERIOR ---
 
     const anterior =
         document.createElement("button");
@@ -1338,9 +1190,7 @@ function criarCalendario(tipo) {
     );
 
 
-    // ======================================
-    // BOTÃO PRÓXIMO
-    // ======================================
+    // --- BOTÃO PRÓXIMO ---
 
     const proximo =
         document.createElement("button");
@@ -1404,9 +1254,7 @@ function criarCalendario(tipo) {
     );
 
 
-    // ======================================
-    // DIAS DA SEMANA
-    // ======================================
+    // --- DIAS DA SEMANA ---
 
     const semana =
         document.createElement("div");
@@ -1456,9 +1304,7 @@ function criarCalendario(tipo) {
     );
 
 
-    // ======================================
-    // DIAS
-    // ======================================
+    // --- DIAS ---
 
     const dias =
         document.createElement("div");
@@ -1493,9 +1339,7 @@ function criarCalendario(tipo) {
         primeiroDia.getDay();
 
 
-    // ======================================
-    // DIAS DO MÊS ANTERIOR
-    // ======================================
+    // --- DIAS DO MÊS ANTERIOR ---
 
     const mesAnteriorUltimoDia =
         new Date(
@@ -1544,9 +1388,7 @@ function criarCalendario(tipo) {
     }
 
 
-    // ======================================
-    // DIAS DO MÊS
-    // ======================================
+    // --- DIAS DO MÊS ---
 
     for (
         let dia = 1;
@@ -1620,9 +1462,7 @@ function criarCalendario(tipo) {
         }
 
 
-        // ==================================
-        // RETORNO NÃO PODE SER ANTES
-        // ==================================
+        // --- RETORNO NÃO PODE SER ANTES ---
 
         if (
             tipo === "retorno"
@@ -1655,9 +1495,7 @@ function criarCalendario(tipo) {
         }
 
 
-        // ==================================
-        // SELECIONAR DATA
-        // ==================================
+        // --- SELECIONAR DATA ---
 
         botao.addEventListener(
             "click",
@@ -1716,9 +1554,7 @@ function criarCalendario(tipo) {
     }
 
 
-    // ======================================
-    // DIAS DO PRÓXIMO MÊS
-    // ======================================
+    // --- DIAS DO PRÓXIMO MÊS ---
 
     const totalCelulas =
         dias.children.length;
@@ -1770,9 +1606,7 @@ function criarCalendario(tipo) {
     );
 
 
-    // ======================================
-    // RODAPÉ
-    // ======================================
+    // --- RODAPÉ ---
 
     const rodape =
         document.createElement(
@@ -1864,7 +1698,8 @@ function criarCalendario(tipo) {
                     )
                 ) {
 
-                    alert(
+                    window.boatourFieldError(
+                        input,
                         "A data de retorno não pode ser anterior à data de partida."
                     );
 
@@ -1916,9 +1751,7 @@ function criarCalendario(tipo) {
 }
 
 
-// ==========================================
-// ABRIR CALENDÁRIO DE PARTIDA
-// ==========================================
+// --- ABRIR CALENDÁRIO DE PARTIDA ---
 
 if (abrirPartida) {
 
@@ -1988,9 +1821,7 @@ if (abrirPartida) {
 }
 
 
-// ==========================================
-// ABRIR CALENDÁRIO DE RETORNO
-// ==========================================
+// --- ABRIR CALENDÁRIO DE RETORNO ---
 
 if (abrirRetorno) {
 
@@ -2076,9 +1907,7 @@ if (abrirRetorno) {
 }
 
 
-// ==========================================
-// DIGITAÇÃO DAS DATAS
-// ==========================================
+// --- DIGITAÇÃO DAS DATAS ---
 
 function configurarDigitacao(
     input,
@@ -2180,13 +2009,7 @@ function configurarDigitacao(
 
             if (!data) {
 
-                alert(
-                    "Digite uma data válida."
-                );
-
-
-                input.value =
-                    "";
+                window.boatourFieldError(input, "Digite uma data válida.");
 
 
                 return;
@@ -2214,13 +2037,10 @@ function configurarDigitacao(
                     )
                 ) {
 
-                    alert(
+                    window.boatourFieldError(
+                        input,
                         "A data de retorno não pode ser anterior à data de partida."
                     );
-
-
-                    input.value =
-                        "";
 
 
                     return;
@@ -2298,9 +2118,7 @@ if (dataRetorno) {
 }
 
 
-// ==========================================
-// CLIQUE NO INPUT DE PARTIDA
-// ==========================================
+// --- CLIQUE NO INPUT DE PARTIDA ---
 
 if (dataPartida) {
 
@@ -2349,9 +2167,7 @@ if (dataPartida) {
 }
 
 
-// ==========================================
-// CLIQUE NO INPUT DE RETORNO
-// ==========================================
+// --- CLIQUE NO INPUT DE RETORNO ---
 
 if (dataRetorno) {
 
@@ -2400,9 +2216,7 @@ if (dataRetorno) {
 }
 
 
-// ==========================================
-// CLICAR FORA DO CALENDÁRIO
-// ==========================================
+// --- CLICAR FORA DO CALENDÁRIO ---
 
 document.addEventListener(
     "click",
@@ -2461,9 +2275,7 @@ document.addEventListener(
 );
 
 
-// ==========================================
-// IDA / IDA E VOLTA
-// ==========================================
+// --- IDA / IDA E VOLTA ---
 
 const soIda =
     document.getElementById("SoIda");
@@ -2597,9 +2409,7 @@ if (
 }
 
 
-// ==========================================
-// PASSAGEIROS
-// ==========================================
+// --- PASSAGEIROS ---
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -2673,9 +2483,7 @@ document.addEventListener(
         );
 
 
-        // ==================================
-        // ABRIR MENU
-        // ==================================
+        // --- ABRIR MENU ---
 
         inputPassageiros.addEventListener(
             "click",
@@ -2702,9 +2510,7 @@ document.addEventListener(
         );
 
 
-        // ==================================
-        // MAIS
-        // ==================================
+        // --- MAIS ---
 
         document
             .querySelectorAll(".mais")
@@ -2749,9 +2555,7 @@ document.addEventListener(
             );
 
 
-        // ==================================
-        // MENOS
-        // ==================================
+        // --- MENOS ---
 
         document
             .querySelectorAll(".menos")
@@ -2798,9 +2602,7 @@ document.addEventListener(
             );
 
 
-        // ==================================
-        // ATUALIZAR CONTADORES
-        // ==================================
+        // --- ATUALIZAR CONTADORES ---
 
         function atualizarContadores() {
 
@@ -2818,9 +2620,7 @@ document.addEventListener(
         }
 
 
-        // ==================================
-        // CLASSE
-        // ==================================
+        // --- CLASSE ---
 
         document
             .querySelectorAll(
@@ -2866,9 +2666,7 @@ document.addEventListener(
             );
 
 
-        // ==================================
-        // CONFIRMAR
-        // ==================================
+        // --- CONFIRMAR ---
 
         confirmar.addEventListener(
             "click",
@@ -2907,9 +2705,7 @@ document.addEventListener(
         );
 
 
-        // ==================================
-        // CLICAR FORA
-        // ==================================
+        // --- CLICAR FORA ---
 
         document.addEventListener(
             "click",
@@ -2933,9 +2729,7 @@ document.addEventListener(
         );
 
 
-        // ==================================
-        // SCROLL
-        // ==================================
+        // --- SCROLL ---
 
         window.addEventListener(
             "scroll",
@@ -2961,44 +2755,17 @@ document.addEventListener(
 );
 
 
-function aplicarFiltrosLocais() {
-    const listaVoos = document.getElementById("listaVoos");
+function obterVoosFiltrados() {
+    if (!Array.isArray(todosVoos)) return [];
+    if (filtroPrecoAtual === "todos") return todosVoos;
 
-    if (!listaVoos) return;
-
-    let voosFiltrados = todosVoos;
-
-    const limite = Number(filtroPrecoAtual);
-
-    if (filtroPrecoAtual !== "todos" && Number.isFinite(limite)) {
-        if (limite === 10000) {
-            voosFiltrados = todosVoos.filter(voo =>
-                Number(voo.preco) >= 10000
-            );
-        } else {
-            voosFiltrados = todosVoos.filter(voo =>
-                Number(voo.preco) <= limite
-            );
-        }
-    }
-
-    renderizarListaFiltrada(voosFiltrados);
-}
-
-function renderizarListaFiltrada(voos) {
-    const lista = document.getElementById("listaVoos");
-
-    if (!lista) return;
-
-    const voosAnteriores = todosVoos;
-    todosVoos = voos;
-
-    quantidadeVisivel = Math.min(
-        quantidadeVisivel,
-        todosVoos.length
-    );
-
-    renderizarVoos();
-
-    todosVoos = voosAnteriores;
+    return todosVoos.filter(voo => {
+        const preco = Number(voo.preco);
+        if (!Number.isFinite(preco)) return false;
+        if (filtroPrecoAtual === "500") return preco <= 500;
+        if (filtroPrecoAtual === "1000") return preco <= 1000;
+        if (filtroPrecoAtual === "3000") return preco <= 3000;
+        if (filtroPrecoAtual === "3000+") return preco > 3000;
+        return true;
+    });
 }

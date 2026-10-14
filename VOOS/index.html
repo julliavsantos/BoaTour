@@ -6,31 +6,33 @@
     <title>Voos - BoaTour</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="../css/menurodape.css">
+    <link rel="stylesheet" href="../css/modal-theme.css">
+    <link rel="stylesheet" href="../css/assistente.css">
 </head>
 <body>
 <div class="nav">
 
     <div class="logo">
-        <img id="logoBoatour" src="img/logo/logo.png" alt="BOATOUR">
+        <img id="logoBoatour" src="../img/logo/logo.png" alt="BOATOUR">
     </div>
 
     <ul class="menu">
-        <li><a href="#inicio">Início</a></li>
-        <li><a href="DESTINOS/index.html">Destinos</a></li>
-        <li><a href="VOOS/index.html">Voos</a></li>
-        <li>Hotéis</li>
-        <li>Atividades</li>
-        <li><a href="#ofertas">Ofertas</a></li>
-        <li><a href="TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
-        <li><a href="#sobre">Sobre Nós</a></li>
+        <li><a href="../index.html#inicio">Início</a></li>
+        <li><a href="../DESTINOS/index.html">Destinos</a></li>
+        <li><a href="index.html">Voos</a></li>
+        <li><a href="../HOTEIS/index.html">Hotéis</a></li>
+        <li><a href="../ATIVIDADES/index.html">Atividades</a></li>
+        <li><a href="../OFERTAS/index.html">Ofertas</a></li>
+        <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="../index.html#sobre">Sobre Nós</a></li>
 
-        <span><li id="btnEntrar">Entrar</li></span>
+        <li><button type="button" id="btnEntrar">Entrar</button></li>
     </ul>
 
     <div class="perfil-area">
 
         <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
-            <img class="foto-perfil-header" src="img/icones/perfil.png" alt="Perfil">
+            <img class="foto-perfil-header" src="../img/icones/perfil.png" alt="Perfil">
         </button>
 
         
@@ -42,7 +44,7 @@
             <div class="perfil-topo">
 
     <div class="avatar">
-        <img id="fotoMenuPerfil" class="foto-viajante" src="img/icones/perfil.png" alt="Perfil">
+        <img id="fotoMenuPerfil" class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
     </div>
 
     <div>
@@ -63,28 +65,28 @@
             </div>
 
             <div class="perfil-links">
-                <a href="PERFIL/index.html#minhasviagens">
+                <a href="../PERFIL/index.html#viagens">
                     <span>✈</span>
                     <div>
                         <strong>Minhas viagens</strong>
                         <small>Veja suas reservas</small>
                     </div>
                 </a>
-                <a href="PERFIL/index.html#favoritos">
+                <a href="../PERFIL/index.html#favoritos">
                     <span>❤︎</span>
                     <div>
                         <strong>Favoritos</strong>
                         <small>Destinos salvos</small>
                     </div>
                 </a>
-                <a href="#">
+                <a href="../CONFIGURAÇÕES/index.html">
                     <span>⚙</span>
                     <div>
                         <strong>Configurações</strong>
                         <small>Preferências da conta</small>
                     </div>
                 </a>
-                <a href="#">
+                <a href="http://localhost:3001/">
                     <span>?</span>
                     <div>
                         <strong>Central de ajuda</strong>
@@ -99,11 +101,8 @@
         </div>
 
 
-     <div class="folder">
-        <img src="../img/propagandas/propaganda01.png" alt="">
-                
-
-            </div>
+<div class="pagina-voos-layout">
+    <main class="conteudo-voos">
  <div class="voos-container">
 
     <h1>Encontre os melhores<br>voos para seu destino</h1>
@@ -285,14 +284,12 @@
 
         </div>
     </div>
-            <a href="voos.html">
-        <img class="busca" src="../img/icones/busca.png" alt="Buscar">
-    </a>
+            <button type="button" class="btn-buscar" aria-label="Buscar voos">
+                <img class="busca" src="../img/icones/busca.png" alt="">
+            </button>
         </div>
         </div>
 
-
-</div>
 
 <div class="filtros">
 
@@ -324,10 +321,16 @@
 
     <div id="listaVoos"></div>
 
-    <button class="btn-ofertas">
-        Ver mais ofertas
+    <button type="button" class="btn-ver-mais">
+        Ver mais
     </button>
 
+</div>
+
+    </main>
+    <aside class="folder" aria-label="Publicidade">
+        <img src="../img/propagandas/propaganda01.png" alt="">
+    </aside>
 </div>
 
 <footer class="footer">
@@ -343,19 +346,19 @@
         <div class="footer-conteudo">
     
             <div class="footer-logo">
-                <img src="img/logo/logobranca.png" alt="">
+                <img src="../img/logo/logobranca.png" alt="">
                 <p>Sua jornada, nosso prazer!</p>
     
                 <div class="redes">
-                    <a href="#"><img src="img/icones/face_icon.svg" alt=""></a>
-                    <a href="#"><img src="img/icones/insta_icon.svg" alt=""></a>
-                    <a href="#"><img src="img/icones/tiktok_icon.svg" alt=""></a>
+                    <a href="#"><img src="../img/icones/face_icon.svg" alt=""></a>
+                    <a href="#"><img src="../img/icones/insta_icon.svg" alt=""></a>
+                    <a href="#"><img src="../img/icones/tiktok_icon.svg" alt=""></a>
                 </div>
             </div>
     
             <div class="footer-links">
                 <h3>Institucional</h3>
-                <a href="#sobre">Sobre nós</a>
+                <a href="../index.html#sobre">Sobre nós</a>
                 <a href="#">Trabalhe conosco</a>
                 <a href="#">Política de privacidade</a>
                 <a href="#">Termos de uso</a>
@@ -399,7 +402,7 @@
             <input type="password" id="senhaLogin" placeholder="Senha">
             <button class="btnLogin" id="btnLogin">Entrar</button>
             <p><a href="#">Esqueci minha senha</a></p>
-            <p>Ainda não possui uma conta? <a href="CADASTRO/index.html">Criar conta</a></p>
+            <p>Ainda não possui uma conta? <a href="../CADASTRO/index.html">Criar conta</a></p>
             </div>
     </div>
 
@@ -411,5 +414,8 @@
 
    
 
+    <script src="../js/assistente-flutuante.js"></script>
+
+    <script src="../js/feedback.js"></script>
 </body>
 </html>

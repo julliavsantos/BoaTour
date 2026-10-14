@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/menurodape.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/modal-theme.css">
+    <link rel="stylesheet" href="../css/assistente.css">
+    <title>Atividades - BoaTour</title>
+</head>
+<body data-catalogo="atividades">
+    <div class="nav">
+
+    <div class="logo">
+        <img id="logoBoatour" src="../img/logo/logo.png" alt="BOATOUR">
+    </div>
+
+    <ul class="menu">
+        <li><a href="../index.html#inicio">Início</a></li>
+        <li><a href="../DESTINOS/index.html">Destinos</a></li>
+        <li><a href="../VOOS/index.html">Voos</a></li>
+        <li><a href="../HOTEIS/index.html">Hotéis</a></li>
+        <li><a href="index.html">Atividades</a></li>
+        <li><a href="../OFERTAS/index.html">Ofertas</a></li>
+        <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="../index.html#sobre">Sobre Nós</a></li>
+
+        <li><button type="button" id="btnEntrar">Entrar</button></li>
+    </ul>
+
+    <div class="perfil-area">
+
+        <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
+            <img  class="foto-perfil-header" src="/img/icones/perfil.png" alt="Perfil">
+        </button>
+
+        
+    </div>
+        </div>
+    <div class="perfil-overlay" id="perfilOverlay"></div>
+    <div class="perfil-menu" id="perfilMenu">
+
+            <div class="perfil-topo">
+                <div class="avatar">
+                    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+                </div>
+                <div>
+                    <h3 id="nomePerfil">Olá, viajante!</h3>
+                    <p id="descricaoPerfil">Acesse sua conta</p>
+                </div>
+
+                <button class="fechar-perfil" id="fecharPerfil">
+                    &times;
+                </button>
+
+            </div>
+
+            <div class="perfil-login">
+                <button id="abrirLoginPerfil">
+                    Entrar na minha conta
+                </button>
+            </div>
+
+            <div class="perfil-links">
+                <a href="../PERFIL/index.html#viagens">
+                    <span>✈</span>
+                    <div>
+                        <strong>Minhas viagens</strong>
+                        <small>Veja suas reservas</small>
+                    </div>
+                </a>
+                <a href="../PERFIL/index.html#favoritos">
+                    <span>❤︎</span>
+                    <div>
+                        <strong>Favoritos</strong>
+                        <small>Destinos salvos</small>
+                    </div>
+                </a>
+                <a href="../CONFIGURAÇÕES/index.html">
+                    <span>⚙</span>
+                    <div>
+                        <strong>Configurações</strong>
+                        <small>Preferências da conta</small>
+                    </div>
+                </a>
+                <a href="http://localhost:3001/">
+                    <span>?</span>
+                    <div>
+                        <strong>Central de ajuda</strong>
+                        <small>Precisa de ajuda?</small>
+                    </div>
+                </a>
+
+            </div>
+            <div class="perfil-footer">
+                <p>Viaje com a BoaTour ✈</p>
+            </div>
+        </div>
+
+        <div class="pagina-voos-layout">
+    <main class="conteudo-voos">
+        <section class="catalogo-container">
+            <header class="catalogo-cabecalho">
+                <div>
+                    <h1>Encontre atividades para sua viagem</h1>
+                    <p>Descubra passeios e experiências disponíveis nas ofertas da BoaTour.</p>
+                </div>
+            </header>
+
+            <div class="linha busca-atividade-linha">
+    <div class="campo">
+        <label for="partida">Pesquisar atividades</label>
+        <input
+            type="text"
+            id="partida"
+            placeholder="Nome, local ou tipo de atividade"
+            autocomplete="off"
+        >
+    </div>
+</div>
+
+            <div class="filtros" aria-label="Filtrar atividades por preço">
+                <button type="button" class="filtro ativo" data-preco="todos">Todos os preços</button>
+                <button type="button" class="filtro" data-preco="100">Até R$ 100</button>
+                <button type="button" class="filtro" data-preco="300">R$ 101 a R$ 300</button>
+                <button type="button" class="filtro" data-preco="600">R$ 301 a R$ 600</button>
+                <button type="button" class="filtro" data-preco="600+">Acima de R$ 600</button>
+            </div>
+
+            <section class="ofertas" aria-labelledby="titulo-ofertas">
+                <h2 id="titulo-ofertas">Atividades disponíveis</h2>
+                <div class="ofertas-grid" id="ofertasGrid" aria-live="polite"></div>
+                <button type="button" class="btn-ver-mais" id="btnVerMais" style="display:none">Ver mais</button>
+            </section>
+        </section>
+    </main>
+    <aside class="folder" aria-label="Publicidade">
+        <img src="../img/propagandas/propaganda01.png" alt="">
+    </aside>
+</div>
+
+
+
+
+    <footer class="footer">
+
+        <div class="footer-texto">
+            <p>Receba ofertas exclusivas!</p>
+            <input type="email" placeholder="email@gmail.com">
+            <button>Inscrever-se</button>
+        </div>
+    
+        <hr>
+    
+        <div class="footer-conteudo">
+    
+            <div class="footer-logo">
+                <img src="/img/logo/logobranca.png" alt="">
+                <p>Sua jornada, nosso prazer!</p>
+    
+                <div class="redes">
+                    <a href="#"><img src="/img/icones/face_icon.svg" alt=""></a>
+                    <a href="#"><img src="/img/icones/insta_icon.svg" alt=""></a>
+                    <a href="#"><img src="/img/icones/tiktok_icon.svg" alt=""></a>
+                </div>
+            </div>
+    
+            <div class="footer-links">
+                <h3>Institucional</h3>
+                <a href="#sobre">Sobre nós</a>
+                <a href="#">Trabalhe conosco</a>
+                <a href="#">Política de privacidade</a>
+                <a href="#">Termos de uso</a>
+            </div>
+    
+            <div class="footer-contato">
+                <h3>Contato</h3>
+                <p>ⓘ (48) 99201-9988</p>
+                <p>✉ contato@boatour.com.br</p>
+                <p>⌖ Criciúma, SC - Brasil</p>
+            </div>
+    
+        </div>
+    
+    </footer>
+
+    <div class="copy">
+        <div class="copyright">
+         <p>
+            Copyright © 2026 BOATOUR - Todos os direitos reservados
+        </p>
+        <span>•</span>
+        <a href="#">Política de Privacidade</a>
+        <span>•</span>
+        <a href="#">Termos de Uso</a>
+        <span>•</span>
+        <a href="#">Direitos do Titular</a>
+        <p>
+            BOATOUR Turismo e Viagens Ltda.; CNPJ: 00.000.000/0000-00;
+            Av. Principal, nº 000, Centro, Criciúma/SC – CEP 00000-000.
+        </p>
+    </div>
+    </div>
+
+    <div class="modal-login" id="modalLogin">
+        <div class="login">
+            <button class="fechar" id="fecharLogin">&times;</button>
+            <h2>Login <span>BoaTour</span></h2>
+            <p>Acesse sua conta e aproveite benefícios exclusivos em suas próximas viagens!</p>
+            <input type="cpf" id="cpfLogin" placeholder="CPF">
+            <input type="password" id="senhaLogin" placeholder="Senha">
+            <button class="btnLogin" id="btnLogin">Entrar</button>
+            <p><a href="#">Esqueci minha senha</a></p>
+            <p>Ainda não possui uma conta? <a href="../CADASTRO/index.html">Criar conta</a></p>
+            </div>
+    </div>
+
+<div class="modal-oferta" id="modalOferta">
+
+    <div class="oferta-detalhes">
+
+        <button class="fechar-oferta" id="fecharOferta">&times;</button>
+
+        <div class="oferta-detalhes-imagem">
+            <img id="modalImagemOferta" src="" alt="">
+            <span class="modal-desconto" id="modalDesconto">-0%</span>
+        </div>
+
+
+        <div class="oferta-detalhes-conteudo">
+            <span class="modal-categoria" id="modalCategoria">-</span>
+
+            <h2 id="modalTitulo">-</h2>
+            <p class="modal-resumo" id="modalResumo">-</p>
+
+            <div class="modal-ods" id="modalOds"></div>
+            
+            <div class="linha-detalhes">
+        <div>
+        
+        <span>✈</span>
+        <p>Passagem aérea</p>
+    </div>
+
+    <div>
+        <span>🏛</span>
+        <p>Hospedagem</p>
+    </div>
+
+    <div>
+        <span>🎟</span>
+        <p>Passeios</p>
+    </div>
+
+    <div>
+        <span>🗓</span>
+        <p>0 dias</p>
+    </div>
+            </div>
+
+
+            <div class="descricao-oferta">
+                <h3>Sobre esta atividade</h3>
+                <p id="modalDescricao">-</p>
+            </div>
+
+            <div class="preco-modal">
+                <div>
+                    <span>De:</span>
+                    <del id="modalPrecoAntigo">R$ 0,00</del>
+                </div>
+
+                <div>
+                    <span>Por apenas:</span>
+                    <strong id="modalPreco">R$ 0,00</strong>
+                </div>
+            </div>
+
+
+            <button class="btn-comprar" id="btnComprar">Comprar agora</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <script src="script.js"></script>
+    <script src="/js/menu.js"></script>
+    <script src="/js/modais.js"></script>
+    <script src="/js/darkmodedemais.js"></script>
+    
+    <script src="../js/assistente-flutuante.js"></script>
+
+    <script src="../js/feedback.js"></script>
+</body>
+</html>

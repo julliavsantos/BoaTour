@@ -61,7 +61,7 @@ body.dark-mode {
 }
 body {
     min-height: 100vh;
-    background: var(--bg-soft)
+    background: var(--bg)
 }
 .fundo {
     width: 95%;
@@ -128,7 +128,8 @@ body.dark-mode .fundo {
     padding: 25px 25px 85px;
     background: var(--card);
     border-radius: 25px;
-    box-shadow: 0 5px 18px rgba(20, 60, 90, 0.14);
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 34px rgba(21, 45, 48, 0.12);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -171,9 +172,9 @@ body.dark-mode .fundo {
     margin-right: auto;
     padding: 14px 18px;
     background: var(--surface-strong);
-    color: var(--accent-strong);
+    color: var(--text);
     border-radius: 6px 20px 20px 20px;
-    box-shadow: 0 2px 7px rgba(30, 80, 120, 0.06);
+    box-shadow: 0 4px 14px rgba(21, 45, 48, 0.08);
     position: relative;
 }
 .chat .mensagem.bot::before {
@@ -194,7 +195,7 @@ body.dark-mode .fundo {
     margin-bottom: 3px;
     font-size: 15px;
     font-weight: 800;
-    color: var(--accent-strong);
+    color: var(--primary-dark);
 }
 .chat .mensagem.usuario {
     width: fit-content;
@@ -221,17 +222,17 @@ body.dark-mode .fundo {
     width: calc(98% - 85px);
     height: 52px;
     padding: 0 18px 0 47px;
-    border: 1.5px solid var(--primary);
+    border: 1px solid var(--border);
     border-radius: 18px;
     outline: none;
-    background: var(--surface);
+    background: var(--surface-alt);
     color: var(--text);
     font-size: 14px;
-    box-shadow: 0 2px 8px rgba(30, 90, 130, 0.05);
+    box-shadow: 0 2px 8px rgba(21, 45, 48, 0.05);
 }
 .chat input:focus {
-    border-color: var(--primary-dark);
-    box-shadow: 0 0 0 3px rgba(75, 145, 199, 0.10);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
 }
 .chat input::placeholder {
     color: var(--muted);
@@ -254,10 +255,10 @@ body.dark-mode .fundo {
     padding: 0;
     border: none;
     border-radius: 50%;
-    background: var(--accent-dark);
+    background: var(--primary);
     color: transparent;
     cursor: pointer;
-    box-shadow:   0 4px 10px rgba(0, 70, 130, 0.20);
+    box-shadow: 0 4px 10px rgba(21, 45, 48, 0.18);
     transition: 0.2s ease;
 }
 .chat button[onclick="enviar()"]::before {
@@ -316,7 +317,8 @@ body.dark-mode .fundo {
     position: absolute;
     right: 0;
     bottom: 0;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 34px rgba(21, 45, 48, 0.12);
     border-radius: 25px;
     padding: 5px;
 }
@@ -337,14 +339,14 @@ body.dark-mode .fundo {
 .opcao-rapida {
     width: 90%;
     height: 42px;
-    border: 1px solid var(--primary);
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background-color: var(--accent);
+    background-color: var(--surface-alt);
     display: flex;
     align-items: center;
     padding: 0 8px;
     cursor: pointer;
-    color: #075d69;
+    color: var(--text);
     transition: 0.2s ease;
     margin-left: auto;
     margin-right: auto;

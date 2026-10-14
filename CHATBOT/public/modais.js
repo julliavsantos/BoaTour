@@ -80,19 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const senha = senhaLogin.value.trim();
 
             if (!cpf) {
-                alert("Digite seu CPF.");
+                window.boatourFieldError(cpfLogin, "Informe seu CPF.");
                 cpfLogin.focus();
                 return;
             }
 
             if (cpf.length < 11) {
-                alert("Digite um CPF válido.");
+                window.boatourFieldError(cpfLogin, "Digite um CPF válido.");
                 cpfLogin.focus();
                 return;
             }
 
             if (!senha) {
-                alert("Digite sua senha.");
+                window.boatourFieldError(senhaLogin, "Informe sua senha.");
                 senhaLogin.focus();
                 return;
             }

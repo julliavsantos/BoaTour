@@ -116,6 +116,14 @@ body, .nav, .perfil-menu, .login, .calendario, .passageiros-menu,
 #btnEntrar{
     color: var(--accent);
 }
+.menu #btnEntrar {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    cursor: pointer;
+}
 .perfil-overlay {
     position: fixed;
     inset: 0;
@@ -204,7 +212,10 @@ body, .nav, .perfil-menu, .login, .calendario, .passageiros-menu,
     object-fit: cover;
     object-position: center;
     display: block;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease;
 }
+.foto-viajante:hover { transform: scale(1.02); box-shadow: 0 0 0 1.5px rgba(255,255,255,.4); }
 .perfil-topo h3 {
     margin: 0;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -261,6 +272,43 @@ body, .nav, .perfil-menu, .login, .calendario, .passageiros-menu,
     border-radius: 10px;
     transition: .2s;
 }
+.perfil-links .perfil-link-botao {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: .2s;
+}
+.perfil-links .perfil-link-botao:hover { background: #e1ebec; transform: translateX(3px); }
+.perfil-links .perfil-link-botao > span {
+    display: flex;
+    flex: 0 0 38px;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--surface-strong);
+    color: var(--primary);
+    font-size: 20px;
+}
+.perfil-links .perfil-link-botao > span img {
+    display: block;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+.perfil-links .perfil-link-botao strong { display: block; font-size: 14px; }
+.perfil-links .perfil-link-botao small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
 .perfil-links a:hover {
     background: #e1ebec;
     transform: translateX(3px);
@@ -366,6 +414,51 @@ body, .nav, .perfil-menu, .login, .calendario, .passageiros-menu,
 .modal-login.ativo .login {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Modal de saída: mantém o mesmo tamanho e acabamento em todas as páginas. */
+#modalSairConta .login,
+#modalSenhaSairConta .login {
+    width: min(350px, calc(100vw - 32px));
+    padding: 30px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: 0 20px 55px rgba(14, 38, 40, .2);
+}
+#modalSairConta .login { min-height: 0; height: auto; }
+#modalSenhaSairConta .login { min-height: 300px; }
+#modalSairConta .botoesSair {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+}
+#modalSairConta .botoesSair button {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font: 600 13px 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+#modalSairConta .btnCancelar {
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    color: var(--text);
+}
+#modalSairConta .btnCancelar:hover { background: var(--hover); transform: translateY(-1px); }
+#modalSairConta .botoesSair .btnLogin { margin: 0; }
+#modalSenhaSairConta .btnLogin { margin-top: 12px; }
+body.dark-mode #modalSairConta .login,
+body.dark-mode #modalSenhaSairConta .login {
+    background: var(--card);
+    box-shadow: 0 20px 55px rgba(0, 0, 0, .4);
+}
+@media (max-width: 420px) {
+    #modalSairConta .login,
+    #modalSenhaSairConta .login { padding: 25px 22px; }
 }
 .login h2 {
     margin: 0 0 10px;
@@ -607,9 +700,92 @@ body, .nav, .perfil-menu, .login, .calendario, .passageiros-menu,
     line-height: 1.6;
     color: var(--muted);
 }
-/* ===============================
-   DARK MODE - ELEMENTOS UNIVERSAIS
-   =============================== */
+.modal-favorito-login {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .55);
+}
+.modal-favorito-login[hidden] { display: none; }
+.modal-favorito-login__painel {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    padding: 35px;
+    border-radius: 20px;
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, .25);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    text-align: center;
+    animation: modalFavoritoAparecer .25s ease;
+}
+@keyframes modalFavoritoAparecer {
+    from { opacity: 0; transform: translateY(15px) scale(.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-favorito-login__fechar {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    border: 0;
+    background: none;
+    color: #777;
+    font-size: 28px;
+    cursor: pointer;
+}
+.modal-favorito-login__icone { margin-bottom: 10px; }
+.modal-favorito-login__icone img { width: 100px; height: auto; }
+.modal-favorito-login__painel h2 {
+    margin: 0 0 15px;
+    color: var(--accent-strong-dark);
+    font-size: 26px;
+}
+.modal-favorito-login__painel p {
+    margin: 0 0 25px;
+    color: var(--text);
+    line-height: 1.6;
+}
+.modal-favorito-login__acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.modal-favorito-login__acoes button,
+.modal-favorito-login__acoes a {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 18px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 15px;
+    transition: .2s;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-favorito-login__acoes button {
+    border: none;
+    background: var(--primary-dark);
+    color: white;
+}
+.modal-favorito-login__acoes button:hover {
+    background: white;
+    color: var(--primary-dark);
+}
+.modal-favorito-login__acoes a {
+    border: 1px solid #d8e6e7;
+    background: #f5f7f7;
+    color: var(--primary-dark);
+}
+.modal-favorito-login__acoes a:hover {
+    background: var(--primary-dark);
+    color: white;
+}
+/* --- DARK MODE - ELEMENTOS UNIVERSAIS --- */
 body.dark-mode .nav.scrolled {
     background: rgba(16, 23, 25, 0.88);
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.35);
@@ -636,6 +812,8 @@ body.dark-mode .perfil-links a > span {
     background: #2b393c;
     color: var(--accent);
 }
+body.dark-mode .perfil-links .perfil-link-botao:hover { background: var(--hover); }
+body.dark-mode .perfil-links .perfil-link-botao > span { background: #2b393c; color: var(--accent); }
 
 body.dark-mode .footer-texto input {
     background: var(--card);

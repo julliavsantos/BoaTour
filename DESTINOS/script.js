@@ -1,10 +1,4 @@
-const fotoPerfil = document.querySelector(".foto-viajante");
 
-if (fotoPerfil) {
-    fotoPerfil.addEventListener("click", () => {
-        window.location.href = "../PERFIL/index.html";
-    });
-}
 document.addEventListener("DOMContentLoaded", () => {
 
     // ELEMENTOS DA PÁGINA
@@ -27,9 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let quantidadeVisivel = 8;
 
 
-    // ==========================================
-    // BUSCAR DESTINOS DO BANCO
-    // ==========================================
+    // --- BUSCAR DESTINOS DO BANCO ---
 
     fetch("http://localhost:3000/destinos")
     .then(response => {
@@ -68,9 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ==========================================
-    // NORMALIZAR TEXTO
-    // ==========================================
+    // --- NORMALIZAR TEXTO ---
 
     function normalizarTexto(texto) {
 
@@ -83,9 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ==========================================
-    // APLICAR BUSCA + FILTRO
-    // ==========================================
+    // --- APLICAR BUSCA + FILTRO ---
 
     function aplicarFiltros() {
 
@@ -169,9 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ==========================================
-    // MOSTRAR OS CARDS
-    // ==========================================
+    // --- MOSTRAR OS CARDS ---
 
     let favoritosUsuario = [];
 
@@ -231,9 +217,7 @@ async function carregarFavoritos() {
         destinosGrid.innerHTML = "";
 
 
-        // ======================================
-        // NENHUM RESULTADO
-        // ======================================
+        // --- NENHUM RESULTADO ---
 
         if (destinosFiltrados.length === 0) {
 
@@ -258,9 +242,7 @@ async function carregarFavoritos() {
         }
 
 
-        // ======================================
-        // PEGAR SOMENTE OS VISÍVEIS
-        // ======================================
+        // --- PEGAR SOMENTE OS VISÍVEIS ---
 
         const destinosVisiveis =
             destinosFiltrados.slice(
@@ -269,9 +251,7 @@ async function carregarFavoritos() {
             );
 
 
-        // ======================================
-        // CRIAR CARDS
-        // ======================================
+        // --- CRIAR CARDS ---
 
         destinosVisiveis.forEach(destino => {
 
@@ -281,25 +261,19 @@ async function carregarFavoritos() {
             card.classList.add("card-oferta");
 
 
-            // ==================================
-            // IMAGEM
-            // ==================================
+            // --- IMAGEM ---
 
             const imagem =
                 destino.imagem || "";
 
 
-            // ==================================
-            // PREÇO
-            // ==================================
+            // --- PREÇO ---
 
             const preco =
                 Number(destino.preco_base || 0);
 
 
-            // ==================================
-            // DESCRIÇÃO
-            // ==================================
+            // --- DESCRIÇÃO ---
 
             const descricao =
                 destino.descricao ||
@@ -311,9 +285,7 @@ async function carregarFavoritos() {
         Number(favorito.id_item) === Number(destino.id_destino)
     );
 
-            // ==================================
-            // CARD
-            // ==================================
+            // --- CARD ---
 
             card.innerHTML = `
             <button
@@ -391,12 +363,8 @@ async function carregarFavoritos() {
     </div>
 `;
 
-// ==========================================
-// BOTÃO DE FAVORITO
-// ==========================================
-            // ==================================
-            // BOTÃO VER OFERTAS
-            // ==================================
+// --- BOTÃO DE FAVORITO ---
+            // --- BOTÃO VER OFERTAS ---
 
             const btnVerOfertas =
                 card.querySelector(".btn-ver-ofertas");
@@ -573,9 +541,7 @@ document.addEventListener("click", async (event) => {
     }
 
 
-    // ==========================================
-    // ATUALIZAR BOTÃO "VER MAIS"
-    // ==========================================
+    // --- ATUALIZAR BOTÃO "VER MAIS" ---
 
     function atualizarBotaoVerMais() {
 
@@ -606,9 +572,7 @@ document.addEventListener("click", async (event) => {
     }
 
 
-    // ==========================================
-    // BOTÃO "VER MAIS"
-    // ==========================================
+    // --- BOTÃO "VER MAIS" ---
 
     if (btnVerMaisDestinos) {
 
@@ -628,9 +592,7 @@ document.addEventListener("click", async (event) => {
     }
 
 
-    // ==========================================
-    // CAMPO DE BUSCA
-    // ==========================================
+    // --- CAMPO DE BUSCA ---
 
     if (campoBusca) {
 
@@ -649,9 +611,7 @@ document.addEventListener("click", async (event) => {
     }
 
 
-    // ==========================================
-    // BOTÕES DE FILTRO
-    // ==========================================
+    // --- BOTÕES DE FILTRO ---
 
     botoesFiltro.forEach(botao => {
 
