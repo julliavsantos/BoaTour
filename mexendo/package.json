@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "dotenv": "^18.0.5",
-    "nodemailer": "^10.0.15"
-  }
-}

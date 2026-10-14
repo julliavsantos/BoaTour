@@ -22,6 +22,24 @@ class UsuariosBD {
         return String(email || '').trim().toLowerCase();
     }
 
+    static emailCadastrado(email, callback) {
+        const emailNormalizado = UsuariosBD.normalizarEmail(email);
+        const connection = UsuariosBD.connect();
+
+        connection.query(
+            'SELECT 1 FROM usuarios WHERE email = ? LIMIT 1',
+            [emailNormalizado],
+            (error, results) => {
+                connection.end();
+                if (error) {
+                    console.error('ERRO AO VERIFICAR E-MAIL:', error);
+                    return callback({ error: 'Não foi possível verificar o e-mail.' });
+                }
+                callback({ cadastrado: results.length > 0 });
+            }
+        );
+    }
+
     static dadosPublicos(usuario) {
         if (!usuario) return null;
 
@@ -287,6 +305,43 @@ class UsuariosBD {
                 });
             }
         );
+    }
+
+    static redefinirSenhaPorEmail(email, novaSenha, callback) {
+        const emailNormalizado = UsuariosBD.normalizarEmail(email);
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailNormalizado)) {
+            return callback({ error: 'Digite um e-mail válido.' });
+        }
+
+        if (String(novaSenha || '').length < 6) {
+            return callback({ error: 'A nova senha deve ter pelo menos 6 caracteres.' });
+        }
+
+        const connection = UsuariosBD.connect();
+
+        bcrypt.hash(novaSenha, 12, (hashError, senhaHash) => {
+            if (hashError) {
+                connection.end();
+                return callback({ error: 'Erro ao proteger a nova senha.' });
+            }
+
+            connection.query(
+                'UPDATE usuarios SET senha = ? WHERE email = ?',
+                [senhaHash, emailNormalizado],
+                (error, result) => {
+                    connection.end();
+
+                    if (error) {
+                        console.error('ERRO AO REDEFINIR SENHA:', error);
+                        return callback({ error: 'Erro ao redefinir a senha.' });
+                    }
+
+                    if (!result.affectedRows) return callback({ error: 'Usuário não encontrado.' });
+                    callback({ message: 'Senha redefinida com sucesso.' });
+                }
+            );
+        });
     }
 
     static atualizaFoto(idUsuario, caminhoFoto, callback) {

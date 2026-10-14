@@ -254,6 +254,101 @@ if (btnCadastro) {
         "../index.html?cadastro=sucesso";
 }
 
+const PAGINA_REDEFINIR_SENHA = 'trocaSenha.html';
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modalLogin = document.getElementById('modalLogin');
+    const modalRecuperar = document.getElementById('modalRecuperarSenha');
+    const modalAviso = document.getElementById('modalAviso');
+    const esqueciSenha = document.getElementById('esqueciSenha');
+    const emailRecuperar = document.getElementById('emailRecuperar');
+    const erroRecuperar = document.getElementById('erroRecuperar');
+    const btnEnviar = document.getElementById('btnEnviarRecuperacao');
+
+    if (!modalLogin || !modalRecuperar || !modalAviso || !esqueciSenha || !emailRecuperar || !btnEnviar) return;
+
+    let acaoOk = () => {};
+    const abrir = modal => modal.classList.add('ativo');
+    const fechar = modal => modal.classList.remove('ativo');
+
+    function mostrarAviso(tipo, titulo, texto, aoConfirmar) {
+        document.getElementById('avisoIcone').textContent = tipo === 'erro' ? '!' : '✓';
+        document.getElementById('avisoIcone').classList.toggle('erro', tipo === 'erro');
+        document.getElementById('avisoTitulo').textContent = titulo;
+        document.getElementById('avisoTexto').textContent = texto;
+        acaoOk = aoConfirmar || (() => {});
+        abrir(modalAviso);
+    }
+
+    esqueciSenha.addEventListener('click', event => {
+        event.preventDefault();
+        erroRecuperar.textContent = '';
+        fechar(modalLogin);
+        abrir(modalRecuperar);
+        setTimeout(() => emailRecuperar.focus(), 150);
+    });
+
+    document.getElementById('fecharRecuperar').addEventListener('click', () => fechar(modalRecuperar));
+    document.getElementById('voltarParaLogin').addEventListener('click', event => {
+        event.preventDefault();
+        fechar(modalRecuperar);
+        abrir(modalLogin);
+    });
+    document.getElementById('btnAvisoOk').addEventListener('click', () => {
+        fechar(modalAviso);
+        acaoOk();
+    });
+    modalRecuperar.addEventListener('click', event => {
+        if (event.target === modalRecuperar) fechar(modalRecuperar);
+    });
+    emailRecuperar.addEventListener('keydown', event => {
+        if (event.key === 'Enter') btnEnviar.click();
+    });
+
+    btnEnviar.addEventListener('click', async () => {
+        const email = emailRecuperar.value.trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            erroRecuperar.textContent = 'Digite um e-mail válido.';
+            emailRecuperar.focus();
+            return;
+        }
+
+        erroRecuperar.textContent = '';
+        btnEnviar.disabled = true;
+        btnEnviar.textContent = 'Enviando...';
+        try {
+            const resposta = await fetch('http://localhost:3000/enviarEmail', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const resultado = await resposta.json();
+            if (!resposta.ok) throw new Error(resultado.error || 'Não foi possível enviar o código.');
+
+            fechar(modalRecuperar);
+            mostrarAviso('sucesso', 'E-mail enviado!', 'Enviamos um código de recuperação para ' + email + '.', () => {
+                sessionStorage.setItem('boatourRecuperacaoEmail', email);
+                window.location.href = PAGINA_REDEFINIR_SENHA;
+            });
+        } catch (erro) {
+            fechar(modalRecuperar);
+            mostrarAviso('erro', 'Não foi possível enviar', erro.message, () => abrir(modalRecuperar));
+        } finally {
+            btnEnviar.disabled = false;
+            btnEnviar.textContent = 'Enviar código';
+        }
+    });
+
+    const parametros = new URLSearchParams(window.location.search);
+
+    if (parametros.get('recuperar') === '1') {
+        abrir(modalRecuperar);
+        setTimeout(() => emailRecuperar.focus(), 150);
+    } else if (parametros.get('login') === '1') {
+        abrir(modalLogin);
+    }
+});
+
         } catch (error) {
 
             console.error(

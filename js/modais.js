@@ -86,6 +86,98 @@
     }, true);
 })();
 
+// --- RECUPERAÇÃO DE SENHA ---
+// O modal é criado aqui para funcionar em todas as páginas que usam o modal de login.
+document.addEventListener("DOMContentLoaded", () => {
+    const linkRecuperar = document.querySelector("#modalLogin .link-recuperar-senha");
+
+    // A página de cadastro já possui seu próprio modal e tratamento completo.
+    if (!linkRecuperar || document.getElementById("modalRecuperarSenha")) return;
+
+    const modalLogin = document.getElementById("modalLogin");
+    const modalRecuperar = document.createElement("div");
+    modalRecuperar.className = "modal-login";
+    modalRecuperar.id = "modalRecuperarSenha";
+    modalRecuperar.setAttribute("role", "dialog");
+    modalRecuperar.setAttribute("aria-modal", "true");
+    modalRecuperar.setAttribute("aria-labelledby", "tituloRecuperarSenha");
+    modalRecuperar.innerHTML = `
+        <section class="login login-recuperacao">
+            <button type="button" class="fechar" aria-label="Fechar">&times;</button>
+            <h2 id="tituloRecuperarSenha">Recuperar <span>senha</span></h2>
+            <p>Informe o e-mail cadastrado. Enviaremos um código para redefinir sua senha.</p>
+            <input type="email" id="emailRecuperar" placeholder="email@gmail.com" autocomplete="email">
+            <p class="mensagem-recuperacao" role="alert" aria-live="polite"></p>
+            <button type="button" class="btnLogin">Enviar código</button>
+            <p><a href="#" class="voltar-login">Voltar ao login</a></p>
+        </section>
+    `;
+    document.body.appendChild(modalRecuperar);
+
+    const email = modalRecuperar.querySelector("#emailRecuperar");
+    const mensagem = modalRecuperar.querySelector(".mensagem-recuperacao");
+    const botaoEnviar = modalRecuperar.querySelector(".btnLogin");
+    const fechar = () => modalRecuperar.classList.remove("ativo");
+    const abrir = () => {
+        modalLogin?.classList.remove("ativo");
+        modalRecuperar.classList.add("ativo");
+        setTimeout(() => email.focus(), 150);
+    };
+
+    linkRecuperar.addEventListener("click", evento => {
+        evento.preventDefault();
+        mensagem.textContent = "";
+        abrir();
+    });
+
+    modalRecuperar.querySelector(".fechar").addEventListener("click", fechar);
+    modalRecuperar.addEventListener("click", evento => {
+        if (evento.target === modalRecuperar) fechar();
+    });
+    modalRecuperar.querySelector(".voltar-login").addEventListener("click", evento => {
+        evento.preventDefault();
+        fechar();
+        modalLogin?.classList.add("ativo");
+    });
+    email.addEventListener("keydown", evento => {
+        if (evento.key === "Enter") botaoEnviar.click();
+    });
+
+    botaoEnviar.addEventListener("click", async () => {
+        const emailNormalizado = email.value.trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailNormalizado)) {
+            mensagem.textContent = "Digite um e-mail válido.";
+            email.focus();
+            return;
+        }
+
+        mensagem.textContent = "";
+        botaoEnviar.disabled = true;
+        botaoEnviar.textContent = "Enviando...";
+
+        try {
+            const resposta = await fetch("http://localhost:3000/enviarEmail", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailNormalizado })
+            });
+            const resultado = await resposta.json().catch(() => ({}));
+
+            if (!resposta.ok) {
+                throw new Error(resultado.error || "Não foi possível enviar o código.");
+            }
+
+            sessionStorage.setItem("boatourRecuperacaoEmail", emailNormalizado);
+            window.location.href = new URL("/CADASTRO/trocaSenha.html", window.location.origin).href;
+        } catch (erro) {
+            mensagem.textContent = erro.message || "Não foi possível conectar ao servidor.";
+        } finally {
+            botaoEnviar.disabled = false;
+            botaoEnviar.textContent = "Enviar código";
+        }
+    });
+});
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const btnEntrar = document.getElementById("btnEntrar");

@@ -1,4 +1,17 @@
 /* --- Estilos compartilhados dos modais --- */
+
+#modalRecuperarSenha .login-recuperacao {
+    min-height: 0;
+}
+
+#modalRecuperarSenha .mensagem-recuperacao {
+    min-height: 18px;
+    margin: 4px 0 0;
+    color: var(--erro, #c83f3f);
+    font-size: 13px;
+    text-align: left;
+}
+
 .modal-login,
 .modal-favorito-login,
 .modal-oferta,

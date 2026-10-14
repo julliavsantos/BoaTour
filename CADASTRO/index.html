@@ -239,9 +239,30 @@
             <input type="text" id="cpfLogin" placeholder="CPF">
             <input type="password" id="senhaLogin" placeholder="Senha">
             <button class="btnLogin" id="btnLogin">Entrar</button>
-            <p><a href="#">Esqueci minha senha</a></p>
+            <p><a href="#" id="esqueciSenha" class="link-recuperar-senha">Esqueci minha senha</a></p>
             <p>Ainda não possui uma conta? <a href="index.html">Criar conta</a></p>
             </div>
+    </div>
+
+    <div class="modal-login" id="modalRecuperarSenha">
+        <div class="login login-compacto">
+            <button class="fechar" id="fecharRecuperar" type="button">&times;</button>
+            <h2>Recuperar <span>senha</span></h2>
+            <p>Digite o e-mail cadastrado e enviaremos um código para você redefinir sua senha.</p>
+            <input type="email" id="emailRecuperar" placeholder="email@gmail.com" autocomplete="email">
+            <p class="msg-erro" id="erroRecuperar" role="alert"></p>
+            <button class="btnLogin" id="btnEnviarRecuperacao" type="button">Enviar código</button>
+            <p><a href="#" id="voltarParaLogin">Voltar ao login</a></p>
+        </div>
+    </div>
+
+    <div class="modal-login" id="modalAviso">
+        <div class="login login-compacto">
+            <div class="aviso-icone" id="avisoIcone">✓</div>
+            <h2 id="avisoTitulo"></h2>
+            <p id="avisoTexto"></p>
+            <button class="btnLogin" id="btnAvisoOk" type="button">OK</button>
+        </div>
     </div>
 
   <script src="../js/menu.js"></script>

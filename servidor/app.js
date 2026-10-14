@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { formidable } = require('formidable');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+const nodemailer = require('nodemailer');
 
 const DestinoBD = require('./database/DestinoBD');
 const OfertaBD = require('./database/OfertaBD');
@@ -14,8 +16,22 @@ const VoosBD = require('./database/VoosBD');
 const HotelBD = require('./database/HoteisBD');
 const AtividadesBD = require('./database/AtividadesBD');
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 const sessions = new Map();
+const recuperacoesSenha = new Map();
+const DURACAO_CODIGO_MS = 10 * 60 * 1000;
+const DURACAO_TOKEN_MS = 10 * 60 * 1000;
+const MAX_TENTATIVAS_CODIGO = 5;
+
+// Aceita os nomes antigos do .env e os nomes em maiúsculas documentados abaixo.
+const remetenteEmail = process.env.EMAIL_REMETENTE || process.env.email_remitente;
+const senhaEmail = process.env.EMAIL_SENHA_APP || process.env.email_senha_app;
+const transportadorEmail = remetenteEmail && senhaEmail
+    ? nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: remetenteEmail, pass: senhaEmail }
+    })
+    : null;
 
 
 // CORS - desenvolvimento local
@@ -51,6 +67,38 @@ function readJson(req, callback) {
         } catch {
             callback(new Error('JSON inválido.'));
         }
+    });
+}
+
+function normalizarEmail(email) {
+    return String(email || '').trim().toLowerCase();
+}
+
+function codigoRecuperacao() {
+    return crypto.randomInt(100000, 1000000).toString();
+}
+
+function hashCodigoRecuperacao(codigo) {
+    return crypto.createHash('sha256').update(String(codigo)).digest('hex');
+}
+
+function compararSegredos(a, b) {
+    const segredoA = Buffer.from(String(a || ''), 'utf8');
+    const segredoB = Buffer.from(String(b || ''), 'utf8');
+
+    return segredoA.length === segredoB.length && crypto.timingSafeEqual(segredoA, segredoB);
+}
+
+function enviarCodigoRecuperacao(email, codigo) {
+    if (!transportadorEmail) {
+        return Promise.reject(new Error('E-mail de recuperação não configurado.'));
+    }
+
+    return transportadorEmail.sendMail({
+        from: `BoaTour <${remetenteEmail}>`,
+        to: email,
+        subject: 'Código para redefinir sua senha - BoaTour',
+        text: `Seu código de recuperação da BoaTour é ${codigo}. Ele expira em 10 minutos. Se você não solicitou a alteração, ignore este e-mail.`
     });
 }
 
@@ -427,6 +475,89 @@ function confirmarSenha(req, res) {
 }
 
 
+function solicitarRedefinicaoSenha(req, res) {
+    readJson(req, async (error, dados) => {
+        if (error) return json(res, 400, { error: error.message });
+
+        const email = normalizarEmail(dados.email);
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return json(res, 400, { error: 'Digite um e-mail válido.' });
+        }
+
+        UsuariosBD.emailCadastrado(email, async resultado => {
+            if (resultado.error) return json(res, 500, resultado);
+            if (!resultado.cadastrado) return json(res, 404, { error: 'Não encontramos uma conta com este e-mail.' });
+
+            const codigo = codigoRecuperacao();
+            try {
+                await enviarCodigoRecuperacao(email, codigo);
+                recuperacoesSenha.set(email, {
+                    // O código nunca fica em texto puro na memória do servidor.
+                    codigoHash: hashCodigoRecuperacao(codigo),
+                    expiraEm: Date.now() + DURACAO_CODIGO_MS,
+                    tentativas: 0,
+                    token: null,
+                    tokenExpiraEm: 0
+                });
+                return json(res, 200, { mensagem: 'Deu certo' });
+            } catch (erro) {
+                console.error('ERRO AO ENVIAR E-MAIL DE RECUPERAÇÃO:', erro.message);
+                return json(res, 503, { error: 'Não foi possível enviar o código de recuperação.' });
+            }
+        });
+    });
+}
+
+function verificarCodigoRedefinicao(req, res) {
+    readJson(req, (error, dados) => {
+        if (error) return json(res, 400, { error: error.message });
+
+        const email = normalizarEmail(dados.email);
+        const recuperacao = recuperacoesSenha.get(email);
+        if (!recuperacao || recuperacao.expiraEm < Date.now()) {
+            recuperacoesSenha.delete(email);
+            return json(res, 400, { error: 'O código expirou. Solicite outro.', expirado: true });
+        }
+
+        const codigoInformado = String(dados.codigo || '');
+        const codigoValido = /^\d{6}$/.test(codigoInformado) &&
+            compararSegredos(recuperacao.codigoHash, hashCodigoRecuperacao(codigoInformado));
+
+        if (!codigoValido) {
+            recuperacao.tentativas++;
+            if (recuperacao.tentativas >= MAX_TENTATIVAS_CODIGO) {
+                recuperacoesSenha.delete(email);
+                return json(res, 429, { error: 'Muitas tentativas. Solicite outro código.', expirado: true });
+            }
+            return json(res, 400, { error: 'Código inválido. Tente novamente.' });
+        }
+
+        recuperacao.token = token();
+        recuperacao.tokenExpiraEm = Date.now() + DURACAO_TOKEN_MS;
+        recuperacao.codigoHash = null;
+        return json(res, 200, { token_redefinicao: recuperacao.token });
+    });
+}
+
+function redefinirSenhaPorCodigo(req, res) {
+    readJson(req, (error, dados) => {
+        if (error) return json(res, 400, { error: error.message });
+
+        const email = normalizarEmail(dados.email);
+        const recuperacao = recuperacoesSenha.get(email);
+        if (!recuperacao || !recuperacao.token || recuperacao.token !== dados.token || recuperacao.tokenExpiraEm < Date.now()) {
+            recuperacoesSenha.delete(email);
+            return json(res, 400, { error: 'Sua verificação expirou. Solicite um novo código.', expirado: true });
+        }
+
+        UsuariosBD.redefinirSenhaPorEmail(email, dados.novaSenha, resultado => {
+            if (resultado.error) return json(res, 400, resultado);
+            recuperacoesSenha.delete(email);
+            return json(res, 200, resultado);
+        });
+    });
+}
+
 // LOGOUT
 function logout(req, res) {
     const sessionToken = req.headers['x-session-token'];
@@ -616,6 +747,18 @@ const callback = (req, res) => {
         return loginUsuario(req, res);
     }
 
+    if (req.method === 'POST' && p === '/enviarEmail') {
+        return solicitarRedefinicaoSenha(req, res);
+    }
+
+    if (req.method === 'POST' && p === '/verificarCodigo') {
+        return verificarCodigoRedefinicao(req, res);
+    }
+
+    if (req.method === 'POST' && p === '/redefinirSenha') {
+        return redefinirSenhaPorCodigo(req, res);
+    }
+
     if (req.method === 'POST' && p === '/favoritos') {
     return adicionarFavorito(req, res);
     }
@@ -705,6 +848,18 @@ const callback = (req, res) => {
         p.startsWith('/js/') ||
         p.startsWith('/img/') ||
         p.startsWith('/uploads/') ||
+        p.startsWith('/CADASTRO/') ||
+        p.startsWith('/DESTINOS/') ||
+        p.startsWith('/VOOS/') ||
+        p.startsWith('/HOTEIS/') ||
+        p.startsWith('/ATIVIDADES/') ||
+        p.startsWith('/OFERTAS/') ||
+        p.startsWith('/PERFIL/') ||
+        p.startsWith('/CONFIGURAÇÕES/') ||
+        p.startsWith('/PAGAMENTOS/') ||
+        p.startsWith('/FAVORITOS/') ||
+        p.startsWith('/COMPRAR/') ||
+        p.startsWith('/TURISMO CONSCIENTE/') ||
         p.endsWith('.html')
     ) {
         return servirArquivoPublico(res, p);

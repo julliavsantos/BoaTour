@@ -21,6 +21,7 @@
 - Tratamento de CORS para `localhost:5500` e `127.0.0.1:5500`.
 - Atualização automática dos dados do perfil no `localStorage`.
 - Correção do erro comum de frontend chamar `/usuarios/cadastro` enquanto o servidor só possuía `/registro`.
+- Recuperação de senha por código de seis dígitos enviado por e-mail, com expiração de 10 minutos e limite de tentativas.
 
 ## Banco de dados
 
@@ -48,6 +49,17 @@ As novas colunas são:
 7. Abra o projeto pelo Live Server na porta 5500, por exemplo:
    `http://127.0.0.1:5500/`
 
+## Recuperação de senha
+
+Antes de iniciar a API, crie ou confira o arquivo `servidor/.env` com uma conta Gmail e uma **senha de app** (não use a senha normal da conta):
+
+```env
+EMAIL_REMETENTE=seu-email@gmail.com
+EMAIL_SENHA_APP=sua-senha-de-app
+```
+
+Os nomes antigos `email_remitente` e `email_senha_app` também continuam compatíveis. No login, clique em **Esqueci minha senha**, informe o e-mail cadastrado e use o código recebido para criar a nova senha.
+
 ## Observação importante
 
-Este projeto foi preparado para ambiente local/desenvolvimento. Para colocar em produção, o ideal é usar HTTPS, cookies de sessão `HttpOnly`/`Secure`, proteção CSRF, rate limiting, validação de MIME por conteúdo real, recuperação de senha por e-mail e armazenamento de imagens em serviço apropriado.
+Este projeto foi preparado para ambiente local/desenvolvimento. Para colocar em produção, o ideal é usar HTTPS, cookies de sessão `HttpOnly`/`Secure`, proteção CSRF, rate limiting, validação de MIME por conteúdo real e armazenamento de imagens em serviço apropriado.
