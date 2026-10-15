@@ -85,25 +85,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    const imagens = document.querySelectorAll(".imagem");
+    const imagens = document.querySelectorAll(".folder .imagem");
+let atual = 0;
 
-    let atual = 0;
+console.log("Total de imagens:", imagens.length);
 
-    if (imagens.length > 1) {
+if (imagens.length > 1) {
+    setInterval(() => {
+        imagens[atual].classList.remove("ativa");
 
-        setInterval(() => {
+        atual = (atual + 1) % imagens.length;
 
-            imagens[atual].classList.remove("ativa");
+        imagens[atual].classList.add("ativa");
 
-            atual++;
-
-            if (atual >= imagens.length) {
-                atual = 0;
-            }
-
-            imagens[atual].classList.add("ativa");
-
-        }, 3000);
-    }
-
+        console.log("Exibindo imagem:", atual + 1);
+    }, 3000);
+}
 });
