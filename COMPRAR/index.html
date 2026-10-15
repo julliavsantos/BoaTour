@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="../css/menurodape.css">
-    <link rel="stylesheet" href="../css/modal-theme.css">
-    <link rel="stylesheet" href="../css/assistente.css">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
 </head>
@@ -19,21 +17,21 @@
 
     <ul class="menu">
         <li><a href="../index.html#inicio">Início</a></li>
-        <li><a href="../DESTINOS/index.html">Destinos</a></li>
-        <li><a href="../VOOS/index.html">Voos</a></li>
-        <li><a href="../HOTEIS/index.html">Hotéis</a></li>
-        <li><a href="../ATIVIDADES/index.html">Atividades</a></li>
-        <li><a href="../OFERTAS/index.html">Ofertas</a></li>
+        <li>Destinos</li>
+        <li>Voos</li>
+        <li>Hotéis</li>
+        <li>Atividades</li>
+        <li><a href="../index.html#ofertas">Ofertas</a></li>
         <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
         <li><a href="../index.html#sobre">Sobre Nós</a></li>
 
-        <li><button type="button" id="btnEntrar">Entrar</button></li>
+        <span><li id="btnEntrar">Entrar</li></span>
     </ul>
 
     <div class="perfil-area">
 
         <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
-            <img  class="foto-perfil-header" src="../img/icones/perfil.png" alt="Perfil">
+            <img src="" alt="Perfil">
         </button>
 
         
@@ -44,11 +42,11 @@
 
             <div class="perfil-topo">
                 <div class="avatar">
-                    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+                    <img src="../img/icones/perfil.png" alt="Perfil">
                 </div>
                 <div>
-                    <h3 id="nomePerfil">Olá, viajante!</h3>
-                    <p id="descricaoPerfil">Acesse sua conta</p>
+                    <h3>Olá, viajante!</h3>
+                    <p>Acesse sua conta</p>
                 </div>
 
                 <button class="fechar-perfil" id="fecharPerfil">
@@ -64,7 +62,7 @@
             </div>
 
             <div class="perfil-links">
-                <a href="../PERFIL/index.html#viagens">
+                <a href="../PERFIL/index.html#minhasviagens">
                     <span>✈</span>
                     <div>
                         <strong>Minhas viagens</strong>
@@ -78,14 +76,14 @@
                         <small>Destinos salvos</small>
                     </div>
                 </a>
-                <a href="../CONFIGURAÇÕES/index.html">
+                <a href="#">
                     <span>⚙</span>
                     <div>
                         <strong>Configurações</strong>
                         <small>Preferências da conta</small>
                     </div>
                 </a>
-                <a href="http://localhost:3001/">
+                <a href="#">
                     <span>?</span>
                     <div>
                         <strong>Central de ajuda</strong>
@@ -98,12 +96,13 @@
                 <p>Viaje com a BoaTour ✈</p>
             </div>
         </div>
-
+        
+<div class="fundo">
     <div class="container">
         <div class="linha">
             <img src="../img/icones/aviao3.png" alt="">
                 <span></span>
-                <p>Passo 2 de 3</p>
+                <p>Passo 1 de 3</p>
                 <span></span>     
         </div>
     </div>
@@ -111,7 +110,11 @@
         <h1>Revise seus dados<br>e finalize sua compra!</h1>
         <p>Confira as informações da sua viagem e escolha a forma de pagamento <br> que preferir. É rápido, fácil e seguro!</p>
     </div>
+    </div>
+
+   
     
+
     <div class="conteudo">
         <div class="conteudo-left">
             <div class="passos">
@@ -194,18 +197,91 @@
                     <button class="btn-editar-passageiro" type="button">✎ Editar</button>
                 </div>
 
-                <button class="btn-adicionar-passageiro" type="button">
-                <div class="texto-botao">
-                    <span>+</span> Adicionar outro passageiro
+                  <div class="adicionar">
+                    <button class="adicionar-info">+ Adicionar</button>
                 </div>
-                </button>   
-            </div>
 
+                <div class="dados">
+                    <img src="../img/icones/cadeado.png" alt="">
+                    <div class="dados-info">
+                     <h3>Seus dados estão protegidos</h3>
+                    <p>Utilizados tecnologia de criptografia para garantir a segurança de suas informações</p>
+                    </div>
+                </div>
+
+                
+
+            </div>
         </div>
+      
         
         <div class="conteudo-right">
+            <div class="titulo-compra">
+                <img src="../img/icones/resumo.png" alt="">
+                <div class="titulo-texto">
+                <h2>Resumo da compra</h2>
+                </div>
+
+            </div>
+
+              <div class="dados-compra">
+                <div class="imagem-compra">
+                    <img  src="../img/destinos/cancun.jpg" alt="">
+                </div>
+                    <div class="compra-info">
+                     <h3>Cancun, México</h3>         
+                   <div class="dados-icones">
+                        <div class="linha-compra">
+                            <img src="../img/icones/aviao2.png" alt="">
+                            <p>Voo de ida e volta</p>
+                        </div>
+                        <div class="linha-compra">
+                            <img src="../img/icones/calendario2.png" alt="">
+                            <p>12 de abr. 2030-19 abr. 2030</p>
+                        </div>
+                        <div class="linha-compra">
+                            <img src="../img/icones/user.png" alt="">
+                            <p>2 passageiros(1 adulto,  1 criança)</p>
+                        </div>
+                        <div class="linha-compra">
+                            <img src="../img/icones/cama.png" alt="">
+                            <p>Hotel Gran Caribe Resort</p>
+                        </div>
+                    </div>
+                    </div>
+
 
         </div>
+         <div class="linha-cima"></div>
+          <div class="dados-compra2">
+                <div class="linha-compra2">
+                    <img src="../img/icones/aviao3.png" alt="">
+                    <p>Passagem aérea (ida e volta)</p>
+                    <h3>R$3.498,00</h3>
+                </div>
+                   </div>
+ <div class="linha-cima"></div>
+              
+ <div class="valor-total">
+    <h2>Valor total</h2> <h1>R$5.873,00</h1>
+ </div>
+
+  <div class="pagamento-seguro">
+                    <img src="../img/icones/resumo.png" alt="">
+                    <div class="pagseg-dados">
+                     <h3>Pagamento seguro</h3>
+                    <p>Suas informações financeiras estão protegidas <br> com tecnoliga de criptografia</p>
+                    </div>
+                </div>
+
+
+   <button class="continuar">
+    <div class="continuar-escrito">
+        <p>Continuar para pagamento →</p>
+    </div>
+   </button>             
+
+</div>            
     </div>
 
 
@@ -279,15 +355,12 @@
             <input type="password" id="senhaLogin" placeholder="Senha">
             <button class="btnLogin" id="btnLogin">Entrar</button>
             <p><a href="#">Esqueci minha senha</a></p>
-            <p>Ainda não possui uma conta? <a href="../CADASTRO/index.html">Criar conta</a></p>
+            <p>Ainda não possui uma conta? <a href="CADASTRO/index.html">Criar conta</a></p>
             </div>
     </div> 
     <script src="script.js"></script>
-    <script src="../js/darkmodedemais.js"></script>
+    <script src="darkmode-compra.js"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>
-    <script src="../js/assistente-flutuante.js"></script>
-
-    <script src="../js/feedback.js"></script>
 </body>
 </html>
