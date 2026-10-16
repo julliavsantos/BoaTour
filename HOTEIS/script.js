@@ -249,6 +249,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const preco = hotel.preco_diaria;
 
+            card.dataset.modalTipo = "hotel";
+            card.dataset.nome = nome;
+            card.dataset.descricao = descricao;
+            card.dataset.categoria = "Hospedagem";
+            card.dataset.resumo = localizacao || "Localização não informada";
+            card.dataset.classificacao = classificacao || "";
+            card.dataset.quarto = hotel.quarto_hotel || "";
+            card.dataset.preco = preco || "0";
+
             card.innerHTML = `
                 <div class="imagem-oferta">
                     ${

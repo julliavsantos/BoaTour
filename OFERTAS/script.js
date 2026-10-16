@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let quantidadeVisivel = 8;
     let resultadosAtuais = [];
     let favoritosUsuario = [];
+    let ofertaSelecionadaParaCompra = null;
 
     // --- CARREGAR FAVORITOS DO USUÁRIO ---
 
@@ -287,6 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "card-oferta"
             );
 
+            card.dataset.id = oferta.id;
+
             // --- IMAGEM ---
 
             const imagem =
@@ -537,6 +540,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- FAVORITOS ---
 
    document.addEventListener("click", async event => {
+
+    const cardOferta = event.target.closest(".card-oferta");
+    if (cardOferta && !event.target.closest(".btn-favorito")) {
+        ofertaSelecionadaParaCompra = cardOferta.dataset.id;
+    }
+
+    const btnComprar = event.target.closest("#btnComprar");
+    if (btnComprar) {
+        event.preventDefault();
+
+        if (!ofertaSelecionadaParaCompra) {
+            alert("Selecione uma oferta antes de continuar.");
+            return;
+        }
+
+        window.location.href = `../COMPRAR/index.html?oferta=${encodeURIComponent(ofertaSelecionadaParaCompra)}`;
+        return;
+    }
 
     const btnFavorito = event.target.closest(".btn-favorito");
 

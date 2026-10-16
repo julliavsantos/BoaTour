@@ -626,6 +626,9 @@ document.addEventListener(
 
         }
 
+        const tipoModal = card.dataset.modalTipo ||
+            document.body.dataset.catalogo || "ofertas";
+
 
         // --- PEGA INFORMAÇÕES DO CARD ---
 
@@ -676,97 +679,67 @@ document.addEventListener(
 
         // --- DESCONTO ---
 
-        if (
-            desconto &&
-            modalDesconto
-        ) {
-
-            modalDesconto.textContent =
-                desconto.textContent;
-
+        if (modalDesconto) {
+            const exibirDesconto = tipoModal === "ofertas" && Boolean(desconto);
+            modalDesconto.style.display = exibirDesconto ? "" : "none";
+            modalDesconto.textContent = exibirDesconto ? desconto.textContent : "";
         }
 
 
         // --- TÍTULO ---
 
-        if (
-            titulo &&
-            modalTitulo
-        ) {
-
-            modalTitulo.textContent =
-                titulo.textContent;
-
+        if (modalTitulo) {
+            modalTitulo.textContent = card.dataset.nome || titulo?.textContent || "Detalhes";
         }
 
 
         // --- RESUMO ---
 
-        if (
-            resumo &&
-            modalResumo
-        ) {
-
-            modalResumo.textContent =
-                resumo.textContent;
-
+        if (modalResumo) {
+            modalResumo.textContent = card.dataset.resumo || resumo?.textContent || "";
         }
 
 
         // --- PREÇO ANTIGO ---
 
-        if (
-            precoAntigo &&
-            modalPrecoAntigo
-        ) {
-
-            modalPrecoAntigo.textContent =
-                precoAntigo.textContent;
-
+        if (modalPrecoAntigo) {
+            const blocoPrecoAntigo = modalPrecoAntigo.parentElement;
+            const exibirPrecoAntigo = tipoModal === "ofertas" && Boolean(precoAntigo);
+            if (blocoPrecoAntigo) blocoPrecoAntigo.style.display = exibirPrecoAntigo ? "" : "none";
+            modalPrecoAntigo.textContent = exibirPrecoAntigo ? precoAntigo.textContent : "";
         }
 
 
         // --- PREÇO ATUAL ---
 
-        if (
-            preco &&
-            modalPreco
-        ) {
-
-            modalPreco.textContent =
-                preco.textContent;
-
-        }
+        if (modalPreco) modalPreco.textContent = preco?.textContent || "Preço não informado";
 
 
         // --- DESCRIÇÃO ---
 
-        const descricao =
-            card.dataset.descricao;
+        const descricao = card.dataset.descricao || card.dataset.recomendacoes || "";
 
 
-        if (
-            descricao &&
-            modalDescricao
-        ) {
+        if (modalDescricao) modalDescricao.textContent = descricao || "Sem descrição disponível.";
 
-            modalDescricao.textContent =
-                descricao;
-
+        const tituloDescricao = document.querySelector(".descricao-oferta h3");
+        if (tituloDescricao) {
+            tituloDescricao.textContent = tipoModal === "hotel" ? "Sobre esta hospedagem" :
+                tipoModal === "atividade" ? "Sobre esta atividade" : "Sobre esta oferta";
         }
 
 
         // --- ODS ---
 
-        const ods8 =
+        const ods8 = tipoModal === "ofertas" ?
             Number(
                 card.dataset.ods8 || 0
-            );
+            ) : 0;
 
-        const ods12 =
+        const ods12 = tipoModal === "ofertas" ?
             Number(
                 card.dataset.ods12 || 0
-            );
+            ) : 0;
 
 
         if (modalOds) {
@@ -814,13 +787,16 @@ document.addEventListener(
 
         // --- CATEGORIA ---
 
-        const categoria =
-            card.dataset.categoria;
+        const categoria = card.dataset.categoria || "";
 
 
         if (modalCategoria) {
 
-            if (
+            if (tipoModal === "hotel") {
+                modalCategoria.textContent = "Hospedagem";
+            } else if (tipoModal === "atividade") {
+                modalCategoria.textContent = categoria || "Atividade";
+            } else if (
                 categoria === "nacional"
             ) {
 
@@ -859,98 +835,45 @@ document.addEventListener(
 
         // --- PASSAGEM AÉREA ---
 
-        const passagem =
-            card.dataset.passagem;
-
-
-        if (modalPassagem) {
-
-            if (passagem === "1") {
-
-                modalPassagem.style.display =
-                    "";
-
+        const linhaDetalhes = document.querySelector(".linha-detalhes");
+        if (tipoModal === "ofertas") {
+            const passagem = card.dataset.passagem;
+            const hospedagem = card.dataset.hospedagem;
+            const passeios = card.dataset.passeios;
+            const dias = card.dataset.dias;
+            if (linhaDetalhes) linhaDetalhes.style.display = "";
+            [modalPassagem, modalHospedagem, modalPasseios].forEach((item, index) => {
+                if (item) item.style.display = [passagem, hospedagem, passeios][index] === "1" ? "" : "none";
+            });
+            if (modalDias) {
+                const textoDias = modalDias.querySelector("p");
+                if (textoDias) textoDias.textContent = `${dias || 0} dias`;
+                modalDias.style.display = "";
             }
-
-            else {
-
-                modalPassagem.style.display =
-                    "none";
-
-            }
-
-        }
-
-
-        // --- HOSPEDAGEM ---
-
-        const hospedagem =
-            card.dataset.hospedagem;
-
-
-        if (modalHospedagem) {
-
-            if (hospedagem === "1") {
-
-                modalHospedagem.style.display =
-                    "";
-
-            }
-
-            else {
-
-                modalHospedagem.style.display =
-                    "none";
-
-            }
-
-        }
-
-
-        // --- PASSEIOS ---
-
-        const passeios =
-            card.dataset.passeios;
-
-
-        if (modalPasseios) {
-
-            if (passeios === "1") {
-
-                modalPasseios.style.display =
-                    "";
-
-            }
-
-            else {
-
-                modalPasseios.style.display =
-                    "none";
-
-            }
-
-        }
-
-
-        // --- QUANTIDADE DE DIAS ---
-
-        const dias =
-            card.dataset.dias;
-
-
-        if (modalDias) {
-
-            const textoDias =
-                modalDias.querySelector("p");
-
-
-            if (textoDias) {
-
-                textoDias.textContent =
-                    dias + " dias";
-
-            }
-
+        } else if (linhaDetalhes) {
+            const itens = [...linhaDetalhes.children];
+            const detalhes = tipoModal === "hotel"
+                ? [
+                    ["🖈", card.dataset.resumo],
+                    ["🛏", card.dataset.quarto],
+                    ["★", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""],
+                    ["$", "Valor por diária"]
+                ]
+                : [
+                    ["🖈", card.dataset.local || card.dataset.destino],
+                    ["⏱", card.dataset.duracao],
+                    ["✓", card.dataset.incluso],
+                    ["★", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""]
+                ];
+            detalhes.forEach(([icone, valor], index) => {
+                const item = itens[index];
+                if (!item) return;
+                const texto = item.querySelector("p");
+                const simbolo = item.querySelector("span");
+                item.style.display = valor ? "" : "none";
+                if (texto) texto.textContent = valor || "";
+                if (simbolo) simbolo.textContent = icone;
+            });
         }
 
 
