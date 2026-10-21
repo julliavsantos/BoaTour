@@ -194,7 +194,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px 20px;
-    padding: 30px;
+    padding: 14px 30px 30px;
 }
 .campo {
     position: relative;
@@ -642,4 +642,216 @@ body {
     background: white;
     color: var(--primary);
 }
+.conteudo-right {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 14px 10px 20px;
+}
+.conteudo {
+    height: auto;
+    align-items: stretch;
+    margin-bottom: 48px;
+}
+.conteudo-left {
+    height: auto;
+    min-height: 0;
+}
+.passos,
+.informaçoes {
+    height: auto;
+}
+.informaçoes {
+    max-height: 75vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding-right: 10px;
+}
+.conteudo-info-scroll {
+    max-height: 75vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+    padding-right: 7px;
+}
+.conteudo-info-scroll::-webkit-scrollbar { width: 7px; }
+.conteudo-info-scroll::-webkit-scrollbar-track { background: transparent; }
+.conteudo-info-scroll::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 10px; background: color-mix(in srgb, var(--primary) 70%, transparent); background-clip: padding-box; }
+.conteudo-info-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary); background-clip: padding-box; }
+.conteudo-info-scroll { padding-bottom: 24px; }
+.dados { margin-top: 27px; }
+.passageiro {
+    height: auto;
+    min-height: 54px;
+    padding: 8px 12px;
+    border-radius: 13px;
+}
+.passageiro-info { width: auto; min-width: 0; flex: 1; margin-left: 0; }
+.passageiro-info h3 { margin: 0; font-size: 15px; line-height: 1.25; letter-spacing: 0; }
+.passageiro-info p { margin: 2px 0 0; font-size: 12px; }
+.btn-editar-passageiro { height: 34px; margin-right: 0; border-radius: 9px; }
+.linha-divisão {
+    height: auto;
+    align-self: stretch;
+}
+.dados-compra {
+    height: auto;
+    min-height: 174px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 12px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, var(--surface)), var(--surface));
+}
+.imagem-compra {
+    position: relative;
+    width: 38%;
+    min-width: 112px;
+    height: 148px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 13px;
+    background: var(--surface-strong);
+}
+.imagem-compra img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.etiqueta-imagem-compra {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    max-width: calc(100% - 16px);
+    padding: 5px 8px;
+    border: 1px solid #ffffff55;
+    border-radius: 20px;
+    background: #102b32bd;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    backdrop-filter: blur(6px);
+}
+.compra-info { min-width: 0; width: 100%; gap: 3px; }
+.tipo-resumo-compra { color: var(--primary); font-size: 9px; font-weight: 800; letter-spacing: .09em; }
+.compra-info h3 { margin: 1px 0 0; font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
+.subtitulo-resumo-compra { margin: 0 0 3px; color: var(--muted); font-size: 11px; line-height: 1.35; overflow-wrap: anywhere; }
+.subtitulo-resumo-compra[hidden] { display: none; }
+.dados-icones { height: auto; margin-top: 2px; }
+.linha-compra { min-height: 19px; height: auto; margin-top: 2px; gap: 4px; }
+.linha-compra img { width: 18px; height: 18px; flex: 0 0 18px; object-fit: contain; }
+.linha-compra p { min-width: 0; font-size: 13px; line-height: 1.3; overflow-wrap: anywhere; }
+.modal-ods.ods-resumo-compra {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    margin: 0 0 5px 5px;
+    cursor: help;
+}
+.ods-resumo-compra .ods-selo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+}
+.ods-resumo-compra .ods-selo img { width: 22px; height: 22px; object-fit: contain; }
+.ods-resumo-compra[hidden] { display: none !important; }
+.dados-compra2 { height: auto; margin-top: 12px; }
+.linha-compra2 { min-height: 47px; height: auto; padding: 6px 8px; gap: 9px; }
+.linha-compra2 img { width: 30px; height: 30px; flex: 0 0 30px; object-fit: contain; }
+.linha-compra2 p { flex: 1; min-width: 0; font-size: 14px; line-height: 1.35; }
+.linha-compra2 h3 { margin-left: auto; font-size: 15px; white-space: nowrap; }
+.linha-compra2 p small { display: block; color: var(--muted); font-size: 10px; }
+.linha-compra2[hidden], .linha-compra[hidden], .datas-compra[hidden], .campo-checkout-compra[hidden] { display: none !important; }
+.linha-extra-compra { min-height: 47px; }
+.linha-cima { margin-top: 14px; }
+.valor-total { height: auto; min-height: 58px; margin-top: 2px; }
+.valor-total h2 { font-size: 20px; margin-top: 10px; }
+.valor-total h1 { font-size: 24px; margin-top: 8px; }
+.pagamento-seguro {
+    width: 93%;
+    height: auto;
+    min-height: 68px;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 9px 12px;
+}
+.pagamento-seguro img {
+    width: 42px;
+    max-width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+}
+.pagseg-dados { width: auto; min-width: 0; flex: 1; }
+.pagseg-dados h3 { margin-left: 0; font-size: 14px; }
+.pagseg-dados p { width: auto; margin: 3px 0 0; font-size: 11px; line-height: 1.25; }
+.datas-compra {
+    box-sizing: border-box;
+    width: calc(100% - 28px);
+    margin: 18px auto 0;
+    padding: 18px 22px 20px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: var(--surface);
+}
+.titulo-datas-compra { display: flex; align-items: center; gap: 11px; margin-bottom: 15px; }
+.titulo-datas-compra > span { display: grid; width: 52px; height: 52px; flex: 0 0 52px; place-items: center; border-radius: 14px; background: color-mix(in srgb, var(--primary) 11%, var(--surface)); }
+.titulo-datas-compra > span img { width: 44px; height: 44px; object-fit: contain; }
+.titulo-datas-compra h3 { margin: 0; color: var(--text); font-size: 14px; font-weight: 700; }
+.titulo-datas-compra p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+.campos-data-compra { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.campo-data-compra, .campo-checkout-compra { display: flex; min-width: 0; flex-direction: column; }
+.campos-data-compra label { display: block; margin: 0 0 10px; color: var(--heading); font-family: "Plus Jakarta Sans", sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.campos-data-compra input { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 9px; background: var(--card); color: var(--text); font: inherit; font-size: 13px; }
+.campos-data-compra input[type="date"] { display: none; }
+.seletor-data-compra { display: flex; height: 45px; overflow: hidden; border: 1px solid #c5cdce; border-radius: 8px; background: var(--surface); transition: border-color .2s ease, box-shadow .2s ease; }
+.seletor-data-compra:focus-within { border-color: #518d93; box-shadow: 0 0 0 3px rgba(81, 141, 147, .15); }
+.seletor-data-compra input { height: 100%; min-height: 0; padding: 0 13px; border: 0; border-radius: 0; background: transparent; color: var(--text); font-family: "Plus Jakarta Sans", sans-serif; font-size: 13px; cursor: pointer; outline: none; }
+.abrir-calendario-compra { display: grid; width: 52px; height: 45px; flex: 0 0 52px; place-items: center; padding: 0; border: 0; background: var(--surface); cursor: pointer; }
+.abrir-calendario-compra img { width: 31px; height: 31px; object-fit: contain; }
+.calendario-compra { position: fixed; top: 0; left: 0; width: min(250px, calc(100vw - 16px)); box-sizing: border-box; padding: 15px; border: 0; border-radius: 12px; background: var(--surface-strong); box-shadow: 0 8px 25px rgba(0,0,0,.15); z-index: 100001; display: none; }
+.calendario-compra.aberto { display: block; }
+.calendario-compra .cabecalho-calendario { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+.calendario-compra .mes-ano { font-size: 13px; font-weight: 700; color: var(--text); }
+.calendario-compra .navegacao-calendario { display: flex; gap: 5px; color: var(--text); }
+.calendario-compra .navegacao-calendario button { width: 26px; height: 26px; border: 0; background: transparent; font-size: 18px; cursor: pointer; border-radius: 6px; color: var(--text); }
+.calendario-compra .navegacao-calendario button:hover { background: var(--hover); }
+.calendario-compra .dias-semana { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 5px; color: var(--text); }
+.calendario-compra .dias-semana span { font-size: 11px; font-weight: 600; color: var(--muted-dark); padding: 5px 0; }
+.calendario-compra .dias { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; color: var(--muted-light); }
+.calendario-compra .dias > span { height: 28px; }
+.calendario-compra .dia { width: 100%; height: 28px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: var(--text); font: 11px "Plus Jakarta Sans", sans-serif; cursor: pointer; }
+.calendario-compra .dia:hover { background: var(--hover); }
+.calendario-compra .dia.outro-mes { color: var(--muted-light); }
+.calendario-compra .dia.hoje { border: 1px solid var(--accent-strong); color: var(--accent-strong); font-weight: 700; }
+.calendario-compra .dia.selecionado { background: var(--accent-strong); color: #fff; font-weight: 700; }
+.calendario-compra .dia.selecionado:hover { background: var(--accent-strong-dark); }
+.calendario-compra .dia.bloqueado { color: var(--muted); cursor: not-allowed; opacity: .45; }
+.calendario-compra .dia.bloqueado:hover { background: transparent; }
+.calendario-compra .rodape-calendario { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); }
+.calendario-compra .rodape-calendario button { border: 0; background: transparent; color: var(--accent-strong); font-family: "Plus Jakarta Sans", sans-serif; font-size: 12px; cursor: pointer; }
+.calendario-compra .rodape-calendario button:hover { text-decoration: underline; }
+@media (max-width: 640px) { .campos-data-compra { grid-template-columns: 1fr; } }
+.btn-comprar-voo {
+    width: 100%;
+    margin-top: 9px;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+    font: 600 12px 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+}
+.btn-comprar-voo:hover { background: var(--accent-dark); }
 }

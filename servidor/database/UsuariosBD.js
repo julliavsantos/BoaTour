@@ -22,6 +22,44 @@ class UsuariosBD {
         return String(email || '').trim().toLowerCase();
     }
 
+    static normalizarNome(nome) {
+        const particulas = new Set(['da', 'das', 'de', 'do', 'dos', 'e']);
+        return String(nome || '').trim().toLocaleLowerCase('pt-BR').split(/\s+/).filter(Boolean)
+            .map((palavra, indice) => {
+                if (indice > 0 && particulas.has(palavra)) return palavra;
+                return palavra.split(/([-'])/).map(parte => {
+                    if (parte === '-' || parte === "'") return parte;
+                    return parte ? parte.charAt(0).toLocaleUpperCase('pt-BR') + parte.slice(1) : '';
+                }).join('');
+            }).join(' ');
+    }
+
+    static cpfValido(cpf) {
+        if (!/^\d{11}$/.test(cpf) || /^([0-9])\1{10}$/.test(cpf)) return false;
+        const calcularDigito = (base, pesoInicial) => {
+            const soma = base.split('').reduce((total, digito, indice) =>
+                total + Number(digito) * (pesoInicial - indice), 0);
+            const resto = (soma * 10) % 11;
+            return resto === 10 ? 0 : resto;
+        };
+        return calcularDigito(cpf.slice(0, 9), 10) === Number(cpf[9]) &&
+            calcularDigito(cpf.slice(0, 10), 11) === Number(cpf[10]);
+    }
+
+    static nascimentoValido(dataNascimento) {
+        const match = String(dataNascimento || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) return false;
+        const ano = Number(match[1]);
+        const mes = Number(match[2]);
+        const dia = Number(match[3]);
+        const nascimento = new Date(Date.UTC(ano, mes - 1, dia));
+        if (nascimento.getUTCFullYear() !== ano || nascimento.getUTCMonth() !== mes - 1 || nascimento.getUTCDate() !== dia) return false;
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - ano;
+        if (hoje.getMonth() + 1 < mes || (hoje.getMonth() + 1 === mes && hoje.getDate() < dia)) idade--;
+        return nascimento <= new Date(Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) && idade >= 16;
+    }
+
     static emailCadastrado(email, callback) {
         const emailNormalizado = UsuariosBD.normalizarEmail(email);
         const connection = UsuariosBD.connect();
@@ -58,22 +96,36 @@ class UsuariosBD {
     }
 
     static addUsuario(usuario, callback) {
-        const nome = String(usuario.nome || '').trim();
+        const nome = UsuariosBD.normalizarNome(usuario.nome);
         const cpf = UsuariosBD.normalizarCPF(usuario.cpf);
         const email = UsuariosBD.normalizarEmail(usuario.email);
         const senha = String(usuario.senha || '');
         const termosAceitos = !!usuario.termos_aceitos;
 
-        if (nome.length < 3) {
-            return callback({ error: 'Digite seu nome completo.' });
+        if (nome.length < 3 || nome.split(/\s+/).length < 2) {
+            return callback({ error: 'Digite seu nome e sobrenome.' });
         }
 
-        if (cpf.length !== 11) {
+        if (!UsuariosBD.cpfValido(cpf)) {
             return callback({ error: 'Digite um CPF válido.' });
         }
 
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        const partesEmail = email.split('@');
+        if (email.length > 254 || partesEmail.length !== 2 || partesEmail[0].length > 64 ||
+            partesEmail[0].includes('..') || !/^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(partesEmail[0]) ||
+            !/^(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,}$/i.test(partesEmail[1])) {
             return callback({ error: 'Digite um e-mail válido.' });
+        }
+
+        const dataNascimento = String(usuario.data_nascimento || '').trim();
+        if (!dataNascimento) return callback({ error: 'Informe sua data de nascimento.' });
+        if (!UsuariosBD.nascimentoValido(dataNascimento)) {
+            return callback({ error: 'É necessário ter pelo menos 16 anos e informar uma data de nascimento válida.' });
+        }
+
+        const telefone = String(usuario.telefone || '').replace(/\D/g, '');
+        if (telefone && ![10, 11].includes(telefone.length)) {
+            return callback({ error: 'Digite um telefone com DDD e 10 ou 11 números.' });
         }
 
         if (senha.length < 6) {
@@ -104,8 +156,8 @@ class UsuariosBD {
                 email,
                 senhaHash,
                 1,
-                String(usuario.telefone || '').trim() || null,
-                usuario.data_nascimento || null
+                telefone || null,
+                dataNascimento
             ], (error, result) => {
                 connection.end();
 

@@ -33,6 +33,55 @@
     `;
     document.head.appendChild(estilo);
 
+    function formatarCpf(valor) {
+        const digitos = String(valor || "").replace(/\D/g, "").slice(0, 11);
+        let formatado = digitos.slice(0, 3);
+        if (digitos.length > 3) formatado += "." + digitos.slice(3, 6);
+        if (digitos.length > 6) formatado += "." + digitos.slice(6, 9);
+        if (digitos.length > 9) formatado += "-" + digitos.slice(9, 11);
+        return formatado;
+    }
+
+    window.boatourFormatCpf = formatarCpf;
+
+    function ehCampoCpf(campo) {
+        return campo instanceof HTMLInputElement && campo.id.toLowerCase().includes("cpf");
+    }
+
+    function prepararCampoCpf(campo) {
+        campo.type = "text";
+        campo.inputMode = "numeric";
+        campo.maxLength = 14;
+        if (!campo.placeholder || campo.placeholder.toLowerCase() === "cpf") {
+            campo.placeholder = "000.000.000-00";
+        }
+        const valorFormatado = formatarCpf(campo.value);
+        if (campo.value !== valorFormatado) campo.value = valorFormatado;
+    }
+
+    document.querySelectorAll("input").forEach(campo => {
+        if (ehCampoCpf(campo)) prepararCampoCpf(campo);
+    });
+
+    document.addEventListener("input", evento => {
+        const campo = evento.target;
+        if (!ehCampoCpf(campo)) return;
+
+        const posicao = campo.selectionStart ?? campo.value.length;
+        const digitosAntes = campo.value.slice(0, posicao).replace(/\D/g, "").length;
+        const valorFormatado = formatarCpf(campo.value);
+        if (campo.value === valorFormatado) return;
+        campo.value = valorFormatado;
+
+        let novaPosicao = 0;
+        let contagem = 0;
+        while (novaPosicao < valorFormatado.length && contagem < digitosAntes) {
+            if (/\d/.test(valorFormatado[novaPosicao])) contagem++;
+            novaPosicao++;
+        }
+        campo.setSelectionRange(novaPosicao, novaPosicao);
+    });
+
     let pilha;
     function obterPilha() {
         if (pilha?.isConnected) return pilha;

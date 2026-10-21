@@ -629,6 +629,18 @@ document.addEventListener(
         const tipoModal = card.dataset.modalTipo ||
             document.body.dataset.catalogo || "ofertas";
 
+        // O botão do modal carrega o item que acabou de ser aberto. Assim a
+        // compra não depende do catálogo de origem.
+        const botaoComprar = document.getElementById("btnComprar");
+        if (botaoComprar) {
+            botaoComprar.dataset.tipo = card.dataset.compraTipo ||
+                (tipoModal === "ofertas" ? "oferta" : tipoModal);
+            botaoComprar.dataset.id = card.dataset.compraId || card.dataset.id || "";
+            botaoComprar.dataset.destinoCidade = card.dataset.local || "";
+            botaoComprar.dataset.destinoPais = card.dataset.pais || "";
+            botaoComprar.dataset.destinoNome = card.dataset.nome || "";
+        }
+
 
         // --- PEGA INFORMAÇÕES DO CARD ---
 
@@ -696,7 +708,17 @@ document.addEventListener(
         // --- RESUMO ---
 
         if (modalResumo) {
-            modalResumo.textContent = card.dataset.resumo || resumo?.textContent || "";
+            const resumoOferta = [
+                card.dataset.dias ? `${card.dataset.dias} dias` : "",
+                card.dataset.quantidadePaises ? `${card.dataset.quantidadePaises} países` : "",
+                card.dataset.destinos ? `Destinos: ${card.dataset.destinos}` : "",
+                card.dataset.voos ? `Voos: ${card.dataset.voos}` : "",
+                card.dataset.hoteis ? `Hotéis: ${card.dataset.hoteis}` : "",
+                card.dataset.atividades ? `Atividades: ${card.dataset.atividades}` : ""
+            ].filter(Boolean).join(" · ");
+            modalResumo.textContent = tipoModal === "ofertas"
+                ? (resumoOferta || card.dataset.resumo || resumo?.textContent || "")
+                : (card.dataset.resumo || resumo?.textContent || "");
         }
 
 
@@ -725,21 +747,25 @@ document.addEventListener(
         const tituloDescricao = document.querySelector(".descricao-oferta h3");
         if (tituloDescricao) {
             tituloDescricao.textContent = tipoModal === "hotel" ? "Sobre esta hospedagem" :
-                tipoModal === "atividade" ? "Sobre esta atividade" : "Sobre esta oferta";
+                tipoModal === "atividade" ? "Sobre esta atividade" :
+                    tipoModal === "destino" ? "Sobre este destino" : "Sobre esta oferta";
         }
 
 
         // --- ODS ---
 
-        const ods8 = tipoModal === "ofertas" ?
-            Number(
-                card.dataset.ods8 || 0
-            ) : 0;
-
-        const ods12 = tipoModal === "ofertas" ?
-            Number(
-                card.dataset.ods12 || 0
-            ) : 0;
+        const ods8 = Number(card.dataset.ods8 || 0);
+        const ods12 = Number(card.dataset.ods12 || 0);
+        const tipoEntidadeOds = tipoModal === "ofertas" && card.dataset.tipoAlvo === "produto"
+            ? card.dataset.tipoProduto
+            : tipoModal;
+        const explicacaoOds = ({
+            destino: "Isso significa que esse destino é alinhado com o programa Turismo Consciente.",
+            atividade: "Isso significa que essa atividade é alinhada com o programa Turismo Consciente.",
+            hotel: "Isso significa que esse hotel é alinhado com o programa Turismo Consciente.",
+            voo: "Isso significa que esse voo é alinhado com o programa Turismo Consciente.",
+            oferta: "Isso significa que essa oferta é alinhada com o programa Turismo Consciente."
+        }[tipoEntidadeOds] || "Isso significa que essa oferta é alinhada com o programa Turismo Consciente.");
 
 
         if (modalOds) {
@@ -750,7 +776,7 @@ document.addEventListener(
             if (ods8 === 1) {
 
                 modalOds.innerHTML += `
-                    <span class="ods-selo">
+                    <span class="ods-selo" title="${explicacaoOds}" aria-label="${explicacaoOds}">
 
                         <img
                             src="/img/icones/arvore.png"
@@ -768,7 +794,7 @@ document.addEventListener(
             if (ods12 === 1) {
 
                 modalOds.innerHTML += `
-                    <span class="ods-selo">
+                    <span class="ods-selo" title="${explicacaoOds}" aria-label="${explicacaoOds}">
 
                         <img
                             src="/img/icones/arvore.png"
@@ -796,6 +822,8 @@ document.addEventListener(
                 modalCategoria.textContent = "Hospedagem";
             } else if (tipoModal === "atividade") {
                 modalCategoria.textContent = categoria || "Atividade";
+            } else if (tipoModal === "destino") {
+                modalCategoria.textContent = "Destino";
             } else if (
                 categoria === "nacional"
             ) {
@@ -859,12 +887,19 @@ document.addEventListener(
                     ["★", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""],
                     ["$", "Valor por diária"]
                 ]
-                : [
+                : tipoModal === "destino"
+                    ? [
+                        ["⌖", card.dataset.resumo || card.dataset.local],
+                        ["⏱", card.dataset.duracao],
+                        ["", ""],
+                        ["", ""]
+                    ]
+                    : [
                     ["🖈", card.dataset.local || card.dataset.destino],
                     ["⏱", card.dataset.duracao],
                     ["✓", card.dataset.incluso],
                     ["★", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""]
-                ];
+                    ];
             detalhes.forEach(([icone, valor], index) => {
                 const item = itens[index];
                 if (!item) return;
@@ -892,6 +927,123 @@ document.addEventListener(
 
     }
 );
+
+function normalizarLocalDeVoo(valor) {
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR")
+        .trim();
+}
+
+window.abrirBuscaVoosDestino = async function (destino) {
+    let aeroportos = [];
+    try {
+        const resposta = await fetch("http://localhost:3000/aeroportos");
+        if (resposta.ok) {
+            const dados = await resposta.json();
+            aeroportos = Array.isArray(dados) ? dados : [];
+        }
+    } catch (erro) {
+        console.warn("Não foi possível consultar aeroportos; usando cidades na busca.", erro);
+    }
+
+    const encontrarAeroporto = (cidade, pais, nomeDestino) => {
+        const cidadeNormalizada = normalizarLocalDeVoo(cidade || nomeDestino);
+        const correspondenciaCidade = aeroportos.find(aeroporto =>
+            [aeroporto.cidade, aeroporto.nome].some(
+                local => normalizarLocalDeVoo(local) === cidadeNormalizada
+            )
+        );
+        if (correspondenciaCidade) return correspondenciaCidade;
+
+        const aeroportosDoPais = aeroportos.filter(aeroporto =>
+            normalizarLocalDeVoo(aeroporto.pais) === normalizarLocalDeVoo(pais)
+        );
+        return aeroportosDoPais.length === 1 ? aeroportosDoPais[0] : null;
+    };
+
+    let origemSalva = "";
+    try {
+        origemSalva = localStorage.getItem("boatour_aeroporto_origem") || "";
+    } catch (_) {}
+
+    const aeroportoOrigem = encontrarAeroporto(origemSalva || "Florianópolis", "Brasil");
+    const aeroportoDestino = encontrarAeroporto(destino?.cidade, destino?.pais, destino?.nome);
+    let origem = aeroportoOrigem?.cidade || aeroportoOrigem?.nome || origemSalva || "Florianópolis";
+    const chegada = aeroportoDestino?.cidade || aeroportoDestino?.nome || destino?.cidade || destino?.nome || "";
+
+    // Prefere a origem escolhida pelo usuário; se não houver voo direto,
+    // usa uma origem cadastrada que tenha voo para esse destino.
+    try {
+        const parametrosRotas = new URLSearchParams({ destino: chegada });
+        const respostaVoos = await fetch(
+            `http://localhost:3000/voos?${parametrosRotas.toString()}`
+        );
+        if (respostaVoos.ok) {
+            const voos = await respostaVoos.json();
+            if (Array.isArray(voos) && voos.length > 0) {
+                const normalizarOrigem = voo => normalizarLocalDeVoo(
+                    voo.cidade_origem || voo.origem
+                );
+                const origemAtual = normalizarLocalDeVoo(origem);
+                const vooDaOrigemEscolhida = voos.find(voo =>
+                    normalizarOrigem(voo) === origemAtual ||
+                    normalizarLocalDeVoo(voo.origem).includes(origemAtual)
+                );
+                const vooDisponivel = vooDaOrigemEscolhida || voos[0];
+                origem = vooDaOrigemEscolhida
+                    ? (vooDaOrigemEscolhida.cidade_origem || vooDaOrigemEscolhida.origem)
+                    : (vooDisponivel.cidade_origem || vooDisponivel.origem);
+            }
+        }
+    } catch (erro) {
+        console.warn("Não foi possível conferir as rotas cadastradas antes da busca.", erro);
+    }
+
+    const parametros = new URLSearchParams({ origem, destino: chegada, idaVolta: "1" });
+    if (destino?.imagem) {
+        const imagemDestino = String(destino.imagem).includes("/")
+            ? String(destino.imagem)
+            : `img/destinos/${destino.imagem}`;
+        parametros.set("imagemDestino", imagemDestino);
+    }
+    window.location.href = `/VOOS/index.html?${parametros.toString()}`;
+};
+
+// Encaminha atividades e hotéis para a compra. Destinos seguem para a busca
+// de voos, já com os aeroportos de origem e chegada preenchidos.
+document.addEventListener("click", event => {
+    const botaoComprar = event.target.closest("#btnComprar");
+    if (!botaoComprar) return;
+
+    const tipo = botaoComprar.dataset.tipo;
+    const id = Number(botaoComprar.dataset.id);
+
+    if (!tipo || !Number.isSafeInteger(id) || id <= 0) {
+        alert("Selecione um item antes de continuar.");
+        return;
+    }
+
+    event.preventDefault();
+    if (tipo === "destino") {
+        window.abrirBuscaVoosDestino({
+            cidade: botaoComprar.dataset.destinoCidade,
+            pais: botaoComprar.dataset.destinoPais,
+            nome: botaoComprar.dataset.destinoNome
+        });
+        return;
+    }
+
+    const urlCompra = new URL(`/COMPRAR/index.html?tipo=${encodeURIComponent(tipo)}&id=${encodeURIComponent(id)}`, window.location.origin);
+    if (tipo === "hotel") {
+        const checkin = document.getElementById("dataPartida")?.value || "";
+        const checkout = document.getElementById("dataRetorno")?.value || "";
+        if (checkin) urlCompra.searchParams.set("checkin", checkin);
+        if (checkout) urlCompra.searchParams.set("checkout", checkout);
+    }
+    window.location.href = urlCompra.href;
+});
 
 
 // --- FECHAR MODAL PELO X ---

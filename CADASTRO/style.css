@@ -217,9 +217,10 @@ body.dark-mode{
     border: 1px solid #d5e0e1;
     background: var(--card);
     outline: none;
-    padding: 0 42px 0 13px;
+    padding: 0 68px 0 13px;
     box-sizing: border-box;
-    color: #1e3436;
+    color: var(--text);
+    caret-color: var(--text);
     font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 13px;
     transition:
@@ -245,10 +246,14 @@ body.dark-mode{
     background: transparent;
     color: #6c8587;
     cursor: pointer;
-    font-size: 15px;
+    min-width: 54px;
+    font-size: 11px;
+    font-weight: 600;
     padding: 3px;
     transition: .2s;
 }
+body.dark-mode .campo-senha input { color: #fff; caret-color: #fff; }
+body.dark-mode .mostrar-senha { color: #fff; }
 .mostrar-senha:hover {
     color: #073b40;
 }

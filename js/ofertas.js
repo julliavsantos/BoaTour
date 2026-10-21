@@ -79,6 +79,10 @@ carregarFavoritos().then(() => {
             const card = document.createElement('div');
 
             card.classList.add('card-oferta');
+            card.dataset.id = oferta.id;
+            card.dataset.modalTipo = 'ofertas';
+            card.dataset.compraTipo = 'oferta';
+            card.dataset.compraId = oferta.id;
 
             const ofertaFavoritada = favoritosUsuario.some(favorito =>
             favorito.tipo === "oferta" &&
@@ -122,43 +126,45 @@ carregarFavoritos().then(() => {
 
             let categoria = "oferta";
 
-            if (
-                Number(oferta.pacote) === 1 ||
-                oferta.pacote === true
-            ) {
+            if (String(oferta.tipo_alvo || "").toLowerCase() === "pacote") {
 
                 categoria = "pacote";
 
-            } else if (
-                Number(oferta.internacional) === 1 ||
-                oferta.internacional === true
-            ) {
+            } else if (String(oferta.abrangencia || "").toLowerCase() === "internacional" ||
+                String(oferta.abrangencia || "").toLowerCase() === "mista") {
 
                 categoria = "internacional";
 
-            } else if (
-                Number(oferta.nacional) === 1 ||
-                oferta.nacional === true
-            ) {
+            } else if (String(oferta.abrangencia || "").toLowerCase() === "nacional") {
 
                 categoria = "nacional";
 
             }
 
+            const tipoExplicacaoOds = String(oferta.tipo_alvo || "").toLowerCase() === "produto"
+                ? ({
+                    destino: "esse destino é alinhado",
+                    atividade: "essa atividade é alinhada",
+                    hotel: "esse hotel é alinhado",
+                    voo: "esse voo é alinhado"
+                }[oferta.tipo_produto] || "essa oferta é alinhada")
+                : "essa oferta é alinhada";
+
 
             // --- DATASET DO CARD ---
 
-            card.dataset.dias =
-                oferta.dias || "";
-
-            card.dataset.passagem =
-                oferta.passagem_aerea || 0;
-
-            card.dataset.hospedagem =
-                oferta.hospedagem || 0;
-
-            card.dataset.passeios =
-                oferta.passeios || 0;
+            card.dataset.tipoAlvo = oferta.tipo_alvo || "";
+            card.dataset.abrangencia = oferta.abrangencia || "";
+            card.dataset.tipoProduto = oferta.tipo_produto || "";
+            card.dataset.dias = oferta.dias || "";
+            card.dataset.passagem = Number(oferta.passagem_aerea) === 1 ? "1" : "0";
+            card.dataset.hospedagem = Number(oferta.hospedagem) === 1 ? "1" : "0";
+            card.dataset.passeios = Number(oferta.passeios) === 1 ? "1" : "0";
+            card.dataset.destinos = oferta.destinos_inclusos || "";
+            card.dataset.voos = oferta.voos_inclusos || "";
+            card.dataset.hoteis = oferta.hoteis_inclusos || "";
+            card.dataset.atividades = oferta.atividades_inclusas || "";
+            card.dataset.quantidadePaises = oferta.quantidade_paises || "";
 
             card.dataset.descricao =
                 oferta.descricao || "";
@@ -175,8 +181,7 @@ carregarFavoritos().then(() => {
             // IMPORTANTE:
             // adiciona o destaque para o filtro "todas"
             card.dataset.destaque =
-                Number(oferta.destaque) === 1 ||
-                oferta.destaque === true
+                Number(oferta.destaque) === 1 || oferta.destaque === true
                     ? "sim"
                     : "nao";
 
@@ -287,6 +292,8 @@ carregarFavoritos().then(() => {
                                         class="selinho-ods"
                                         src="/img/icones/arvore.png"
                                         alt="Oferta alinhada às ODS"
+                                        title="Isso significa que ${tipoExplicacaoOds} com o programa Turismo Consciente."
+                                        aria-label="Isso significa que ${tipoExplicacaoOds} com o programa Turismo Consciente."
                                     >
                                 `
                                 : ""
@@ -507,10 +514,27 @@ carregarFavoritos().then(() => {
 
                 else {
 
-                    if (
-                        categoria === filtroSelecionado &&
-                        contador < 8
-                    ) {
+                    const tipoAlvo = (oferta.dataset.tipoAlvo || '').toLowerCase();
+                    const tipoProduto = (oferta.dataset.tipoProduto || '').toLowerCase();
+                    const abrangencia = (oferta.dataset.abrangencia || '').toLowerCase();
+                    const corresponde = (() => {
+                        if (filtroSelecionado === 'nacional') {
+                            return abrangencia === 'nacional' || abrangencia === 'mista';
+                        }
+                        if (filtroSelecionado === 'internacional') {
+                            return abrangencia === 'internacional' || abrangencia === 'mista';
+                        }
+                        if (filtroSelecionado === 'pacote') return tipoAlvo === 'pacote';
+                        if (['destino', 'hotel', 'atividade'].includes(filtroSelecionado)) {
+                            return tipoAlvo === 'produto' && tipoProduto === filtroSelecionado;
+                        }
+                        if (filtroSelecionado === 'turismo-consciente') {
+                            return Number(oferta.dataset.ods8) === 1 || Number(oferta.dataset.ods12) === 1;
+                        }
+                        return false;
+                    })();
+
+                    if (corresponde && contador < 8) {
 
                         oferta.style.display = '';
 

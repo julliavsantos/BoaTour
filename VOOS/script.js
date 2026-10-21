@@ -6,6 +6,7 @@ let quantidadeVisivel = 6;
 
 let filtroPrecoAtual = "todos";
 let requisicaoVoosAtual = 0;
+let imagemDestinoInicial = "";
 
 function normalizarBuscaVoo(valor) {
     return String(valor || "")
@@ -68,12 +69,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const parametrosIniciais = new URLSearchParams(window.location.search);
+    imagemDestinoInicial = parametrosIniciais.get("imagemDestino") || "";
     const origemInicial = parametrosIniciais.get("origem");
     const destinoInicial = parametrosIniciais.get("destino");
     const dataInicial = parametrosIniciais.get("data");
+    const idaVoltaInicial = parametrosIniciais.get("idaVolta");
     if (origemInicial && campoPartida) campoPartida.value = origemInicial;
     if (destinoInicial && campoDestino) campoDestino.value = destinoInicial;
     if (dataInicial && campoDataPartida) campoDataPartida.value = dataInicial;
+    if (origemInicial) {
+        try { localStorage.setItem("boatour_aeroporto_origem", origemInicial); } catch (_) {}
+    }
+    if (idaVoltaInicial === "1" && idaVolta) {
+        idaVolta.checked = true;
+        idaVolta.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    campoPartida?.addEventListener("change", () => {
+        const origem = campoPartida.value.trim();
+        try {
+            if (origem) localStorage.setItem("boatour_aeroporto_origem", origem);
+            else localStorage.removeItem("boatour_aeroporto_origem");
+        } catch (_) {}
+    });
 
     let temporizadorBuscaVoos;
     const agendarBuscaVoos = () => {
@@ -396,6 +413,12 @@ function formatarDataVoo(data) {
         return "";
     }
 
+    if (data instanceof Date && !Number.isNaN(data.getTime())) {
+        const dia = String(data.getDate()).padStart(2, "0");
+        const mes = String(data.getMonth() + 1).padStart(2, "0");
+        return `${dia}/${mes}/${data.getFullYear()}`;
+    }
+
     const correspondencia = String(data).match(
         /^(\d{4})-(\d{2})-(\d{2})/
     );
@@ -523,12 +546,14 @@ function renderizarVoos() {
 
         // --- ORIGEM / DESTINO ---
 
-        const origem =
-            voo.origem || "Origem";
+        const origem = voo.cidade_origem
+            ? `${voo.cidade_origem}${voo.codigo_origem ? ` (${voo.codigo_origem})` : ""}`
+            : voo.origem || "Origem";
 
 
-        const destino =
-            voo.destino || "Destino";
+        const destino = voo.cidade_destino
+            ? `${voo.cidade_destino}${voo.codigo_destino ? ` (${voo.codigo_destino})` : ""}`
+            : voo.destino || "Destino";
 
 
         // --- DATA ---
@@ -557,34 +582,66 @@ function renderizarVoos() {
 
         // --- COMPANHIA ---
 
-        const companhia =
-            voo.companhia_aerea ||
-            "Companhia aérea";
-
+        const companhia = voo.companhia_nome || voo.companhia_aerea || "Companhia aérea";
+        const iniciaisCompanhia = companhia
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(parte => parte[0])
+            .join("")
+            .toUpperCase();
+        const logosPorCompanhia = {
+            1: "img/companhias/latam.png",
+            2: "img/companhias/gol.png",
+            3: "img/companhias/azul.png",
+            4: "img/companhias/american-airlines.png",
+            5: "img/companhias/delta.png",
+            6: "img/companhias/air-france.png",
+            7: "img/companhias/emirates.png",
+            8: "img/companhias/tap.png"
+        };
         const imagem = String(
-            voo.imagem || voo.foto || voo.logo_companhia || ""
+            voo.logo_companhia || logosPorCompanhia[Number(voo.id_companhia)] || ""
         ).trim();
-        const imagemUrl = imagem
-            ? (/^(https?:|data:|\/)/i.test(imagem)
-                ? imagem
-                : `../${imagem.replace(/^\.\//, "")}`)
+        const caminhoImagem = imagem && !/^(https?:|data:|\/)/i.test(imagem)
+            ? `../${imagem.replace(/^(\.\/|\.\.\/)+/, "")}`
+            : imagem;
+        const imagemUrl = caminhoImagem
+            ? new URL(caminhoImagem, document.baseURI).href
             : "";
+        const horarioSaida = String(voo.horario_saida || "").slice(0, 5);
+        const horarioChegada = String(voo.horario_chegada || "").slice(0, 5);
+        const dataChegada = voo.data_chegada &&
+            formatarDataVoo(voo.data_chegada) !== formatarDataVoo(voo.data_saida)
+            ? ` · Chega ${formatarDataVoo(voo.data_chegada)}`
+            : "";
+        const odsVoos = [
+            Number(voo.ods8) === 1 ? "ODS 8" : null,
+            Number(voo.ods12) === 1 ? "ODS 12" : null
+        ].filter(Boolean);
+        const explicacaoOdsVoo = "Isso significa que esse voo é alinhado com o programa Turismo Consciente.";
+        const etiquetasOdsVoo = odsVoos.map(ods => `
+            <span class="ods-selo" title="${explicacaoOdsVoo}" aria-label="${explicacaoOdsVoo}">
+                <img src="../img/icones/arvore.png" alt="">
+                ${ods}
+            </span>
+        `).join("");
 
 
         // --- CARD ---
 
         card.innerHTML = `
-            ${imagemUrl ? `
-                <div class="imagem-voo">
-                    <img src="${imagemUrl}" alt="${companhia}" loading="lazy">
-                </div>
-            ` : ""}
+            <div class="imagem-voo">
+                ${imagemUrl ? `<img src="${imagemUrl}" alt="Logo ${companhia}" loading="lazy">` : ""}
+                <span class="logo-companhia-fallback" ${imagemUrl ? "hidden" : ""}>${iniciaisCompanhia || "✈"}</span>
+            </div>
 
             <div class="voo-info">
-                <span class="categoria-voo">Voo · ${companhia}</span>
+                <span class="categoria-voo">${Number(voo.oferta) === 1 ? "Oferta de voo · " : "Voo · "}${companhia} · ${voo.numero_voo || ""}</span>
+                ${etiquetasOdsVoo ? `<div class="ods-voo-tags">${etiquetasOdsVoo}</div>` : ""}
                 <strong class="rota-voo">${origem} → ${destino}</strong>
-                <p>${data} <span aria-hidden="true">•</span> ${escalas}</p>
-                <small>${companhia}</small>
+                <p>${data}${dataChegada} <span aria-hidden="true">•</span> ${horarioSaida || "--:--"} – ${horarioChegada || "--:--"} <span aria-hidden="true">•</span> ${escalas}${voo.duracao ? ` <span aria-hidden="true">•</span> ${voo.duracao}` : ""}</p>
+                <small>${voo.classe_nome || voo.classe || "Classe não informada"}${voo.assentos_disponiveis != null ? ` · ${voo.assentos_disponiveis} assentos disponíveis` : ""}</small>
             </div>
 
             <div class="preco">
@@ -593,8 +650,24 @@ function renderizarVoos() {
                 ` : ""}
                 <strong>R$ ${preco}</strong>
                 <span class="preco-legenda">A partir de</span>
+                <button type="button" class="btn-comprar-voo" data-id-voo="${voo.id_voo}">Comprar voo</button>
             </div>
         `;
+
+        card.querySelector(".btn-comprar-voo")?.addEventListener("click", event => {
+            event.stopPropagation();
+            const parametrosCompra = new URLSearchParams({ tipo: "voo", id: voo.id_voo });
+            if (imagemDestinoInicial) parametrosCompra.set("imagemDestino", imagemDestinoInicial);
+            window.location.href = `../COMPRAR/index.html?${parametrosCompra.toString()}`;
+        });
+
+        const logoImagem = card.querySelector(".imagem-voo img");
+        if (logoImagem) {
+            logoImagem.addEventListener("error", () => {
+                logoImagem.hidden = true;
+                card.querySelector(".logo-companhia-fallback").hidden = false;
+            }, { once: true });
+        }
 
 
         // --- DADOS DO CARD ---

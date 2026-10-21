@@ -232,6 +232,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- DADOS PARA EVENTUAIS MODAIS ---
 
             card.dataset.id = atividade.id_atividade || "";
+            card.dataset.compraTipo = "atividade";
+            card.dataset.compraId = atividade.id_atividade || "";
             card.dataset.modalTipo = "atividade";
             card.dataset.nome = nome;
             card.dataset.descricao = descricao;

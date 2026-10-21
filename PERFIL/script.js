@@ -52,10 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (nomeEditar) nomeEditar.value = usuario.nome || "";
         if (emailEditar) emailEditar.value = usuario.email || "";
-        if (cpfEditar) cpfEditar.value = usuario.cpf || "";
+        if (cpfEditar) cpfEditar.value = window.boatourFormatCpf
+            ? window.boatourFormatCpf(usuario.cpf)
+            : usuario.cpf || "";
         if (telefoneEditar) telefoneEditar.value = usuario.telefone || "";
         if (nascimentoEditar) nascimentoEditar.value = usuario.data_nascimento
-            ? String(usuario.data_nascimento).slice(0, 10)
+            ? formatarDataExibicao(String(usuario.data_nascimento).slice(0, 10))
             : "";
 
         if (usuario.foto_perfil) window.atualizarFotosPerfil(usuario.foto_perfil);
@@ -120,6 +122,102 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelarEditarPerfil = document.getElementById("cancelarEditarPerfil");
     const modalGaleriaBanners = document.getElementById("modalGaleriaBanners");
     const abrirGaleriaBanners = document.getElementById("abrirGaleriaBanners");
+
+    // Calendário de nascimento com a mesma aparência dos campos de data de VOOS.
+    const campoDataNascimento = document.getElementById("campoDataNascimentoPerfil");
+    const inputDataNascimento = document.getElementById("dataNascimentoPerfil");
+    const calendarioNascimento = document.getElementById("calendarioNascimentoPerfil");
+    const botaoCalendarioNascimento = document.getElementById("abrirCalendarioNascimento");
+    const hojeNascimento = new Date();
+    let mesCalendarioNascimento = new Date(hojeNascimento.getFullYear(), hojeNascimento.getMonth(), 1);
+
+    // Mantém o calendário fora da área rolável do modal para não alterar seu layout.
+    if (calendarioNascimento) document.body.appendChild(calendarioNascimento);
+
+    function formatarDataExibicao(dataIso) {
+        const partes = String(dataIso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        return partes ? `${partes[3]}/${partes[2]}/${partes[1]}` : "";
+    }
+
+    function montarCalendarioNascimento() {
+        if (!calendarioNascimento) return;
+        const selecionada = inputDataNascimento?.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        const ano = mesCalendarioNascimento.getFullYear();
+        const mes = mesCalendarioNascimento.getMonth();
+        const primeiroDia = new Date(ano, mes, 1);
+        const inicioGrade = new Date(ano, mes, 1 - primeiroDia.getDay());
+        const nomesMeses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+        const dias = Array.from({ length: 42 }, (_, indice) => {
+            const data = new Date(inicioGrade);
+            data.setDate(inicioGrade.getDate() + indice);
+            const foraDoMes = data.getMonth() !== mes;
+            const futura = data > new Date(hojeNascimento.getFullYear(), hojeNascimento.getMonth(), hojeNascimento.getDate());
+            const ehHoje = data.toDateString() === hojeNascimento.toDateString();
+            const ehSelecionada = selecionada && Number(selecionada[1]) === data.getDate() && Number(selecionada[2]) === data.getMonth() + 1 && Number(selecionada[3]) === data.getFullYear();
+            const classes = ["dia", foraDoMes ? "outro-mes" : "", ehHoje ? "hoje" : "", ehSelecionada ? "selecionado" : "", futura ? "bloqueado" : ""].filter(Boolean).join(" ");
+            return `<button type="button" class="${classes}" data-data="${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}" ${futura ? "disabled" : ""}>${data.getDate()}</button>`;
+        }).join("");
+
+        calendarioNascimento.innerHTML = `
+            <div class="cabecalho-calendario">
+                <span class="mes-ano">${nomesMeses[mes]} ${ano}</span>
+                <div class="navegacao-calendario">
+                    <button type="button" data-navegar="-1" aria-label="Mês anterior">‹</button>
+                    <button type="button" data-navegar="1" aria-label="Próximo mês">›</button>
+                </div>
+            </div>
+            <div class="dias-semana">${["D", "S", "T", "Q", "Q", "S", "S"].map(dia => `<span>${dia}</span>`).join("")}</div>
+            <div class="dias">${dias}</div>
+            <div class="rodape-calendario"><button type="button" data-limpar>Limpar</button><button type="button" data-hoje>Hoje</button></div>`;
+    }
+
+    botaoCalendarioNascimento?.addEventListener("click", () => {
+        const partes = inputDataNascimento?.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        mesCalendarioNascimento = partes
+            ? new Date(Number(partes[3]), Number(partes[2]) - 1, 1)
+            : new Date(hojeNascimento.getFullYear(), hojeNascimento.getMonth(), 1);
+        montarCalendarioNascimento();
+        const abrindo = !calendarioNascimento?.classList.contains("aberto");
+        calendarioNascimento?.classList.toggle("aberto", abrindo);
+        if (abrindo && calendarioNascimento) {
+            const retangulo = botaoCalendarioNascimento.getBoundingClientRect();
+            const largura = 250;
+            const alturaEstimada = 310;
+            const espacoAbaixo = window.innerHeight - retangulo.bottom;
+            const topo = espacoAbaixo >= alturaEstimada + 8
+                ? retangulo.bottom + 8
+                : Math.max(8, retangulo.top - alturaEstimada - 8);
+            const esquerda = Math.min(retangulo.left, window.innerWidth - largura - 8);
+            calendarioNascimento.style.top = `${topo}px`;
+            calendarioNascimento.style.left = `${Math.max(8, esquerda)}px`;
+        }
+    });
+
+    calendarioNascimento?.addEventListener("click", event => {
+        const botao = event.target.closest("button");
+        if (!botao) return;
+        if (botao.dataset.navegar) {
+            event.stopPropagation();
+            mesCalendarioNascimento.setMonth(mesCalendarioNascimento.getMonth() + Number(botao.dataset.navegar));
+            montarCalendarioNascimento();
+        } else if (botao.dataset.data && inputDataNascimento) {
+            inputDataNascimento.value = formatarDataExibicao(botao.dataset.data);
+            calendarioNascimento.classList.remove("aberto");
+        } else if (botao.hasAttribute("data-limpar") && inputDataNascimento) {
+            inputDataNascimento.value = "";
+            calendarioNascimento.classList.remove("aberto");
+        } else if (botao.hasAttribute("data-hoje") && inputDataNascimento) {
+            inputDataNascimento.value = `${String(hojeNascimento.getDate()).padStart(2, "0")}/${String(hojeNascimento.getMonth() + 1).padStart(2, "0")}/${hojeNascimento.getFullYear()}`;
+            calendarioNascimento.classList.remove("aberto");
+        }
+    });
+
+    document.addEventListener("click", event => {
+        if (campoDataNascimento && !campoDataNascimento.contains(event.target) && !calendarioNascimento?.contains(event.target)) {
+            calendarioNascimento?.classList.remove("aberto");
+        }
+    });
+    modalEditarPerfil?.addEventListener("scroll", () => calendarioNascimento?.classList.remove("aberto"), true);
 
     function selecionarBanner(caminho) {
         const normalizar = valor => String(valor || "").replace(/^(\.\.\/)+/, "").replace(/^\/+/, "");
@@ -255,7 +353,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = document.getElementById("emailPerfil")?.value.trim();
         const cpf = document.getElementById("cpfPerfil")?.value.replace(/\D/g, "");
         const telefone = document.getElementById("telefonePerfil")?.value.trim() || "";
-        const dataNascimento = document.getElementById("dataNascimentoPerfil")?.value || null;
+        const dataNascimentoExibicao = document.getElementById("dataNascimentoPerfil")?.value || "";
+        const dataNascimentoPartes = dataNascimentoExibicao.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        const dataNascimento = dataNascimentoPartes
+            ? `${dataNascimentoPartes[3]}-${dataNascimentoPartes[2]}-${dataNascimentoPartes[1]}`
+            : null;
 
         const campoNome = document.getElementById("nomePerfilEditar");
         const campoEmail = document.getElementById("emailPerfil");

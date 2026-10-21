@@ -393,13 +393,15 @@
                 >
             </div>
 
-            <div class="campo campo-completo">
+            <div class="campo campo-completo data-campo" id="campoDataNascimentoPerfil">
                 <label for="dataNascimentoPerfil">Data de nascimento</label>
-                <input
-                    type="date"
-                    id="dataNascimentoPerfil"
-                    autocomplete="bday"
-                >
+                <div class="input-data">
+                    <input type="text" id="dataNascimentoPerfil" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="bday" readonly>
+                    <button type="button" class="btn-calendario" id="abrirCalendarioNascimento" aria-label="Abrir calendário">
+                        <img src="../img/icones/calendario.png" alt="">
+                    </button>
+                </div>
+                <div class="calendario" id="calendarioNascimentoPerfil"></div>
             </div>
         </div>
 

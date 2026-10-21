@@ -124,6 +124,9 @@ if (linkBuscaVoosHome) {
         const destino = document.getElementById("destino")?.value.trim();
         const data = document.getElementById("dataPartida")?.value.trim();
 
+        try {
+            if (origem) localStorage.setItem("boatour_aeroporto_origem", origem);
+        } catch (_) {}
         if (origem) parametros.set("origem", origem);
         if (destino) parametros.set("destino", destino);
         if (data) parametros.set("data", data);

@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-
     // --- NORMALIZAR TEXTO ---
 
     function normalizarTexto(texto) {
@@ -149,6 +148,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // Sempre que pesquisar ou trocar filtro,
         // volta para os 8 primeiros
         quantidadeVisivel = 8;
+
+        // Garante que um destino selecionado no carrossel inicial não fique
+        // escondido depois dos primeiros oito cards.
+        const idDestinoSelecionado = Number(
+            new URLSearchParams(window.location.search).get("destino")
+        );
+        const indiceSelecionado = destinosFiltrados.findIndex(destino =>
+            Number(destino.id_destino) === idDestinoSelecionado
+        );
+        if (indiceSelecionado >= 0) {
+            quantidadeVisivel = Math.max(quantidadeVisivel, indiceSelecionado + 1);
+        }
 
 
         // Renderiza novamente
@@ -259,6 +270,18 @@ async function carregarFavoritos() {
                 document.createElement("div");
 
             card.classList.add("card-oferta");
+            card.dataset.destinoId = destino.id_destino || "";
+            card.dataset.modalTipo = "destino";
+            card.dataset.compraTipo = "destino";
+            card.dataset.compraId = destino.id_destino || "";
+            card.dataset.nome = destino.nome || "Destino";
+            card.dataset.resumo = [destino.cidade, destino.pais].filter(Boolean).join(", ");
+            card.dataset.pais = destino.pais || "";
+            card.dataset.descricao = destino.descricao || "Conheça este incrível destino.";
+            card.dataset.local = destino.cidade || destino.pais || "";
+            card.dataset.duracao = destino.dias ? `${destino.dias} dias` : "";
+            card.dataset.ods8 = destino.ods8 || 0;
+            card.dataset.ods12 = destino.ods12 || 0;
 
 
             // --- IMAGEM ---
@@ -339,6 +362,8 @@ async function carregarFavoritos() {
                             class="selinho-ods"
                             src="/img/icones/arvore.png"
                             alt="Destino alinhado às ODS"
+                            title="Isso significa que esse destino é alinhado com o programa Turismo Consciente."
+                            aria-label="Isso significa que esse destino é alinhado com o programa Turismo Consciente."
                         >
                     `
                     : ""
@@ -357,14 +382,14 @@ async function carregarFavoritos() {
             class="btn-ver-ofertas"
             type="button"
         >
-            Ver ofertas
+            Buscar voos
         </button>
 
     </div>
 `;
 
 // --- BOTÃO DE FAVORITO ---
-            // --- BOTÃO VER OFERTAS ---
+            // --- BOTÃO COMPRAR DESTINO ---
 
             const btnVerOfertas =
                 card.querySelector(".btn-ver-ofertas");
@@ -380,15 +405,17 @@ async function carregarFavoritos() {
                         // qualquer outra ação no card
                         event.stopPropagation();
 
-                        console.log(
-                            "Ver ofertas:",
-                            destino.nome
-                        );
+                        if (typeof window.abrirBuscaVoosDestino === "function") {
+                            window.abrirBuscaVoosDestino(destino);
+                            return;
+                        }
 
-                        // Por enquanto leva para
-                        // a página de ofertas
-                        window.location.href =
-                            "/OFERTAS/index.html";
+                        const parametros = new URLSearchParams({
+                            origem: "Florianópolis",
+                            destino: destino.cidade || destino.nome || "",
+                            idaVolta: "1"
+                        });
+                        window.location.href = `/VOOS/index.html?${parametros}`;
 
                     }
                 );
@@ -538,6 +565,24 @@ document.addEventListener("click", async (event) => {
         // Atualiza o botão depois de renderizar
         atualizarBotaoVerMais();
 
+        destacarDestinoSolicitado();
+
+    }
+
+    // Vindo da página inicial, revela e destaca o card indicado no endereço.
+    function destacarDestinoSolicitado() {
+        const idDestino = Number(
+            new URLSearchParams(window.location.search).get("destino")
+        );
+        if (!Number.isSafeInteger(idDestino) || idDestino <= 0) return;
+
+        const card = destinosGrid.querySelector(
+            `.card-oferta[data-destino-id="${idDestino}"]`
+        );
+        if (!card) return;
+
+        card.classList.add("destino-selecionado");
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
 

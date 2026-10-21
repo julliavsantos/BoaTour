@@ -157,26 +157,30 @@ document.addEventListener("DOMContentLoaded", () => {
             case "nacionais":
             case "nacional":
 
-                return (
-                    Number(oferta.nacional) === 1 ||
-                    oferta.nacional === true
-                );
+                return normalizarTexto(oferta.abrangencia) === "nacional" ||
+                    normalizarTexto(oferta.abrangencia) === "mista";
 
             case "internacionais":
             case "internacional":
 
-                return (
-                    Number(oferta.internacional) === 1 ||
-                    oferta.internacional === true
-                );
+                return normalizarTexto(oferta.abrangencia) === "internacional" ||
+                    normalizarTexto(oferta.abrangencia) === "mista";
 
             case "pacotes":
             case "pacote":
 
-                return (
-                    Number(oferta.pacote) === 1 ||
-                    oferta.pacote === true
-                );
+                return normalizarTexto(oferta.tipo_alvo) === "pacote";
+
+            case "destino":
+            case "hotel":
+            case "atividade":
+
+                return normalizarTexto(oferta.tipo_alvo) === "produto" &&
+                    normalizarTexto(oferta.tipo_produto) === normalizarTexto(filtro);
+
+            case "turismo-consciente":
+                return Number(oferta.ods8) === 1 || oferta.ods8 === true ||
+                    Number(oferta.ods12) === 1 || oferta.ods12 === true;
 
             default:
                 return true;
@@ -205,8 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     normalizarTexto(`
                         ${oferta.titulo || ""}
                         ${oferta.descricao || ""}
-                        ${oferta.dias || ""}
-                        ${oferta.quantidade_paises || ""}
+                        ${oferta.abrangencia || ""}
+                        ${oferta.tipo_alvo || ""}
+                        ${oferta.tipo_produto || ""}
                     `);
 
                 const passouNaBusca =
@@ -289,6 +294,8 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             card.dataset.id = oferta.id;
+            card.dataset.compraTipo = "oferta";
+            card.dataset.compraId = oferta.id;
 
             // --- IMAGEM ---
 
@@ -329,43 +336,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // --- CATEGORIA ---
 
-            let categoria = "Oferta";
-
-            if (
-                Number(oferta.pacote) === 1 ||
-                oferta.pacote === true
-            ) {
-
-                categoria = "Pacote";
-
-            } else if (
-                Number(oferta.internacional) === 1 ||
-                oferta.internacional === true
-            ) {
-
-                categoria = "Internacional";
-
-            } else if (
-                Number(oferta.nacional) === 1 ||
-                oferta.nacional === true
-            ) {
-
-                categoria = "Nacional";
-            }
+            const tipoAlvo = normalizarTexto(oferta.tipo_alvo);
+            const abrangencia = normalizarTexto(oferta.abrangencia);
+            const categoria = tipoAlvo === "pacote"
+                ? "Pacote"
+                : abrangencia === "mista"
+                    ? "Mista"
+                    : abrangencia === "internacional"
+                        ? "Internacional"
+                        : abrangencia === "nacional"
+                            ? "Nacional"
+                            : "Oferta";
+            const tipoExplicacaoOds = tipoAlvo === "produto"
+                ? ({
+                    destino: "esse destino é alinhado",
+                    atividade: "essa atividade é alinhada",
+                    hotel: "esse hotel é alinhado",
+                    voo: "esse voo é alinhado"
+                }[oferta.tipo_produto] || "essa oferta é alinhada")
+                : "essa oferta é alinhada";
 
             // --- DATASET PARA O MODAL ---
 
-            card.dataset.dias =
-                oferta.dias || "";
-
-            card.dataset.passagem =
-                oferta.passagem_aerea || 0;
-
-            card.dataset.hospedagem =
-                oferta.hospedagem || 0;
-
-            card.dataset.passeios =
-                oferta.passeios || 0;
+            card.dataset.tipoAlvo = oferta.tipo_alvo || "";
+            card.dataset.abrangencia = oferta.abrangencia || "";
+            card.dataset.tipoProduto = oferta.tipo_produto || "";
 
             card.dataset.descricao =
                 oferta.descricao || "";
@@ -376,14 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
             card.dataset.ods12 =
                 oferta.ods12 || 0;
 
-            card.dataset.categoria =
-                categoria === "Nacional"
-                    ? "nacional"
-                    : categoria === "Internacional"
-                        ? "internacional"
-                        : categoria === "Pacote"
-                            ? "pacote"
-                            : "oferta";
+            card.dataset.categoria = categoria.toLowerCase();
 
             // --- HTML DO CARD ---
 
@@ -491,6 +479,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                         class="selinho-ods"
                                         src="/img/icones/arvore.png"
                                         alt="Oferta alinhada às ODS"
+                                        title="Isso significa que ${tipoExplicacaoOds} com o programa Turismo Consciente."
+                                        aria-label="Isso significa que ${tipoExplicacaoOds} com o programa Turismo Consciente."
                                     >
                                 `
                                 : ""
@@ -549,13 +539,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnComprar = event.target.closest("#btnComprar");
     if (btnComprar) {
         event.preventDefault();
+        const idOferta = btnComprar.dataset.compraId ||
+            btnComprar.dataset.id || ofertaSelecionadaParaCompra;
 
-        if (!ofertaSelecionadaParaCompra) {
+        if (!idOferta) {
             alert("Selecione uma oferta antes de continuar.");
             return;
         }
 
-        window.location.href = `../COMPRAR/index.html?oferta=${encodeURIComponent(ofertaSelecionadaParaCompra)}`;
+        window.location.href = `../COMPRAR/index.html?tipo=oferta&id=${encodeURIComponent(idOferta)}`;
         return;
     }
 

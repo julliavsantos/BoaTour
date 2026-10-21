@@ -482,4 +482,13 @@ body {
 .btn-ver-ofertas:hover {
     background: var(--primary-dark);
 }
+
+.card-oferta.destino-selecionado {
+    outline: 3px solid var(--primary);
+    outline-offset: 4px;
+    animation: destacar-destino 1.3s ease-in-out 2;
+}
+@keyframes destacar-destino {
+    50% { transform: translateY(-5px) scale(1.02); }
+}
 }

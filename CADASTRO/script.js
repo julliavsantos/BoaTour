@@ -13,13 +13,15 @@ document.querySelectorAll(".mostrar-senha").forEach(botao => {
 
             campo.type = "text";
 
-            botao.textContent = "🙈";
+            botao.textContent = "Ocultar";
+            botao.setAttribute("aria-label", id === "senhaCadastro" ? "Ocultar senha" : "Ocultar confirmação de senha");
 
         } else {
 
             campo.type = "password";
 
-            botao.textContent = "👁";
+            botao.textContent = "Mostrar";
+            botao.setAttribute("aria-label", id === "senhaCadastro" ? "Mostrar senha" : "Mostrar confirmação de senha");
 
         }
 
@@ -42,6 +44,12 @@ const cpfCadastro =
 const emailCadastro =
     document.getElementById("emailCadastro");
 
+const telefoneCadastro =
+    document.getElementById("telefoneCadastro");
+
+const nascimentoCadastro =
+    document.getElementById("nascimentoCadastro");
+
 const senhaCadastro =
     document.getElementById("senhaCadastro");
 
@@ -51,19 +59,121 @@ const senhaCadastroConfirmar =
 const termo =
     document.getElementById("Termo");
 
+function aplicarMascara(input, limite, formatar) {
+    if (!input) return;
+
+    input.addEventListener("input", () => {
+        const posicao = input.selectionStart ?? input.value.length;
+        const digitosAntes = input.value.slice(0, posicao).replace(/\D/g, "").length;
+        const digitos = input.value.replace(/\D/g, "").slice(0, limite);
+        const valorFormatado = formatar(digitos);
+        input.value = valorFormatado;
+
+        let novaPosicao = 0;
+        let digitosContados = 0;
+        while (novaPosicao < valorFormatado.length && digitosContados < digitosAntes) {
+            if (/\d/.test(valorFormatado[novaPosicao])) digitosContados++;
+            novaPosicao++;
+        }
+        if (digitosAntes > 0) {
+            while (/\D/.test(valorFormatado[novaPosicao] || "") && novaPosicao < valorFormatado.length) {
+                novaPosicao++;
+            }
+        }
+        input.setSelectionRange(novaPosicao, novaPosicao);
+    });
+}
+
+function formatarTelefone(digitos) {
+    if (digitos.length <= 2) return digitos ? `(${digitos}` : "";
+    const tamanhoPrefixo = digitos.length > 10 ? 5 : 4;
+    const prefixo = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 2 + tamanhoPrefixo)}`;
+    const restante = digitos.slice(2 + tamanhoPrefixo);
+    return restante ? `${prefixo}-${restante}` : prefixo;
+}
+
+function formatarDataNascimento(digitos) {
+    let valor = digitos.slice(0, 2);
+    if (digitos.length > 2) valor += "/" + digitos.slice(2, 4);
+    if (digitos.length > 4) valor += "/" + digitos.slice(4, 8);
+    return valor;
+}
+
+aplicarMascara(telefoneCadastro, 11, formatarTelefone);
+aplicarMascara(nascimentoCadastro, 8, formatarDataNascimento);
+
+function capitalizarNomeCompleto(nome) {
+    const particulas = new Set(["da", "das", "de", "do", "dos", "e"]);
+    return String(nome || "").trim().toLocaleLowerCase("pt-BR").split(/\s+/).filter(Boolean)
+        .map((palavra, indice) => {
+            if (indice > 0 && particulas.has(palavra)) return palavra;
+            return palavra.split(/([-'])/).map(parte => {
+                if (parte === "-" || parte === "'") return parte;
+                return parte ? parte.charAt(0).toLocaleUpperCase("pt-BR") + parte.slice(1) : "";
+            }).join("");
+        }).join(" ");
+}
+
+nomeCadastro?.addEventListener("blur", () => {
+    nomeCadastro.value = capitalizarNomeCompleto(nomeCadastro.value);
+});
+
+emailCadastro?.addEventListener("blur", () => {
+    emailCadastro.value = emailCadastro.value.trim().toLocaleLowerCase("pt-BR");
+});
+
+function validarCPF(cpf) {
+    if (!/^\d{11}$/.test(cpf) || /^([0-9])\1{10}$/.test(cpf)) return false;
+    const calcularDigito = (base, pesoInicial) => {
+        const soma = base.split("").reduce((total, digito, indice) =>
+            total + Number(digito) * (pesoInicial - indice), 0);
+        const resto = (soma * 10) % 11;
+        return resto === 10 ? 0 : resto;
+    };
+    return calcularDigito(cpf.slice(0, 9), 10) === Number(cpf[9]) &&
+        calcularDigito(cpf.slice(0, 10), 11) === Number(cpf[10]);
+}
+
+function validarEmail(email) {
+    if (email.length > 254 || /\s/.test(email)) return false;
+    const partes = email.split("@");
+    if (partes.length !== 2 || partes[0].length > 64 || partes[0].includes("..")) return false;
+    return /^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(partes[0]) &&
+        /^(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,}$/i.test(partes[1]);
+}
+
+function validarNascimento(valor) {
+    const correspondencia = String(valor || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (!correspondencia) return { valido: false };
+    const dia = Number(correspondencia[1]);
+    const mes = Number(correspondencia[2]);
+    const ano = Number(correspondencia[3]);
+    const hoje = new Date();
+    const data = new Date(ano, mes - 1, dia);
+    if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia || data > hoje) {
+        return { valido: false };
+    }
+    let idade = hoje.getFullYear() - ano;
+    if (hoje.getMonth() < mes - 1 || (hoje.getMonth() === mes - 1 && hoje.getDate() < dia)) idade--;
+    return { valido: true, maioridadeMinima: idade >= 16, iso: `${String(ano).padStart(4, "0")}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}` };
+}
+
 
 if (btnCadastro) {
 
     btnCadastro.addEventListener("click", async () => {
 
-        const nome =
-            nomeCadastro.value.trim();
+        const nome = capitalizarNomeCompleto(nomeCadastro.value);
+        nomeCadastro.value = nome;
 
         const cpf =
             cpfCadastro.value.trim();
 
-        const email =
-            emailCadastro.value.trim();
+        const email = emailCadastro.value.trim().toLocaleLowerCase("pt-BR");
+        emailCadastro.value = email;
+
+        const telefone = telefoneCadastro.value.replace(/\D/g, "");
+        const nascimento = validarNascimento(nascimentoCadastro.value.trim());
 
         const senha =
             senhaCadastro.value;
@@ -99,9 +209,9 @@ if (btnCadastro) {
             cpf.replace(/\D/g, "");
 
 
-        if (cpfLimpo.length !== 11) {
+        if (!validarCPF(cpfLimpo)) {
 
-            window.boatourFieldError(cpfCadastro, "Digite um CPF válido.");
+            window.boatourFieldError(cpfCadastro, "Digite um CPF válido e não use números repetidos.");
 
             cpfCadastro.focus();
 
@@ -115,6 +225,36 @@ if (btnCadastro) {
 
             emailCadastro.focus();
 
+            return;
+        }
+
+        if (!validarEmail(email)) {
+            window.boatourFieldError(emailCadastro, "Digite um e-mail válido.");
+            emailCadastro.focus();
+            return;
+        }
+
+        if (!nascimentoCadastro.value.trim()) {
+            window.boatourFieldError(nascimentoCadastro, "Informe sua data de nascimento.");
+            nascimentoCadastro.focus();
+            return;
+        }
+
+        if (!nascimento.valido) {
+            window.boatourFieldError(nascimentoCadastro, "Digite uma data de nascimento válida.");
+            nascimentoCadastro.focus();
+            return;
+        }
+
+        if (!nascimento.maioridadeMinima) {
+            window.boatourFieldError(nascimentoCadastro, "É necessário ter pelo menos 16 anos para criar uma conta.");
+            nascimentoCadastro.focus();
+            return;
+        }
+
+        if (telefone && ![10, 11].includes(telefone.length)) {
+            window.boatourFieldError(telefoneCadastro, "Digite um telefone com DDD e 10 ou 11 números.");
+            telefoneCadastro.focus();
             return;
         }
 
@@ -192,6 +332,10 @@ if (btnCadastro) {
 
                         email: email,
 
+                        telefone: telefone,
+
+                        data_nascimento: nascimento.iso,
+
                         senha: senha,
 
                         termos_aceitos: true
@@ -218,6 +362,10 @@ if (btnCadastro) {
                     ? cpfCadastro
                     : /e-?mail/i.test(resultado.error)
                         ? emailCadastro
+                        : /nascimento|16 anos|idade/i.test(resultado.error)
+                            ? nascimentoCadastro
+                            : /telefone/i.test(resultado.error)
+                                ? telefoneCadastro
                         : /senha/i.test(resultado.error)
                             ? senhaCadastro
                             : /nome/i.test(resultado.error)

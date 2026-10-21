@@ -816,13 +816,16 @@ body {
     box-shadow: 0 7px 18px rgb(0 0 0 / 10%);
 }
 .imagem-voo {
-    width: 220px;
-    min-width: 220px;
+    display: grid;
+    width: 112px;
+    min-width: 112px;
     min-height: 176px;
-    overflow: hidden;
-    background: var(--surface, #e9eeee);
+    place-items: center;
+    padding: 12px;
+    background: transparent;
 }
-.imagem-voo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.imagem-voo img { display: block; box-sizing: border-box; width: 100%; max-height: 84px; padding: 8px; object-fit: contain; }
+.logo-companhia-fallback { color: var(--primary-strong); font-size: 20px; font-weight: 800; }
 .voo-info {
     display: flex;
     min-width: 0;
@@ -855,13 +858,25 @@ body {
 .conteudo-voos .oferta .preco .preco-legenda { margin: 0; color: var(--muted); font-size: 11px; }
 .conteudo-voos .sem-voos { width: 100%; min-height: 260px; }
 .conteudo-voos .btn-ver-mais { margin: 24px auto; }
+.btn-comprar-voo {
+    width: 100%;
+    margin-top: 7px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--primary);
+    color: #fff;
+    font: 600 12px 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+}
+.btn-comprar-voo:hover { background: var(--accent-dark); }
 
 @media (max-width: 1000px) {
     .pagina-voos-layout { grid-template-columns: minmax(0, 1fr) 250px; }
     .voos-container { padding-inline: 70px 28px; }
     .conteudo-voos > .filtros { margin-inline: 70px; }
     .conteudo-voos > .ofertas { padding-inline: 70px; }
-    .imagem-voo { width: 180px; min-width: 180px; }
+    .imagem-voo { width: 100px; min-width: 100px; }
 }
 
 @media (max-width: 700px) {
@@ -872,7 +887,7 @@ body {
     .conteudo-voos > .filtros { margin-inline: 20px; }
     .conteudo-voos > .ofertas { padding-inline: 20px; }
     .conteudo-voos .oferta { min-height: 145px; }
-    .imagem-voo { width: 130px; min-width: 130px; min-height: 145px; }
+    .imagem-voo { width: 86px; min-width: 86px; min-height: 145px; padding: 8px; }
     .voo-info { padding: 14px; }
     .voo-info .rota-voo { font-size: 15px; }
     .conteudo-voos .oferta .preco { width: 120px; min-width: 110px; padding: 12px 10px 12px 6px; }
@@ -880,7 +895,7 @@ body {
 }
 
 @media (max-width: 440px) {
-    .imagem-voo { width: 96px; min-width: 96px; }
+    .imagem-voo { width: 68px; min-width: 68px; padding: 6px; }
     .voo-info { padding: 10px; }
     .voo-info .categoria-voo { font-size: 10px; }
     .conteudo-voos .oferta .preco { width: 100px; min-width: 100px; padding-right: 8px; }
@@ -909,3 +924,22 @@ body {
     .folder { position: static; height: auto; min-height: 0; padding: 12px; }
     .folder img { width: min(85%, 420px); max-height: none; margin: 20px auto; }
 }
+
+.ods-voo-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 4px 0;
+}
+.ods-voo-tags .ods-selo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 7px;
+    border-radius: 20px;
+    background: var(--surface, #fff);
+    color: var(--text, #333);
+    font-size: 10px;
+    font-weight: 600;
+}
+.ods-voo-tags .ods-selo img { width: 18px; height: 18px; object-fit: contain; }

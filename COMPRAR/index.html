@@ -143,6 +143,7 @@
         <div class="linha-divisão"></div>
 
             <div class="informaçoes">
+                <div class="conteudo-info-scroll">
                 <div class="linha-info">
                     <img src="../img/icones/user.png" alt="">
                     <div class="texto-info">
@@ -178,27 +179,56 @@
 
                 </div>
 
+                <div class="datas-compra" id="datasCompra">
+                    <div class="titulo-datas-compra">
+                        <span aria-hidden="true"><img src="../img/icones/calendario2.png" alt=""></span>
+                        <div>
+                            <h3>Período da hospedagem</h3>
+                            <p>Defina as datas da sua estadia</p>
+                        </div>
+                    </div>
+                    <div class="campos-data-compra">
+                        <div class="campo-data-compra">
+                            <label for="dataInicioCompraDisplay">Check-in</label>
+                            <div class="seletor-data-compra">
+                                <input type="text" id="dataInicioCompraDisplay" placeholder="dd/mm/aaaa" readonly>
+                                <button type="button" class="abrir-calendario-compra" data-calendario="inicio" aria-label="Abrir calendário de check-in"><img src="../img/icones/calendario2.png" alt=""></button>
+                            </div>
+                            <input type="date" id="dataInicioCompra">
+                            <div class="calendario calendario-compra" id="calendarioInicioCompra"></div>
+                        </div>
+                        <div class="campo-checkout-compra" id="campoCheckoutCompra" hidden>
+                            <label for="dataFimCompraDisplay">Check-out</label>
+                            <div class="seletor-data-compra">
+                                <input type="text" id="dataFimCompraDisplay" placeholder="dd/mm/aaaa" readonly>
+                                <button type="button" class="abrir-calendario-compra" data-calendario="fim" aria-label="Abrir calendário de check-out"><img src="../img/icones/calendario2.png" alt=""></button>
+                            </div>
+                            <input type="date" id="dataFimCompra">
+                            <div class="calendario calendario-compra" id="calendarioFimCompra"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="linha-divisão2"></div>
 
                 <div class="linha-info">
                     <img src="../img/icones/passageiros.png" alt="">
                     <div class="texto-info">
-                    <h3>Dados dos passageiros</h3>
-                    <p>Confirme as informações de todos os passageiros da viagem.</p>
+                    <h3 id="tituloDadosViajante">Dados dos passageiros</h3>
+                    <p id="descricaoDadosViajante">Confirme as informações de todos os passageiros da viagem.</p>
                     </div>
                 </div>
 
                 <div class="passageiro">
-                    <img src="../img/icones/perfil.png" alt="">
                     <div class="passageiro-info">
-                    <h3>Passageiro 1</h3>
-                    <p>Adulto</p>
+                    <h3 id="tituloViajante">Passageiro 1</h3>
+                    <p id="tipoViajante">Adulto</p>
                     </div>
                     <button class="btn-editar-passageiro" type="button">✎ Editar</button>
                 </div>
 
                   <div class="adicionar">
-                    <button class="adicionar-info">+ Adicionar passageiro</button>
+                    <button class="adicionar-info" id="adicionarViajante">+ Adicionar passageiro</button>
                 </div>
 
                 <div class="dados">
@@ -209,7 +239,7 @@
                     </div>
                 </div>
 
-                
+                </div>
 
             </div>
         </div>
@@ -227,25 +257,33 @@
               <div class="dados-compra">
                 <div class="imagem-compra">
                     <img id="imagemOfertaCompra" src="../img/destinos/cancun.jpg" alt="">
+                    <span id="etiquetaImagemCompra" class="etiqueta-imagem-compra">Sua viagem</span>
                 </div>
                     <div class="compra-info">
+                     <span id="tipoResumoCompra" class="tipo-resumo-compra">RESUMO DA VIAGEM</span>
                      <h3 id="tituloOfertaCompra">Carregando oferta...</h3>
+                     <p id="subtituloResumoCompra" class="subtitulo-resumo-compra"></p>
+                     <div class="modal-ods ods-resumo-compra" id="seloTurismoConsciente" hidden aria-label="Alinhamento às ODS"></div>
                    <div class="dados-icones">
-                        <div class="linha-compra">
+                        <div class="linha-compra" id="linhaDataResumoCompra">
+                            <img src="../img/icones/calendario2.png" alt="">
+                            <p id="dataResumoCompra">Escolha a data da viagem</p>
+                        </div>
+                        <div class="linha-compra" id="linhaHotelResumoCompra" hidden>
+                            <img src="../img/icones/cama.png" alt="">
+                            <p id="hotelResumoCompra"></p>
+                        </div>
+                        <div class="linha-compra" id="linhaDetalheVooCompra" hidden>
                             <img src="../img/icones/aviao2.png" alt="">
+                            <p id="detalheVooCompra"></p>
+                        </div>
+                        <div class="linha-compra" id="linhaItensOfertaCompra" hidden>
+                            <img src="../img/icones/globo.png" alt="">
                             <p id="itensOfertaCompra">Itens incluídos na oferta</p>
                         </div>
-                        <div class="linha-compra">
-                            <img src="../img/icones/calendario2.png" alt="">
-                            <p>Datas e detalhes conforme a oferta</p>
-                        </div>
-                        <div class="linha-compra">
-                            <img src="../img/icones/user.png" alt="">
-                            <p>1 comprador</p>
-                        </div>
-                        <div class="linha-compra">
-                            <img src="../img/icones/cama.png" alt="">
-                            <p id="descricaoOfertaCompra">Confira os detalhes desta oferta</p>
+                        <div class="linha-compra" id="linhaAtividadesResumoCompra" hidden>
+                            <img src="../img/icones/globo.png" alt="">
+                            <p id="atividadesResumoCompra"></p>
                         </div>
                     </div>
                     </div>
@@ -254,22 +292,42 @@
         </div>
          <div class="linha-cima"></div>
           <div class="dados-compra2">
-                <div class="linha-compra2">
+                <div class="linha-compra2" id="linhaItemSelecionadoCompra">
                     <img src="../img/icones/aviao3.png" alt="">
                     <p id="nomePrecoOfertaCompra">Oferta</p>
                     <h3 id="precoOfertaCompra">—</h3>
                 </div>
-                <div class="linha-compra2">
+                <div class="linha-compra2" id="linhaVooCompra" hidden>
+                    <img src="../img/icones/aviao2.png" alt="">
+                    <p id="nomeVooCompra">Voo</p>
+                    <h3 id="precoVooCompra">—</h3>
+                </div>
+                <div class="linha-compra2" id="linhaHotelCompra" hidden>
                     <img src="../img/icones/calendario2.png" alt="">
-                    <p>Hotel Gran Caribe Resort</p>
-                    <h3>—</h3>
+                    <p id="nomeHotelCompra">Hotel</p>
+                    <h3 id="precoHotelCompra">—</h3>
                 </div>
-                <div class="linha-compra2">
+                <div class="linha-compra2 linha-extra-compra" id="linhaAlimentacaoCompra">
+                    <img src="../img/icones/folha.png" alt="">
+                    <p>Alimentação <small>15%</small></p>
+                    <h3 id="precoAlimentacaoCompra">—</h3>
+                </div>
+                <div class="linha-compra2 linha-extra-compra" id="linhaAtividadesCompra">
+                    <img src="../img/icones/globo.png" alt="">
+                    <p>Atividades <small>8%</small></p>
+                    <h3 id="precoAtividadesCompra">—</h3>
+                </div>
+                <div class="linha-compra2 linha-extra-compra" id="linhaTransporteCompra">
+                    <img src="../img/icones/aviao2.png" alt="">
+                    <p>Transporte local <small>5%</small></p>
+                    <h3 id="precoTransporteCompra">—</h3>
+                </div>
+                <div class="linha-compra2" id="linhaSeguroCompra">
                     <img src="../img/icones/escudo2.png" alt="">
-                    <p>Seguro Viagem</p>
-                    <h3>—</h3>
+                    <p id="nomeSeguroCompra">Seguro viagem <small>10% do subtotal</small></p>
+                    <h3 id="precoSeguroCompra">Incluso</h3>
                 </div>
-                   </div>
+          </div>
  <div class="linha-cima"></div>
               
  <div class="valor-total">
@@ -280,7 +338,7 @@
                     <img src="../img/icones/cartao2 - Copia.png" alt="">
                     <div class="pagseg-dados">
                      <h3>Pagamento seguro</h3>
-                    <p>Suas informações financeiras estão protegidas <br> com tecnologia de criptografia</p>
+                    <p>Suas informações financeiras estão protegidas com tecnologia de criptografia.</p>
                     </div>
                 </div>
 

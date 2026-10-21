@@ -233,6 +233,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const card = document.createElement("div");
             card.classList.add("card-oferta");
             card.dataset.idHotel = String(idHotel);
+            card.dataset.compraTipo = "hotel";
+            card.dataset.compraId = String(idHotel);
 
             const imagem = obterImagem(hotel.imagem_principal);
 

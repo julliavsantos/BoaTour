@@ -113,21 +113,35 @@
     <div class="linha">
         <div class="campo">
             <label for="nomeCadastro">Nome completo</label>
-            <input type="text" id="nomeCadastro" placeholder="Seu Nome Completo" autocomplete="off">
+            <input type="text" id="nomeCadastro" placeholder="Seu Nome Completo" autocomplete="name" required>
         </div>
     </div>
 
     <div class="linha">
         <div class="campo">
             <label for="cpfCadastro">CPF</label>
-            <input type="text" id="cpfCadastro" placeholder="Seu CPF" autocomplete="off">
+            <input type="text" id="cpfCadastro" placeholder="000.000.000-00" autocomplete="off" inputmode="numeric" maxlength="14" required>
+        </div>
+    </div>
+
+    <div class="linha">
+        <div class="campo">
+            <label for="telefoneCadastro">Telefone</label>
+            <input type="tel" id="telefoneCadastro" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel" maxlength="15">
+        </div>
+    </div>
+
+    <div class="linha">
+        <div class="campo">
+            <label for="nascimentoCadastro">Data de nascimento</label>
+            <input type="text" id="nascimentoCadastro" placeholder="dd/mm/aaaa" autocomplete="bday" inputmode="numeric" maxlength="10" required>
         </div>
     </div>
 
     <div class="linha">
         <div class="campo">
             <label for="emailCadastro">Email</label>
-            <input type="email" id="emailCadastro" placeholder="email@gmail.com" autocomplete="off">
+            <input type="email" id="emailCadastro" placeholder="email@gmail.com" autocomplete="email" maxlength="254" required>
         </div>
     </div>
 
@@ -138,8 +152,8 @@
     <div class="campo-senha">
         <input type="password" id="senhaCadastro" placeholder="Senha" autocomplete="new-password">
 
-        <button type="button" class="mostrar-senha" data-target="senhaCadastro">
-            👁
+        <button type="button" class="mostrar-senha" data-target="senhaCadastro" aria-label="Mostrar senha">
+            Mostrar
         </button>
     </div>
 </div>
@@ -152,8 +166,8 @@
     <div class="campo-senha">
         <input type="password" id="senhaCadastroConfirmar" placeholder="Confirme sua senha" autocomplete="new-password">
 
-        <button type="button" class="mostrar-senha" data-target="senhaCadastroConfirmar">
-            👁
+        <button type="button" class="mostrar-senha" data-target="senhaCadastroConfirmar" aria-label="Mostrar confirmação de senha">
+            Mostrar
         </button>
     </div>
 </div>
