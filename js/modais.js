@@ -45,6 +45,13 @@
         modalFavoritoLogin.querySelector(".modal-favorito-login__abrir-login")
             .addEventListener("click", () => {
                 fechar();
+                // A confirmação de compra é exibida sobre o modal da oferta.
+                // Feche-o antes de abrir o login para que os dois overlays não
+                // disputem a mesma camada visual.
+                document.querySelectorAll(".modal-oferta.ativo").forEach(modal =>
+                    modal.classList.remove("ativo")
+                );
+                document.body.style.overflow = "";
                 document.getElementById("modalLogin")?.classList.add("ativo");
                 document.getElementById("cpfLogin")?.focus();
             });

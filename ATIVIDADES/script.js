@@ -245,6 +245,8 @@ document.addEventListener("DOMContentLoaded", () => {
             card.dataset.classificacao = classificacao || "";
             card.dataset.incluso = atividade.incluso || "";
             card.dataset.recomendacoes = atividade.recomendacoes || "";
+            card.dataset.ods8 = atividade.ods8 || 0;
+            card.dataset.ods12 = atividade.ods12 || 0;
 
             // --- RESUMO DO CARD ---
 
@@ -274,6 +276,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     </span>
 
                     <h3>${nome}</h3>
+
+                    ${Number(atividade.ods8) === 1 || Number(atividade.ods12) === 1 ? `
+                        <div class="ods-card-tags" aria-label="Atividade alinhada ao programa Turismo Consciente">
+                            ${Number(atividade.ods8) === 1 ? `<span class="ods-card-tag">ODS 8</span>` : ""}
+                            ${Number(atividade.ods12) === 1 ? `<span class="ods-card-tag">ODS 12</span>` : ""}
+                        </div>
+                    ` : ""}
 
                     <p>${informacoes}</p>
 

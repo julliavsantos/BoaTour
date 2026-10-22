@@ -113,6 +113,14 @@ body.dark-mode {
 #btnEntrar{
     color: var(--accent);
 }
+.menu #btnEntrar {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    cursor: pointer;
+}
 .perfil-overlay {
     position: fixed;
     inset: 0;

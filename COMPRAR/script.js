@@ -174,11 +174,214 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     window.addEventListener("resize", fecharCalendariosCompra);
     window.addEventListener("scroll", fecharCalendariosCompra, true);
+
+    // O calendário de nascimento usa a mesma interface dos calendários de viagem,
+    // mas limita a seleção a datas anteriores a hoje.
+    const nascimentoViajante = document.getElementById("nascimentoViajante");
+    const nascimentoViajanteDisplay = document.getElementById("nascimentoViajanteDisplay");
+    const calendarioNascimento = document.getElementById("calendarioNascimentoViajante");
+    const botaoNascimento = document.getElementById("abrirCalendarioNascimento");
+    let mesNascimento = new Date();
+    const mascararDataNascimento = valor => {
+        const numeros = String(valor || "").replace(/\D/g, "").slice(0, 8);
+        return numeros.replace(/(\d{2})(\d)/, "$1/$2").replace(/(\d{2})(\d)/, "$1/$2");
+    };
+    const sincronizarNascimentoDigitado = () => {
+        const iso = paraISO(nascimentoViajanteDisplay.value);
+        const data = dataLocalCompra(iso);
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        const dataExiste = data && isoLocalCompra(data) === iso;
+        nascimentoViajante.value = dataExiste && data <= hoje ? iso : "";
+    };
+    const fecharCalendarioNascimento = () => calendarioNascimento?.classList.remove("aberto");
+    const renderizarCalendarioNascimento = () => {
+        if (!calendarioNascimento) return;
+        const ano = mesNascimento.getFullYear();
+        const mes = mesNascimento.getMonth();
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        const selecionada = nascimentoViajante.value;
+        const primeiroDia = new Date(ano, mes, 1);
+        const deslocamento = primeiroDia.getDay();
+        const totalDias = new Date(ano, mes + 1, 0).getDate();
+        const diasMesAnterior = new Date(ano, mes, 0).getDate();
+        calendarioNascimento.innerHTML = `
+            <div class="cabecalho-calendario"><span class="mes-ano">${nomesMesesCompra[mes]} de ${ano}</span>
+                <div class="navegacao-calendario"><button type="button" data-mover-nascimento="-1" aria-label="Mês anterior">‹</button><button type="button" data-mover-nascimento="1" aria-label="Próximo mês">›</button></div>
+            </div>
+            <div class="dias-semana">${["D", "S", "T", "Q", "Q", "S", "S"].map(dia => `<span>${dia}</span>`).join("")}</div>
+            <div class="dias">${Array.from({ length: 42 }, (_, indice) => {
+                if (indice < deslocamento) return `<button type="button" class="dia outro-mes" disabled>${diasMesAnterior - deslocamento + indice + 1}</button>`;
+                if (indice >= deslocamento + totalDias) return `<button type="button" class="dia outro-mes" disabled>${indice - deslocamento - totalDias + 1}</button>`;
+                const data = new Date(ano, mes, indice - deslocamento + 1);
+                const iso = isoLocalCompra(data);
+                const bloqueado = data > hoje;
+                const classes = ["dia", iso === selecionada ? "selecionado" : "", data.toDateString() === hoje.toDateString() ? "hoje" : "", bloqueado ? "bloqueado" : ""].filter(Boolean).join(" ");
+                return `<button type="button" class="${classes}" data-nascimento="${iso}" ${bloqueado ? "disabled" : ""}>${data.getDate()}</button>`;
+            }).join("")}</div>
+            <div class="rodape-calendario"><button type="button" data-limpar-nascimento>Limpar</button><span></span></div>`;
+        calendarioNascimento.querySelectorAll("[data-mover-nascimento]").forEach(botao => botao.addEventListener("click", () => {
+            mesNascimento = new Date(ano, mes + Number(botao.dataset.moverNascimento), 1);
+            renderizarCalendarioNascimento();
+        }));
+        calendarioNascimento.querySelectorAll("[data-nascimento]").forEach(botao => botao.addEventListener("click", () => {
+            nascimentoViajante.value = botao.dataset.nascimento;
+            nascimentoViajanteDisplay.value = formatarData(botao.dataset.nascimento);
+            fecharCalendarioNascimento();
+        }));
+        calendarioNascimento.querySelector("[data-limpar-nascimento]")?.addEventListener("click", () => {
+            nascimentoViajante.value = "";
+            nascimentoViajanteDisplay.value = "";
+            fecharCalendarioNascimento();
+        });
+    };
+    botaoNascimento?.addEventListener("click", () => {
+        const abrir = !calendarioNascimento.classList.contains("aberto");
+        fecharCalendariosCompra();
+        fecharCalendarioNascimento();
+        if (!abrir) return;
+        mesNascimento = dataLocalCompra(nascimentoViajante.value) || new Date();
+        renderizarCalendarioNascimento();
+        calendarioNascimento.classList.add("aberto");
+        posicionarCalendarioCompra(calendarioNascimento, botaoNascimento);
+    });
+    nascimentoViajanteDisplay?.addEventListener("input", evento => {
+        evento.target.value = mascararDataNascimento(evento.target.value);
+        sincronizarNascimentoDigitado();
+    });
+    nascimentoViajanteDisplay?.addEventListener("blur", sincronizarNascimentoDigitado);
+    document.addEventListener("click", evento => {
+        if (!evento.target.closest("#calendarioNascimentoViajante, #abrirCalendarioNascimento")) fecharCalendarioNascimento();
+    });
     let itemCarregado;
     let precoBaseCompra = 0;
     let precoDiariaHotel = 0;
     let ofertaIncluiPasseios = false;
     let ehHospedagem = false;
+    let rotuloViajante = "Passageiro";
+    let viajantes = [];
+    let indiceViajanteEditado = null;
+    const listaViajantes = document.getElementById("listaViajantes");
+    const modalViajante = document.getElementById("modalViajante");
+    const formViajante = document.getElementById("formViajante");
+    const erroViajante = document.getElementById("erroViajante");
+
+    const apenasNumeros = valor => String(valor || "").replace(/\D/g, "");
+    const cpfValido = valor => {
+        const cpf = apenasNumeros(valor);
+        if (!/^\d{11}$/.test(cpf) || /^(\d)\1{10}$/.test(cpf)) return false;
+        const digito = limite => {
+            let soma = 0;
+            for (let indice = 0; indice < limite; indice++) soma += Number(cpf[indice]) * (limite + 1 - indice);
+            const resto = (soma * 10) % 11;
+            return resto === 10 ? 0 : resto;
+        };
+        return digito(9) === Number(cpf[9]) && digito(10) === Number(cpf[10]);
+    };
+    const mascararCpf = valor => {
+        const cpf = apenasNumeros(valor).slice(0, 11);
+        return cpf.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    };
+    const mascararTelefone = valor => {
+        const telefone = apenasNumeros(valor).slice(0, 11);
+        return telefone.replace(/(\d{2})(\d)/, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2");
+    };
+    const lerUsuarioLocal = () => {
+        try { return JSON.parse(localStorage.getItem("boatourUsuario") || "null"); } catch { return null; }
+    };
+    const abrirModalViajante = indice => {
+        indiceViajanteEditado = Number.isInteger(indice) ? indice : null;
+        const viajante = indiceViajanteEditado === null ? null : viajantes[indiceViajanteEditado];
+        formViajante.reset();
+        document.getElementById("tituloModalViajante").textContent = viajante ? `Editar ${rotuloViajante.toLocaleLowerCase("pt-BR")}` : `Adicionar ${rotuloViajante.toLocaleLowerCase("pt-BR")}`;
+        document.getElementById("nomeViajante").value = viajante?.nome || "";
+        document.getElementById("cpfViajante").value = viajante?.cpf || "";
+        document.getElementById("nascimentoViajante").value = viajante?.nascimento || "";
+        document.getElementById("nascimentoViajanteDisplay").value = formatarData(viajante?.nascimento);
+        document.getElementById("tipoCadastroViajante").value = viajante?.categoria || "Adulto";
+        erroViajante.textContent = "";
+        modalViajante.hidden = false;
+        document.getElementById("nomeViajante").focus();
+    };
+    const fecharModalViajante = () => { modalViajante.hidden = true; };
+    const renderizarViajantes = () => {
+        if (!listaViajantes) return;
+        listaViajantes.replaceChildren();
+        if (!viajantes.length) {
+            const vazio = document.createElement("p");
+            vazio.className = "aviso-viajantes";
+            vazio.textContent = `Adicione ao menos um ${rotuloViajante.toLocaleLowerCase("pt-BR")} para continuar.`;
+            listaViajantes.appendChild(vazio);
+            return;
+        }
+        viajantes.forEach((viajante, indice) => {
+            const cartao = document.createElement("div");
+            cartao.className = "passageiro";
+            const informacoes = document.createElement("div");
+            informacoes.className = "passageiro-info";
+            const nome = document.createElement("h3");
+            nome.textContent = `${rotuloViajante} ${indice + 1} · ${viajante.nome}`;
+            const detalhes = document.createElement("p");
+            detalhes.textContent = `${viajante.categoria} · CPF ${viajante.cpf} · Nascimento: ${formatarData(viajante.nascimento)}`;
+            informacoes.append(nome, detalhes);
+            const editar = document.createElement("button");
+            editar.className = "btn-editar-passageiro";
+            editar.type = "button";
+            editar.textContent = "✎ Editar";
+            editar.addEventListener("click", () => abrirModalViajante(indice));
+            cartao.append(informacoes, editar);
+            listaViajantes.appendChild(cartao);
+        });
+    };
+    const preencherComprador = async () => {
+        let usuario = lerUsuarioLocal();
+        const token = localStorage.getItem("boatourSessionToken");
+        if (token) {
+            try {
+                const resposta = await fetch("http://localhost:3000/usuarios/me", { headers: { "X-Session-Token": token } });
+                if (resposta.ok) {
+                    usuario = await resposta.json();
+                    localStorage.setItem("boatourUsuario", JSON.stringify(usuario));
+                }
+            } catch { /* Mantém os dados já disponíveis localmente. */ }
+        }
+        if (!usuario) return;
+        document.getElementById("nomeUsuario").value = usuario.nome || "";
+        document.getElementById("emailUsuario").value = usuario.email || "";
+        document.getElementById("cpfUsuario").value = mascararCpf(usuario.cpf);
+        document.getElementById("telefoneUsuario").value = mascararTelefone(usuario.telefone);
+    };
+
+    document.getElementById("cpfUsuario")?.addEventListener("input", evento => { evento.target.value = mascararCpf(evento.target.value); });
+    document.getElementById("telefoneUsuario")?.addEventListener("input", evento => { evento.target.value = mascararTelefone(evento.target.value); });
+    document.getElementById("cpfViajante")?.addEventListener("input", evento => { evento.target.value = mascararCpf(evento.target.value); });
+    document.getElementById("adicionarViajante")?.addEventListener("click", () => abrirModalViajante());
+    document.querySelector(".fechar-modal-viajante")?.addEventListener("click", fecharModalViajante);
+    document.querySelector(".btn-cancelar-viajante")?.addEventListener("click", fecharModalViajante);
+    modalViajante?.addEventListener("click", evento => { if (evento.target === modalViajante) fecharModalViajante(); });
+    formViajante?.addEventListener("submit", evento => {
+        evento.preventDefault();
+        const dados = Object.fromEntries(new FormData(formViajante));
+        dados.nome = String(dados.nome || "").trim().replace(/\s+/g, " ");
+        dados.cpf = mascararCpf(dados.cpf);
+        if (dados.nome.split(" ").length < 2 || !cpfValido(dados.cpf) || !dados.nascimento) {
+            erroViajante.textContent = "Informe nome completo, CPF válido e data de nascimento.";
+            return;
+        }
+        const outroComMesmoCpf = viajantes.some((viajante, indice) => indice !== indiceViajanteEditado && apenasNumeros(viajante.cpf) === apenasNumeros(dados.cpf));
+        if (outroComMesmoCpf) {
+            erroViajante.textContent = "Já existe um viajante cadastrado com este CPF.";
+            return;
+        }
+        if (indiceViajanteEditado === null) viajantes.push(dados);
+        else viajantes[indiceViajanteEditado] = dados;
+        renderizarViajantes();
+        atualizarValores();
+        fecharModalViajante();
+    });
+    preencherComprador();
+    renderizarViajantes();
 
     function atualizarDataResumo() {
         const linhaData = document.getElementById("linhaDataResumoCompra");
@@ -242,6 +445,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function atualizarValores() {
         if (!itemCarregado) return;
+        // Até o primeiro cadastro, o resumo mostra o valor para uma pessoa.
+        // Cada viajante incluído passa a compor o valor total da reserva.
+        const quantidadeViajantes = Math.max(viajantes.length, 1);
+        const descricaoQuantidade = `${quantidadeViajantes} ${quantidadeViajantes === 1 ? rotuloViajante.toLocaleLowerCase("pt-BR") : `${rotuloViajante.toLocaleLowerCase("pt-BR")}s`}`;
         const noites = ehHospedagem ? calcularNoites(inicioCompra?.value, fimCompra?.value) : 0;
         if (ehHospedagem && noites <= 0) {
             linhaItem.hidden = true;
@@ -255,10 +462,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         document.getElementById("linhaSeguroCompra").hidden = false;
-        const precoHotel = ehHospedagem ? precoDiariaHotel * noites : 0;
-        const base = ehHospedagem ? precoHotel : precoBaseCompra;
-        const vooValor = tipo === "voo" ? precoBaseCompra : 0;
-        const baseExtras = ehHospedagem ? precoHotel : precoBaseCompra;
+        const precoHotel = ehHospedagem ? precoDiariaHotel * noites * quantidadeViajantes : 0;
+        const base = ehHospedagem ? precoHotel : precoBaseCompra * quantidadeViajantes;
+        const vooValor = tipo === "voo" ? precoBaseCompra * quantidadeViajantes : 0;
+        const baseExtras = base;
         const valorAlimentacao = baseExtras * 0.15;
         const valorAtividades = tipo === "atividade" || ofertaIncluiPasseios ? 0 : baseExtras * 0.08;
         const valorTransporte = baseExtras * 0.05;
@@ -273,27 +480,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             linhaHotel.hidden = true;
             if (noites > 0) {
                 linhaHotel.hidden = false;
-                document.getElementById("nomeHotelCompra").textContent = `${itemCarregado.nome_hotel || itemCarregado.nome_produto || "Hotel"} · ${noites} ${noites === 1 ? "noite" : "noites"} · ${formatarMoeda(precoDiariaHotel)}/noite`;
+                document.getElementById("nomeHotelCompra").textContent = `${itemCarregado.nome_hotel || itemCarregado.nome_produto || "Hotel"} · ${noites} ${noites === 1 ? "noite" : "noites"} · ${descricaoQuantidade}`;
                 document.getElementById("precoHotelCompra").textContent = formatarMoeda(precoHotel);
             }
         } else if (ofertaHotelComercial) {
             linhaItem.hidden = true;
             linhaHotel.hidden = false;
-            document.getElementById("nomeHotelCompra").textContent = itemCarregado.nome_produto || "Hotel";
+            document.getElementById("nomeHotelCompra").textContent = `${itemCarregado.nome_produto || "Hotel"} · ${descricaoQuantidade}`;
             document.getElementById("precoHotelCompra").textContent = formatarMoeda(base);
         } else if (ofertaVooComercial) {
             linhaItem.hidden = true;
             linhaVoo.hidden = false;
-            document.getElementById("nomeVooCompra").textContent = itemCarregado.voos_inclusos || itemCarregado.nome_produto || "Voo";
+            document.getElementById("nomeVooCompra").textContent = `${itemCarregado.voos_inclusos || itemCarregado.nome_produto || "Voo"} · ${descricaoQuantidade}`;
             document.getElementById("precoVooCompra").textContent = formatarMoeda(base);
         } else if (tipo === "voo") {
             linhaItem.hidden = true;
             linhaVoo.hidden = false;
-            document.getElementById("nomeVooCompra").textContent = `Voo · ${itemCarregado.companhia_nome || itemCarregado.companhia_aerea || "Companhia aérea"}`;
+            document.getElementById("nomeVooCompra").textContent = `Voo · ${itemCarregado.companhia_nome || itemCarregado.companhia_aerea || "Companhia aérea"} · ${descricaoQuantidade}`;
             document.getElementById("precoVooCompra").textContent = formatarMoeda(vooValor);
         } else {
             linhaItem.hidden = false;
-            document.getElementById("nomePrecoOfertaCompra").textContent = `${tipo === "oferta" ? "Oferta" : tipo === "destino" ? "Destino" : "Atividade"} · ${configuracao.nome(itemCarregado)}`;
+            document.getElementById("nomePrecoOfertaCompra").textContent = `${tipo === "oferta" ? "Oferta" : tipo === "destino" ? "Destino" : "Atividade"} · ${configuracao.nome(itemCarregado)} · ${descricaoQuantidade}`;
             document.getElementById("precoOfertaCompra").textContent = formatarMoeda(base);
         }
 
@@ -426,7 +633,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const tipoProdutoCompra = tipo === "oferta" && itemCarregado.tipo_alvo === "produto"
             ? itemCarregado.tipo_produto
             : tipo;
-        const rotuloViajante = tipoProdutoCompra === "hotel" ? "Hóspede" : tipoProdutoCompra === "atividade" ? "Participante" : "Passageiro";
+        rotuloViajante = tipoProdutoCompra === "hotel" ? "Hóspede" : tipoProdutoCompra === "atividade" ? "Participante" : "Passageiro";
         const tituloDadosViajante = document.getElementById("tituloDadosViajante");
         const descricaoDadosViajante = document.getElementById("descricaoDadosViajante");
         const tituloViajante = document.getElementById("tituloViajante");
@@ -435,6 +642,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (descricaoDadosViajante) descricaoDadosViajante.textContent = `Confirme as informações ${rotuloViajante === "Hóspede" ? "do hóspede" : rotuloViajante === "Participante" ? "do participante" : "dos passageiros"} da viagem.`;
         if (tituloViajante) tituloViajante.textContent = `${rotuloViajante} 1`;
         if (adicionarViajante) adicionarViajante.textContent = `+ Adicionar ${rotuloViajante.toLocaleLowerCase("pt-BR")}`;
+        renderizarViajantes();
         document.getElementById("linhaHotelResumoCompra").hidden = !(tipo === "oferta" && verdade(itemCarregado.hospedagem));
         document.getElementById("linhaVooCompra").hidden = tipo !== "voo" && !(tipo === "oferta" && verdade(itemCarregado.passagem_aerea));
         document.getElementById("linhaHotelCompra").hidden = true;
@@ -476,6 +684,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         atualizarValores();
         botaoContinuar.addEventListener("click", event => {
+            const comprador = {
+                nome: document.getElementById("nomeUsuario").value.trim().replace(/\s+/g, " "),
+                email: document.getElementById("emailUsuario").value.trim().toLowerCase(),
+                cpf: mascararCpf(document.getElementById("cpfUsuario").value),
+                telefone: mascararTelefone(document.getElementById("telefoneUsuario").value)
+            };
+            if (comprador.nome.split(" ").length < 2 || !/^\S+@\S+\.\S+$/.test(comprador.email) || !cpfValido(comprador.cpf) || apenasNumeros(comprador.telefone).length < 10) {
+                event.preventDefault();
+                alert("Preencha os dados do comprador com nome completo, e-mail, CPF válido e telefone.");
+                document.getElementById("nomeUsuario").focus();
+                return;
+            }
+            if (!viajantes.length) {
+                event.preventDefault();
+                alert(`Adicione ao menos um ${rotuloViajante.toLocaleLowerCase("pt-BR")} para continuar.`);
+                document.getElementById("adicionarViajante").focus();
+                return;
+            }
             if (ehHospedagem && calcularNoites(inicioCompra.value, fimCompra.value) <= 0) {
                 event.preventDefault();
                 alert("Informe as datas de check-in e check-out para calcular a hospedagem.");
@@ -486,7 +712,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                 alert("Este voo não possui uma data de saída cadastrada.");
                 return;
             }
-            alert("Resumo atualizado. A próxima etapa será conectar os dados do comprador ao pagamento.");
+            const compraPendente = {
+                criadaEm: new Date().toISOString(),
+                comprador,
+                viajantes,
+                item: {
+                    tipo,
+                    id: idItem,
+                    nome: configuracao.nome(itemCarregado),
+                    valorTotal: document.getElementById("totalOfertaCompra").textContent,
+                    checkin: inicioCompra?.value || "",
+                    checkout: fimCompra?.value || ""
+                }
+            };
+            sessionStorage.setItem("boatourCompraPendente", JSON.stringify(compraPendente));
+            window.location.href = "../PAGAMENTOS/index.html?checkout=1";
         });
     } catch (erro) {
         titulo.textContent = "Não foi possível carregar o item";

@@ -33,6 +33,8 @@ class HotelBD {
                 classificacao,
                 imagem_principal,
                 site_oficial,
+                ods8,
+                ods12,
                 ativo
             FROM hoteis
             WHERE ativo = 1

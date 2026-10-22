@@ -259,6 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
             card.dataset.classificacao = classificacao || "";
             card.dataset.quarto = hotel.quarto_hotel || "";
             card.dataset.preco = preco || "0";
+            card.dataset.ods8 = hotel.ods8 || 0;
+            card.dataset.ods12 = hotel.ods12 || 0;
 
             card.innerHTML = `
                 <div class="imagem-oferta">
@@ -279,6 +281,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="categoria-oferta">Hospedagem</span>
 
                     <h3>${nome}</h3>
+
+                    ${Number(hotel.ods8) === 1 || Number(hotel.ods12) === 1 ? `
+                        <div class="ods-card-tags" aria-label="Hotel alinhado ao programa Turismo Consciente">
+                            ${Number(hotel.ods8) === 1 ? `<span class="ods-card-tag">ODS 8</span>` : ""}
+                            ${Number(hotel.ods12) === 1 ? `<span class="ods-card-tag">ODS 12</span>` : ""}
+                        </div>
+                    ` : ""}
 
                     ${localizacao
                         ? `<p>${localizacao}</p>`

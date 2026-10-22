@@ -31,8 +31,8 @@
     <div class="perfil-area">
 
         <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
-            <img src="" alt="Perfil">
-        </button>
+    <img class="foto-perfil-header" src="../img/icones/perfil.png" alt="Perfil">
+</button>
 
         
     </div>
@@ -42,12 +42,12 @@
 
             <div class="perfil-topo">
                 <div class="avatar">
-                    <img src="../img/icones/perfil.png" alt="Perfil">
-                </div>
-                <div>
-                    <h3>Olá, viajante!</h3>
-                    <p>Acesse sua conta</p>
-                </div>
+    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+</div>
+<div>
+    <h3 id="nomePerfil">Olá, viajante!</h3>
+    <p id="descricaoPerfil">Acesse sua conta</p>
+</div>
 
                 <button class="fechar-perfil" id="fecharPerfil">
                     &times;
@@ -219,13 +219,7 @@
                     </div>
                 </div>
 
-                <div class="passageiro">
-                    <div class="passageiro-info">
-                    <h3 id="tituloViajante">Passageiro 1</h3>
-                    <p id="tipoViajante">Adulto</p>
-                    </div>
-                    <button class="btn-editar-passageiro" type="button">✎ Editar</button>
-                </div>
+                <div id="listaViajantes" class="lista-viajantes" aria-live="polite"></div>
 
                   <div class="adicionar">
                     <button class="adicionar-info" id="adicionarViajante">+ Adicionar passageiro</button>
@@ -308,12 +302,12 @@
                     <h3 id="precoHotelCompra">—</h3>
                 </div>
                 <div class="linha-compra2 linha-extra-compra" id="linhaAlimentacaoCompra">
-                    <img src="../img/icones/folha.png" alt="">
+                    <img src="../img/icones/alimentacao.png" alt="">
                     <p>Alimentação <small>15%</small></p>
                     <h3 id="precoAlimentacaoCompra">—</h3>
                 </div>
                 <div class="linha-compra2 linha-extra-compra" id="linhaAtividadesCompra">
-                    <img src="../img/icones/globo.png" alt="">
+                    <img src="../img/icones/atividade.png" alt="">
                     <p>Atividades <small>8%</small></p>
                     <h3 id="precoAtividadesCompra">—</h3>
                 </div>
@@ -424,6 +418,50 @@
             <p>Ainda não possui uma conta? <a href="CADASTRO/index.html">Criar conta</a></p>
             </div>
     </div> 
+
+    <div class="modal-viajante" id="modalViajante" hidden role="dialog" aria-modal="true" aria-labelledby="tituloModalViajante">
+        <form class="modal-viajante-conteudo" id="formViajante" novalidate>
+            <div class="modal-viajante-cabecalho">
+                <div>
+                    <p class="rotulo-modal-viajante">INFORMAÇÕES DA VIAGEM</p>
+                    <h2 id="tituloModalViajante">Adicionar passageiro</h2>
+                </div>
+                <button class="fechar-modal-viajante" type="button" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="campos-viajante">
+                <div class="campo-viajante campo-viajante-amplo">
+                    <label for="nomeViajante">Nome completo</label>
+                    <input id="nomeViajante" name="nome" type="text" autocomplete="name" placeholder="Como consta no documento" required>
+                </div>
+                <div class="campo-viajante">
+                    <label for="cpfViajante">CPF</label>
+                    <input id="cpfViajante" name="cpf" type="text" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required>
+                </div>
+                <div class="campo-viajante">
+                    <label for="nascimentoViajante">Data de nascimento</label>
+                    <div class="seletor-data-compra seletor-nascimento-viajante">
+                        <input id="nascimentoViajanteDisplay" type="text" inputmode="numeric" autocomplete="bday" maxlength="10" placeholder="dd/mm/aaaa" aria-label="Data de nascimento">
+                        <button type="button" id="abrirCalendarioNascimento" class="abrir-calendario-compra" aria-label="Abrir calendário de nascimento"><img src="../img/icones/calendario2.png" alt=""></button>
+                    </div>
+                    <input id="nascimentoViajante" name="nascimento" type="date" required>
+                    <div class="calendario calendario-compra" id="calendarioNascimentoViajante"></div>
+                </div>
+                <div class="campo-viajante">
+                    <label for="tipoCadastroViajante">Categoria</label>
+                    <select id="tipoCadastroViajante" name="categoria">
+                        <option value="Adulto">Adulto</option>
+                        <option value="Criança">Criança</option>
+                        <option value="Bebê">Bebê</option>
+                    </select>
+                </div>
+            </div>
+            <p id="erroViajante" class="erro-viajante" role="alert"></p>
+            <div class="acoes-modal-viajante">
+                <button class="btn-cancelar-viajante" type="button">Cancelar</button>
+                <button class="btn-salvar-viajante" type="submit">Salvar informações</button>
+            </div>
+        </form>
+    </div>
     <script src="script.js"></script>
     <script src="darkmode-compra.js"></script>
     <script src="../js/menu.js"></script>

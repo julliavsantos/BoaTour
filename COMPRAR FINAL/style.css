@@ -1,0 +1,683 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@media screen and (min-width: 1440px) {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+html {
+    scroll-behavior: smooth;
+}
+html,
+body {
+    overflow-x: hidden;
+}
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--bg);
+}
+.container{
+    width: 100%;
+    height: 15vh;
+    padding-top: 10vh;
+    padding-left: 60px;
+    
+}
+.fundo {
+    width: 100%;
+    height: 40vh;
+    background-image: url("../img/banners/fundo003.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    margin: 0;
+}
+.linha{
+    width: 25%;
+    height: 7vh;
+    display: flex;
+    align-items: center;
+    gap:10px;
+}
+.linha img{
+    width: 75px;
+    height: auto;
+}
+.linha span {
+    height: 2px;
+    background-color: #2f8588;
+    flex: 1;
+}
+.linha p {
+    margin: 0;
+    color: #2f8588;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.titulo{
+    width: 100%;
+    height: 20vh;
+    padding-left: 70px;
+  
+}
+.titulo h1{
+    width: 40%;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 58px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.titulo p{
+    width: 45%;
+    margin-top: 1vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    color: var(--text);
+}
+.conteudo{
+    width: 92%;
+    height: 115vh;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    gap: 30px;
+    margin-top:0vh;
+}
+.conteudo-left{
+    width: 70%;
+    height: 85vh;
+    background-color: var(--surface);
+    border-radius: 40px;
+    border: 1.5px solid var(--border);
+    display: flex;
+    padding: 5px;
+}
+
+.passos {
+    width: 20%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px;
+}
+.passo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.bolinha {
+    width: 50px;
+    height: 50px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    background-color: var(--card);
+}
+.passo-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #52798a;
+}
+.linha-passo {
+    width: 2px;
+    height: 45px;
+    background-color: var(--surface-strong);
+    margin-left: 25px;
+}
+.passo-item.ativo .bolinha {
+    background-color: #2f8588;
+    border-color: #2f8588;
+    color: white;
+}
+.passo-item.ativo p {
+    color: #2f8588;
+    font-weight: 600;
+}
+
+.informaçoes{
+    width: 90%;
+    height: 108vh;
+    border: 1.5px solid var(--border);
+    border-radius: 40px;
+    margin-top: 2%;
+
+}
+.linha-info{
+    width: 180%;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    gap:1px;
+    margin-left: 8px;
+   
+}
+.linha-info img{
+    width: 90px;
+    height: 90px;
+}
+.texto-info {
+    display: flex;
+    flex-direction: column;
+}
+.linha-info h3 {
+    margin: 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.linha-info h2 {
+    margin: 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.linha-info p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+
+.campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 20px;
+    padding: 30px;
+    width: 100%;
+    height: 20%
+}
+.campos2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 20px;
+    padding: 30px;
+    width: 100%;
+    height: 42%;
+}
+.campo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.campo label {
+    margin-bottom: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--heading);
+}
+.campo img {
+    position: absolute;
+    right: 0;
+    top: 70%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+}
+.campo input {
+    width: 100%;
+    height: 45px;
+    padding: 0 13px;
+    box-sizing: border-box;
+    border: 1px solid #c5cdce;
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+.campo input:focus {
+    border-color: #518d93;
+    box-shadow:
+        0 0 0 3px rgba(81, 141, 147, 0.15);
+}
+
+.linha-divisão2 {
+    width: 53%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 1px;
+    background-color: var(--surface-strong);
+    margin-top: 10px;
+}
+.passageiro{
+    width: 93%;
+    height: 10vh;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+}
+.passageiro img{
+    margin-top: 4px;
+    margin-left: 4px;
+    width: 78px;
+    height: 78px;
+}
+.passageiro-info {
+    width: 80%;
+    margin-left: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+}
+.passageiro-info h3 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.passageiro-info p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+.btn-editar-passageiro {
+    width: 90px;
+    height: 4.5vh;
+    border-radius: 5px ;
+    border-top-right-radius: 17px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    right: 0;
+}
+.btn-editar-passageiro:hover {
+    opacity: .7;
+}
+.adicionar{
+    width: 93%;
+    height: 5vh;
+    border-radius: 15px;
+    border: 1.5px solid var(--primary);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 27px;
+}
+.adicionar-info {
+    width: 80%;
+    display: flex;
+    margin-top: 11px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+}
+.adicionar-info h3 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.10;
+    letter-spacing: -1.5px;
+    color: var(--primary);
+}
+
+.dados img{
+    margin-top: 6.5px;
+    width: 80px;
+    height: 80px;
+}
+.dados-info {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+}
+.dados-info h3 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--text);
+}
+.dados-info p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+.conteudo-right{
+    width: 45%;
+    height: 108vh;
+    border-radius: 40px;
+    border: 1.5px solid var(--border);
+    margin-top: 2%;
+}
+.imgRigth{
+    width: 40%;
+    height: 30%;
+
+}
+.img{
+    width: 236%;
+    height: 105%;
+    border-radius: 20px;
+    margin-left: 7%;
+    margin-top: 40%;
+}
+.titulo-compra{
+    display: flex;
+    width: 90%;
+    height: 50px;
+    margin-top: 20px;
+}
+.titulo-compra img{
+    width: 9%;
+    height: 80%;
+    margin-left: 20px;
+    margin-top: 10px;
+}
+.titulo-texto{
+    width: 90%;
+    height: 20px;
+    margin-top: 18px;
+    margin-left: 5px;
+    
+      
+}
+.titulo-texto h2{
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.10;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+}
+.texto-info2{
+    margin-left: 3%;
+}
+}
+.dados-compra{
+    width: 98%;
+    height: 17.5vh;
+    border-radius: 15px; 
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 16px;
+}
+.dados-compra img{
+    margin-top: 12px;
+    margin-left: 8px;
+    width: 225px;
+    height: 150px;
+    border-radius: 6%
+    
+    
+}
+.compra-info {
+    width: 80%;
+    margin-left: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+  
+}
+.compra-info h3 {
+    margin-top: 12px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 17px;
+    font-weight: 630;
+    line-height: 1.05;
+    letter-spacing: -1.0px;
+    color: var(--text);
+    margin-left: 5px;
+}
+.dados-icones{
+    width: 80%;
+    height: 80%;
+    margin-top: auto;
+    display: flex;
+}
+.dados-icones img{
+    width: 35px;
+    height: 93%;
+    margin-top: 1px;
+    margin-left: 0px;
+}
+.compra-info p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 30px;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+.linha-cima{
+     width: 95%;
+    height: 1px;
+      background-color: var(--surface-strong);
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dados-compra2{
+    width: 100%;
+    height: 20%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 22px;
+    display: flex;
+}
+.dados-icones2{
+    width: 10%;
+    height: 86%;
+    margin-left: 6px;
+}
+.dados-icones2 img{
+    width: 55px;
+    height: 95%;
+    margin-top: 4px;
+    margin-left: 0px;
+}
+.info-dados{
+    width: 60%;
+    height: 90%;  
+    margin-top: 10px;
+    margin-left: 2px;
+}
+.info-dados p{
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 55px;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+.preco-dados2{
+    width: 25%;
+    height: 90%;  
+    margin-top: 10px;
+    margin-left: auto;
+     
+}
+.preco-dados2 p{
+     font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 45px;
+    letter-spacing: 0px;
+    margin-top: 3px;
+    color: var(--text);
+}
+
+.resumo-pagamento {
+    width: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #172b35;
+}
+
+
+.valor-total {
+    display: flex;
+    width: 100%;
+    height: 60px;
+    margin-top: 40px;
+
+}
+
+.valor-total h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-left: 25px;
+    margin-top: 12px;
+    color: var(--text);
+}
+
+.valor-total h1{
+      font-size: 25px;
+    font-weight: 800;
+    margin-left: 210px;
+    margin-top: 12px;
+      color: var(--primary);
+}
+.pagamento-seguro{
+    width: 93%;
+    height: 12vh;
+    border-radius: 15px;
+    background-color: var(--accent-light);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+}
+.pagamento-seguro img{
+    margin-top: 15px;
+    margin-left: 15px;
+    width: 45px;
+    height: 40px;
+}
+.pagseg-dados {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+
+}
+.pagseg-dados h3 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    margin-left: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: 0.5px;
+    color: var(--text);
+}
+.pagseg-dados p {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    margin-left: 8px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: 0px;
+    color: var(--text);
+    margin-top: 3px;
+}
+.continuar{
+    width: 93%;
+    height: 5vh;
+    border-radius: 15px;
+    border: 1.5px solid var(--border);
+    background-color: var(--primary);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+
+}
+.finalizar-compra{
+    margin-left: 80%;
+    height: 10%;
+    
+}
+.finalizaeButton{
+    width: 80%;
+    height: 60%;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0f4c50, #124f53, #073b40);
+    
+}
+.finalizaeButton h3{
+    color: aliceblue;
+
+
+}
+.compra-Button{
+  width: 135px;
+  height: 48px;
+  margin-right: 3%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background-color: #eaf4f5;
+  color: #287982;
+
+  border: none;
+  border-radius: 16px;
+
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.compra-Button:hover {
+  background-color: #dcecee;
+}
+
+
+
+
+
+

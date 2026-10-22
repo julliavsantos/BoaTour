@@ -955,6 +955,22 @@ body {
     height: 22px;
     object-fit: contain;
 }
+.ods-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 8px;
+}
+.ods-card-tag {
+    padding: 4px 7px;
+    border-radius: 999px;
+    background: var(--primary-strong);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
 .btn-favorito {
     position: absolute;
     top: 8px;
