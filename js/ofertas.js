@@ -488,14 +488,11 @@ carregarFavoritos().then(() => {
                     oferta.getAttribute('data-destaque');
 
 
-                // --- TODAS · SOMENTE DESTAQUES · MÁXIMO 8 ---
+                // --- TODAS · MÁXIMO 8 ---
 
                 if (filtroSelecionado === 'todas') {
 
-                    if (
-                        destaque === 'sim' &&
-                        contador < 8
-                    ) {
+                    if (contador < 8) {
 
                         oferta.style.display = '';
 

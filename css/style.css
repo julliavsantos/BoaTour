@@ -772,7 +772,7 @@ body.dark-mode .cont {
 }
 .filtros {
     position: relative;
-    z-index: 1101;
+    z-index: 1;
     height: auto;
     display: flex;
     gap: 10px;

@@ -716,7 +716,7 @@ body {
 }
 .pagina-voos-layout {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+    grid-template-columns: minmax(0, 3fr) minmax(360px, 1fr);
     align-items: start;
     width: 100%;
 }
@@ -872,7 +872,7 @@ body {
 .btn-comprar-voo:hover { background: var(--accent-dark); }
 
 @media (max-width: 1000px) {
-    .pagina-voos-layout { grid-template-columns: minmax(0, 1fr) 250px; }
+    .pagina-voos-layout { grid-template-columns: minmax(0, 1fr) 300px; }
     .voos-container { padding-inline: 70px 28px; }
     .conteudo-voos > .filtros { margin-inline: 70px; }
     .conteudo-voos > .ofertas { padding-inline: 70px; }
@@ -912,7 +912,7 @@ body {
 }
 .folder img {
     display: block;
-    width: min(100%, 320px);
+    width: 95%;
     max-height: calc(100vh - 56px);
     height: auto;
     object-fit: contain;
@@ -943,3 +943,7 @@ body {
     font-weight: 600;
 }
 .ods-voo-tags .ods-selo img { width: 18px; height: 18px; object-fit: contain; }
+
+@media (max-width: 640px) {
+    .folder img { width: min(85%, 420px); }
+}

@@ -6,26 +6,12 @@ class VoosBD {
         return `
             SELECT
                 v.*,
-                COALESCE(c.nome, v.companhia_aerea) AS companhia_nome,
-                c.logo AS logo_companhia,
-                COALESCE(cl.nome, v.classe) AS classe_nome,
-                ao.nome AS aeroporto_origem_nome,
-                ao.cidade AS cidade_origem,
-                ao.pais AS pais_origem,
-                ao.codigo_iata AS codigo_origem,
-                ad.nome AS aeroporto_destino_nome,
-                ad.cidade AS cidade_destino,
-                ad.pais AS pais_destino,
-                ad.codigo_iata AS codigo_destino
+                v.companhia_aerea AS companhia_nome,
+                NULL AS logo_companhia,
+                v.classe AS classe_nome,
+                v.origem AS cidade_origem,
+                v.destino AS cidade_destino
             FROM voos v
-            LEFT JOIN companhias_aereas c
-                ON c.id_companhia = v.id_companhia
-            LEFT JOIN classes_voo cl
-                ON cl.id_classe = v.id_classe
-            LEFT JOIN aeroportos ao
-                ON ao.id_aeroporto = v.id_aeroporto_origem
-            LEFT JOIN aeroportos ad
-                ON ad.id_aeroporto = v.id_aeroporto_destino
         `;
     }
 
@@ -52,8 +38,6 @@ class VoosBD {
 
     const sql = `
         ${VoosBD.consultaBase()}
-        WHERE v.ativo = 1
-          AND v.assentos_disponiveis > 0
         ORDER BY v.data_saida, v.horario_saida
     `
 
@@ -85,8 +69,7 @@ class VoosBD {
 
         let sql = `
             ${VoosBD.consultaBase()}
-            WHERE v.ativo = 1
-              AND v.assentos_disponiveis > 0
+            WHERE 1 = 1
         `
 
         const valores = []
@@ -100,28 +83,14 @@ class VoosBD {
                 AND (
                     v.numero_voo LIKE ?
                     OR v.companhia_aerea LIKE ?
-                    OR c.nome LIKE ?
                     OR v.origem LIKE ?
                     OR v.destino LIKE ?
-                    OR ao.cidade LIKE ?
-                    OR ao.nome LIKE ?
-                    OR ao.codigo_iata LIKE ?
-                    OR ad.cidade LIKE ?
-                    OR ad.nome LIKE ?
-                    OR ad.codigo_iata LIKE ?
                 )
             `
 
             const pesquisa = `%${filtros.pesquisa}%`
 
             valores.push(
-                pesquisa,
-                pesquisa,
-                pesquisa,
-                pesquisa,
-                pesquisa,
-                pesquisa,
-                pesquisa,
                 pesquisa,
                 pesquisa,
                 pesquisa,
@@ -136,15 +105,11 @@ class VoosBD {
 
             sql += `
                 AND (
-                    v.origem LIKE ? OR ao.cidade LIKE ? OR
-                    ao.nome LIKE ? OR ao.codigo_iata LIKE ?
+                    v.origem LIKE ?
                 )
             `
 
             valores.push(
-                `%${filtros.origem}%`,
-                `%${filtros.origem}%`,
-                `%${filtros.origem}%`,
                 `%${filtros.origem}%`
             )
         }
@@ -156,15 +121,11 @@ class VoosBD {
 
             sql += `
                 AND (
-                    v.destino LIKE ? OR ad.cidade LIKE ? OR
-                    ad.nome LIKE ? OR ad.codigo_iata LIKE ?
+                    v.destino LIKE ?
                 )
             `
 
             valores.push(
-                `%${filtros.destino}%`,
-                `%${filtros.destino}%`,
-                `%${filtros.destino}%`,
                 `%${filtros.destino}%`
             )
         }
@@ -259,8 +220,6 @@ class VoosBD {
         const sql = `
             ${VoosBD.consultaBase()}
             WHERE v.id_voo = ?
-              AND v.ativo = 1
-              AND v.assentos_disponiveis > 0
         `
 
         connection.query(

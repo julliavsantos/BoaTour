@@ -37,9 +37,22 @@ class OfertaBD {
                 v.data_saida AS data_voo,
                 v.horario_saida AS horario_voo,
                 v.horario_chegada AS chegada_voo,
-                c.logo AS logo_companhia,
+                NULL AS logo_companhia,
+                CASE
+                    WHEN o.tipo_alvo = 'pacote' AND COALESCE(ip.tem_item_nacional, 0) > 0
+                         AND COALESCE(ip.tem_item_internacional, 0) > 0 THEN 'mista'
+                    WHEN o.tipo_alvo = 'pacote' AND COALESCE(ip.tem_item_internacional, 0) > 0 THEN 'internacional'
+                    WHEN o.tipo_alvo = 'pacote' AND COALESCE(ip.tem_item_nacional, 0) > 0 THEN 'nacional'
+                    WHEN o.tipo_alvo = 'produto' AND o.tipo_produto = 'destino'
+                        THEN CASE WHEN d.pais = 'Brasil' THEN 'nacional' ELSE 'internacional' END
+                    WHEN o.tipo_alvo = 'produto' AND o.tipo_produto = 'hotel'
+                        THEN CASE WHEN h.pais = 'Brasil' THEN 'nacional' ELSE 'internacional' END
+                    WHEN o.tipo_alvo = 'produto' AND o.tipo_produto = 'atividade'
+                        THEN CASE WHEN d_atividade.pais = 'Brasil' THEN 'nacional' ELSE 'internacional' END
+                    ELSE NULL
+                END AS abrangencia,
                 COALESCE(d.nome, h.nome_hotel, v.numero_voo, a.nome_atividade) AS nome_produto,
-                COALESCE(d.imagem, h.imagem_principal, c.logo, a.imagem_principal, p.imagem, o.imagem) AS imagem_resumo,
+                COALESCE(d.imagem, h.imagem_principal, a.imagem_principal, p.imagem, o.imagem) AS imagem_resumo,
                 COALESCE(ip.hoteis, h.nome_hotel) AS hoteis_inclusos,
                 COALESCE(ip.voos, CASE WHEN v.id_voo IS NOT NULL THEN CONCAT(v.companhia_aerea, ' · ', v.numero_voo, ' · ', v.origem, ' → ', v.destino, ' · ', DATE_FORMAT(v.data_saida, '%d/%m/%Y'), ' · ', TIME_FORMAT(v.horario_saida, '%H:%i')) END) AS voos_inclusos,
                 COALESCE(ip.atividades, a.nome_atividade) AS atividades_inclusas,
@@ -59,10 +72,10 @@ class OfertaBD {
                 ON o.tipo_alvo = 'produto' AND o.tipo_produto = 'hotel' AND h.id_hotel = o.id_produto
             LEFT JOIN voos v
                 ON o.tipo_alvo = 'produto' AND o.tipo_produto = 'voo' AND v.id_voo = o.id_produto
-            LEFT JOIN companhias_aereas c
-                ON c.id_companhia = v.id_companhia
             LEFT JOIN atividades a
                 ON o.tipo_alvo = 'produto' AND o.tipo_produto = 'atividade' AND a.id_atividade = o.id_produto
+            LEFT JOIN destinos d_atividade
+                ON d_atividade.id_destino = a.id_destino
             LEFT JOIN (
                 SELECT
                     pi.id_pacote,
@@ -72,7 +85,9 @@ class OfertaBD {
                     GROUP_CONCAT(DISTINCT CASE WHEN pi.tipo_item = 'destino' THEN d_pacote.nome END ORDER BY d_pacote.nome SEPARATOR ' · ') AS destinos,
                     SUM(pi.tipo_item = 'hotel') AS tem_hotel,
                     SUM(pi.tipo_item = 'voo') AS tem_voo,
-                    SUM(pi.tipo_item = 'atividade') AS tem_atividade
+                    SUM(pi.tipo_item = 'atividade') AS tem_atividade,
+                    SUM(COALESCE(d_pacote.pais, h_pacote.pais, d_atividade_pacote.pais) = 'Brasil') AS tem_item_nacional,
+                    SUM(COALESCE(d_pacote.pais, h_pacote.pais, d_atividade_pacote.pais) <> 'Brasil') AS tem_item_internacional
                 FROM pacote_itens pi
                 LEFT JOIN hoteis h_pacote
                     ON pi.tipo_item = 'hotel' AND h_pacote.id_hotel = pi.id_item
@@ -82,6 +97,8 @@ class OfertaBD {
                     ON pi.tipo_item = 'atividade' AND a_pacote.id_atividade = pi.id_item
                 LEFT JOIN destinos d_pacote
                     ON pi.tipo_item = 'destino' AND d_pacote.id_destino = pi.id_item
+                LEFT JOIN destinos d_atividade_pacote
+                    ON pi.tipo_item = 'atividade' AND d_atividade_pacote.id_destino = a_pacote.id_destino
                 GROUP BY pi.id_pacote
             ) ip ON ip.id_pacote = p.id_pacote
             WHERE o.status = 'ativa'

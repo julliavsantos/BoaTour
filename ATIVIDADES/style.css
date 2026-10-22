@@ -845,8 +845,9 @@ body {
     height: 24px;
     flex: 0 0 24px;
     place-items: center;
-    color: #333;
-    filter: grayscale(1);
+    /* Os símbolos usam a cor herdada do texto em ambos os temas. */
+    color: var(--text);
+    filter: none;
     font-size: 20px;
 }
 .oferta-detalhes .linha-detalhes p {
@@ -1016,7 +1017,7 @@ body[data-catalogo] {
 }
 .pagina-voos-layout {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+    grid-template-columns: minmax(0, 3fr) minmax(360px, 1fr);
     align-items: start;
     width: 100%;
 }
@@ -1169,10 +1170,10 @@ body[data-catalogo] .folder {
     align-items: center;
     justify-content: center;
 }
-body[data-catalogo] .folder img { width: 85%; height: auto; }
+body[data-catalogo] .folder img { width: 95%; height: auto; }
 body[data-catalogo] .btn-ver-mais { margin: 24px auto; }
 @media (max-width: 1000px) {
-    .pagina-voos-layout { grid-template-columns: minmax(0, 1fr) 250px; }
+    .pagina-voos-layout { grid-template-columns: minmax(0, 1fr) 300px; }
     .catalogo-container { padding-inline: 70px; }
     body[data-catalogo] .imagem-oferta { width: 180px; min-width: 180px; }
 }
@@ -1227,7 +1228,7 @@ body[data-catalogo] .btn-ver-mais { margin: 24px auto; }
 body[data-catalogo] .folder { top: 16px; height: calc(100vh - 32px); padding: 12px; }
 body[data-catalogo] .folder img {
     display: block;
-    width: min(100%, 320px);
+    width: 95%;
     max-height: calc(100vh - 56px);
     border-radius: 14px;
     box-shadow: 0 8px 24px rgb(20 50 55 / 14%);

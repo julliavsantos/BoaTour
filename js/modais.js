@@ -84,6 +84,25 @@
         modal.hidden = false;
         modal.querySelector(".modal-favorito-login__abrir-login").focus();
     }, true);
+
+    // Reutiliza o mesmo modal ao tentar iniciar uma compra sem uma sessão.
+    window.addEventListener("click", evento => {
+        const alvo = evento.target instanceof Element ? evento.target : null;
+        const botao = alvo?.closest("#btnComprar, .btn-comprar-voo");
+        if (!botao || localStorage.getItem("boatourSessionToken")) return;
+
+        // O botão da página de destinos apenas encaminha para a busca de voos.
+        if (botao.id === "btnComprar" && botao.dataset.tipo === "destino") return;
+
+        evento.preventDefault();
+        evento.stopImmediatePropagation();
+
+        const modal = criarModalFavoritoLogin();
+        modal.querySelector(".modal-favorito-login__mensagem").textContent =
+            "Para continuar a compra, você precisa entrar em uma conta.";
+        modal.hidden = false;
+        modal.querySelector(".modal-favorito-login__abrir-login").focus();
+    }, true);
 })();
 
 // --- RECUPERAÇÃO DE SENHA ---
@@ -882,23 +901,23 @@ document.addEventListener(
             const itens = [...linhaDetalhes.children];
             const detalhes = tipoModal === "hotel"
                 ? [
-                    ["🖈", card.dataset.resumo],
-                    ["🛏", card.dataset.quarto],
-                    ["★", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""],
+                    ["🖈︎", card.dataset.resumo],
+                    ["🛏︎", card.dataset.quarto],
+                    ["★︎", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""],
                     ["$", "Valor por diária"]
                 ]
                 : tipoModal === "destino"
                     ? [
-                        ["⌖", card.dataset.resumo || card.dataset.local],
-                        ["⏱", card.dataset.duracao],
+                        ["⌖︎", card.dataset.resumo || card.dataset.local],
+                        ["⏱︎", card.dataset.duracao],
                         ["", ""],
                         ["", ""]
                     ]
                     : [
-                    ["🖈", card.dataset.local || card.dataset.destino],
-                    ["⏱", card.dataset.duracao],
-                    ["✓", card.dataset.incluso],
-                    ["★", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""]
+                    ["🖈︎", card.dataset.local || card.dataset.destino],
+                    ["⏱︎", card.dataset.duracao],
+                    ["✓︎", card.dataset.incluso],
+                    ["★︎", card.dataset.classificacao ? `Classificação: ${card.dataset.classificacao}` : ""]
                     ];
             detalhes.forEach(([icone, valor], index) => {
                 const item = itens[index];
