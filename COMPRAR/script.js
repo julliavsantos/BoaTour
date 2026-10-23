@@ -726,7 +726,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             };
             sessionStorage.setItem("boatourCompraPendente", JSON.stringify(compraPendente));
-            window.location.href = "../PAGAMENTOS/index.html?checkout=1";
+            window.location.href = "../COMPRAR FINAL/index.html?checkout=1";
         });
     } catch (erro) {
         titulo.textContent = "Não foi possível carregar o item";

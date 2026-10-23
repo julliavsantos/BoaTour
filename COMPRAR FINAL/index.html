@@ -17,10 +17,10 @@
 
     <ul class="menu">
         <li><a href="../index.html#inicio">Início</a></li>
-        <li>Destinos</li>
-        <li>Voos</li>
-        <li>Hotéis</li>
-        <li>Atividades</li>
+        <li><a href="../DESTINOS/index.html">Destinos</a></li>
+        <li><a href="../VOOS/index.html">Voos</a></li>
+        <li><a href="../HOTEIS/index.html">Hotéis</a></li>
+        <li><Atividades href="../ATIVIDADES/index.html">Atividades</a></li>
         <li><a href="../index.html#ofertas">Ofertas</a></li>
         <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
         <li><a href="../index.html#sobre">Sobre Nós</a></li>
@@ -42,12 +42,12 @@
 
             <div class="perfil-topo">
                 <div class="avatar">
-                    <img src="../img/icones/perfil.png" alt="Perfil">
-                </div>
-                <div>
-                    <h3>Olá, viajante!</h3>
-                    <p>Acesse sua conta</p>
-                </div>
+    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+</div>
+<div>
+    <h3 id="nomePerfil">Olá, viajante!</h3>
+    <p id="descricaoPerfil">Acesse sua conta</p>
+</div>
 
                 <button class="fechar-perfil" id="fecharPerfil">
                     &times;
@@ -112,32 +112,71 @@
     </div>
     </div>
 
-   
-    
-
     <div class="conteudo">
         
-        
-     
-        
-        
-        
-        
+        <div class="conteudo-left">
+
+            <div class="passos">
+
+    <div class="passo-item concluido">
+        <div class="bolinha">✓</div>
+        <p>Seus dados</p>
+    </div>
+
+    <div class="linha-passo"></div>
+
+    <div class="passo-item ativo">
+        <div class="bolinha">2</div>
+        <p>Pagamento</p>
+    </div>
+
+    <div class="linha-passo"></div>
+
+    <div class="passo-item">
+        <div class="bolinha">3</div>
+        <p>Confirmação</p>
+    </div>
+
+            </div>
+            
+            <div class="linha-divisão"></div>
 
             <div class="informaçoes">
+                <div class="linha-info">
+                    <img src="../img/icones/aviao2.png" alt="">
+                    <div class="texto-info">
+                    <h3>Resumo da viagem</h3>
+                    </div>
+                    <button class="compra-Button">✎Alterar </button>
+                </div>
+
                   <div class="dados-compra">
                     <img  src="../img/destinos/cancun.jpg" alt="">
                     <div class="compra-info">
                      <h3>Cancun, México</h3>         
                    <div class="dados-icones">
-                   <img src="../img/icones/dados-todos.png" alt="">
-                   <p>Voo de ida e volta <br> 12 de abr. 2030-19 abr. 2030 <br>
-                2 passageiros(1 adulto,  1 criança) <br> Hotel Gran Caribe Resort</p>
+                        <div class="linha-compra" id="linhaDataResumoCompra">
+                            <img src="../img/icones/calendario2.png" alt="">
+                            <p id="dataResumoCompra">Escolha a data da viagem</p>
+                        </div>
+                        <div class="linha-compra" id="linhaHotelResumoCompra" hidden>
+                            <img src="../img/icones/cama.png" alt="">
+                            <p id="hotelResumoCompra"></p>
+                        </div>
+                        <div class="linha-compra" id="linhaDetalheVooCompra" hidden>
+                            <img src="../img/icones/aviao2.png" alt="">
+                            <p id="detalheVooCompra"></p>
+                        </div>
+                        <div class="linha-compra" id="linhaItensOfertaCompra" hidden>
+                            <img src="../img/icones/globo.png" alt="">
+                            <p id="itensOfertaCompra">Itens incluídos na oferta</p>
+                        </div>
+                        <div class="linha-compra" id="linhaAtividadesResumoCompra" hidden>
+                            <img src="../img/icones/globo.png" alt="">
+                            <p id="atividadesResumoCompra"></p>
+                        </div>
                     </div>
                     </div>
-                
-                       
-                    <button class="compra-Button">Alterar </button>
                 
                     
         </div>
@@ -241,7 +280,7 @@
 
             
         
-      
+      </div>
         
         <div class="conteudo-right">
             <div class="titulo-compra">
