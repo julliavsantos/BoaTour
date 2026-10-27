@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const origemInicial = parametrosIniciais.get("origem");
     const destinoInicial = parametrosIniciais.get("destino");
     const dataInicial = parametrosIniciais.get("data");
+    const retornoInicial = parametrosIniciais.get("retorno");
     const idaVoltaInicial = parametrosIniciais.get("idaVolta");
     if (origemInicial && campoPartida) campoPartida.value = origemInicial;
     if (destinoInicial && campoDestino) campoDestino.value = destinoInicial;
@@ -83,6 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (idaVoltaInicial === "1" && idaVolta) {
         idaVolta.checked = true;
         idaVolta.dispatchEvent(new Event("change", { bubbles: true }));
+    } else if (idaVoltaInicial === "0" && soIda) {
+        soIda.checked = true;
+        soIda.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    if (retornoInicial && campoDataRetorno && idaVoltaInicial === "1") {
+        campoDataRetorno.value = retornoInicial;
     }
     campoPartida?.addEventListener("change", () => {
         const origem = campoPartida.value.trim();
@@ -2538,22 +2545,31 @@ document.addEventListener(
         }
 
 
+        const parametrosPassageiros = new URLSearchParams(window.location.search);
         let passageiros = {
-
-            adultos: 1,
-            criancas: 0,
-            bebes: 0
-
+            adultos: Math.max(1, parseInt(parametrosPassageiros.get("adultos"), 10) || 1),
+            criancas: Math.max(0, parseInt(parametrosPassageiros.get("criancas"), 10) || 0),
+            bebes: Math.max(0, parseInt(parametrosPassageiros.get("bebes"), 10) || 0)
         };
+        while (passageiros.adultos + passageiros.criancas + passageiros.bebes > 9) {
+            if (passageiros.bebes) passageiros.bebes--;
+            else if (passageiros.criancas) passageiros.criancas--;
+            else passageiros.adultos--;
+        }
 
-
-        let classeSelecionada =
-            "Econômica";
+        const classeInicial = parametrosPassageiros.get("classe");
+        let classeSelecionada = Array.from(
+            document.querySelectorAll(".classe-option")
+        ).find(opcao => opcao.dataset.classe === classeInicial)?.dataset.classe || "Econômica";
 
 
         menuPassageiros.classList.remove(
             "aberto"
         );
+
+        document.querySelectorAll(".classe-option").forEach(opcao => {
+            opcao.classList.toggle("ativa", opcao.dataset.classe === classeSelecionada);
+        });
 
 
         // --- ABRIR MENU ---
@@ -2691,6 +2707,10 @@ document.addEventListener(
                 passageiros.bebes;
 
         }
+
+        atualizarContadores();
+        const totalInicial = passageiros.adultos + passageiros.criancas + passageiros.bebes;
+        inputPassageiros.value = `${totalInicial} ${totalInicial === 1 ? "Passageiro" : "Passageiros"} — ${classeSelecionada}`;
 
 
         // --- CLASSE ---

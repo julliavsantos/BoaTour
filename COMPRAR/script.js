@@ -326,11 +326,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             detalhes.textContent = `${viajante.categoria} · CPF ${viajante.cpf} · Nascimento: ${formatarData(viajante.nascimento)}`;
             informacoes.append(nome, detalhes);
             const editar = document.createElement("button");
-            editar.className = "btn-editar-passageiro";
+            editar.className = "btn-editar-passageiro btn-editar-padrao";
             editar.type = "button";
             editar.textContent = "✎ Editar";
             editar.addEventListener("click", () => abrirModalViajante(indice));
-            cartao.append(informacoes, editar);
+            const remover = document.createElement("button");
+            remover.className = "btn-remover-passageiro";
+            remover.type = "button";
+            remover.textContent = "Remover";
+            remover.setAttribute("aria-label", "Remover " + viajante.nome);
+            remover.addEventListener("click", () => {
+                viajantes.splice(indice, 1);
+                renderizarViajantes();
+                atualizarValores();
+            });
+            const acoes = document.createElement("div");
+            acoes.className = "passageiro-acoes";
+            acoes.append(editar, remover);
+            cartao.append(informacoes, acoes);
             listaViajantes.appendChild(cartao);
         });
     };
@@ -721,6 +734,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                     id: idItem,
                     nome: configuracao.nome(itemCarregado),
                     valorTotal: document.getElementById("totalOfertaCompra").textContent,
+                    imagem: document.getElementById("imagemOfertaCompra")?.getAttribute("src") || "",
+                    tipoResumo: document.getElementById("tipoResumoCompra")?.textContent || "RESUMO DA VIAGEM",
+                    detalhes: Array.from(document.querySelectorAll(".dados-compra .linha-compra:not([hidden])"), linha => ({
+                        icone: linha.querySelector("img")?.getAttribute("src") || "",
+                        texto: linha.querySelector("p")?.textContent.replace(/\s+/g, " ").trim() || ""
+                    })).filter(detalhe => detalhe.texto),
+                    itensResumo: Array.from(document.querySelectorAll(".conteudo-right .dados-compra2 .linha-compra2:not([hidden])"), linha => ({
+                        icone: linha.querySelector("img")?.getAttribute("src") || "",
+                        nome: linha.querySelector("p")?.textContent.replace(/\s+/g, " ").trim() || "",
+                        valor: linha.querySelector("h3")?.textContent.trim() || ""
+                    })).filter(item => item.nome),
+                    rotuloViajante,
                     checkin: inicioCompra?.value || "",
                     checkout: fimCompra?.value || ""
                 }

@@ -40,7 +40,11 @@ const btnSalvarSenha = document.getElementById("btnSalvarSenha");
 // MODO ESCURO (usa a escolha salva no site)
 // ==========================================
 
-if (localStorage.getItem("boatour-dark-mode") === "ativo") {
+const modoTemaCookie = document.cookie.match(/(?:^|;\s*)boatour-dark-mode=(ativo|desativado)(?:;|$)/)?.[1];
+const modoTemaInicial = modoTemaCookie || localStorage.getItem("boatour-dark-mode") || "desativado";
+localStorage.setItem("boatour-dark-mode", modoTemaInicial);
+if (!modoTemaCookie) document.cookie = "boatour-dark-mode=" + modoTemaInicial + "; path=/; max-age=31536000; SameSite=Lax";
+if (modoTemaInicial === "ativo") {
     document.body.classList.add("dark-mode");
     if (logo) logo.src = "../img/logo/logodarkmode.png";
 }

@@ -217,6 +217,17 @@ function atualizarMenuUsuario() {
             ".foto-viajante, .foto-perfil-header"
         );
 
+    fotosPerfil.forEach(foto => {
+        if (!foto.dataset.avatarPadrao) {
+            foto.dataset.avatarPadrao = foto.getAttribute("src") || "../img/icones/perfil.png";
+        }
+        foto.onerror = () => {
+            foto.onerror = null;
+            const padrao = foto.dataset.avatarPadrao;
+            if (padrao && foto.getAttribute("src") !== padrao) foto.src = padrao;
+        };
+    });
+
 
     // --- USUÁRIO NÃO LOGADO ---
 
@@ -254,12 +265,7 @@ function atualizarMenuUsuario() {
         atualizarBannerMenu(null);
 
 
-        fotosPerfil.forEach((foto) => {
-
-            foto.src =
-                "http://localhost:3000/img/icones/perfil.png";
-
-        });
+        fotosPerfil.forEach(foto => { foto.src = foto.dataset.avatarPadrao; });
 
 
         return;
@@ -333,45 +339,29 @@ function atualizarMenuUsuario() {
 
     // --- FOTO DO USUÁRIO ---
 
-    let fotoUsuario =
-        usuario.foto_perfil;
-
-
-    // Se existir uma foto salva no banco/localStorage
-    if (fotoUsuario) {
-
-        if (!fotoUsuario.startsWith("http")) {
-
-            fotoUsuario =
-                `http://localhost:3000/${fotoUsuario}`;
-
-        }
-
-
-        // Evita cache da foto antiga
-
-        fotoUsuario =
-            `${fotoUsuario}?t=${Date.now()}`;
-
-
-        fotosPerfil.forEach((foto) => {
-
-            foto.src = fotoUsuario;
-
-        });
-
-    } else {
-
-        // --- FOTO PADRÃO ---
-
-        fotosPerfil.forEach((foto) => {
-
-            foto.src =
-                "http://localhost:3000/img/icones/perfil.png";
-
-        });
-
+    const fotoUsuario = String(usuario.foto_perfil || "").trim();
+    if (!fotoUsuario) {
+        fotosPerfil.forEach(foto => { foto.src = foto.dataset.avatarPadrao; });
+        return;
     }
+
+    let urlFoto;
+    if (/^(https?:|data:|blob:)/i.test(fotoUsuario)) {
+        urlFoto = fotoUsuario;
+    } else {
+        const caminho = fotoUsuario.replace(/^(\.\.\/)+/, "").replace(/^\/+/, "");
+        const origemApi = window.location.port === "3000"
+            ? window.location.origin
+            : "http://localhost:3000";
+        urlFoto = new URL(caminho, `${origemApi}/`).href;
+    }
+
+    if (/^https?:/i.test(urlFoto)) {
+        const url = new URL(urlFoto);
+        url.searchParams.set("t", String(Date.now()));
+        urlFoto = url.href;
+    }
+    fotosPerfil.forEach(foto => { foto.src = urlFoto; });
 
 }
 

@@ -123,6 +123,14 @@ if (linkBuscaVoosHome) {
         const origem = document.getElementById("partida")?.value.trim();
         const destino = document.getElementById("destino")?.value.trim();
         const data = document.getElementById("dataPartida")?.value.trim();
+        const retorno = document.getElementById("dataRetorno")?.value.trim();
+        const idaVolta = document.getElementById("IdaVolta")?.checked;
+        const passageiros = {
+            adultos: document.getElementById("adultosQtd")?.textContent.trim() || "1",
+            criancas: document.getElementById("criancasQtd")?.textContent.trim() || "0",
+            bebes: document.getElementById("bebesQtd")?.textContent.trim() || "0"
+        };
+        const classe = document.querySelector(".classe-option.ativa")?.dataset.classe || "Econômica";
 
         try {
             if (origem) localStorage.setItem("boatour_aeroporto_origem", origem);
@@ -130,13 +138,19 @@ if (linkBuscaVoosHome) {
         if (origem) parametros.set("origem", origem);
         if (destino) parametros.set("destino", destino);
         if (data) parametros.set("data", data);
+        parametros.set("idaVolta", idaVolta ? "1" : "0");
+        if (idaVolta && retorno) parametros.set("retorno", retorno);
+        parametros.set("adultos", passageiros.adultos);
+        parametros.set("criancas", passageiros.criancas);
+        parametros.set("bebes", passageiros.bebes);
+        parametros.set("classe", classe);
 
         const query = parametros.toString();
         window.location.href = `VOOS/index.html${query ? `?${query}` : ""}`;
     };
 
     linkBuscaVoosHome.addEventListener("click", buscarVoosDaHome);
-    ["partida", "destino", "dataPartida"].forEach(id => {
+    ["partida", "destino", "dataPartida", "dataRetorno"].forEach(id => {
         document.getElementById(id)?.addEventListener("keydown", evento => {
             if (evento.key === "Enter") buscarVoosDaHome(evento);
         });

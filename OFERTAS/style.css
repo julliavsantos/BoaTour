@@ -115,7 +115,7 @@ body {
 }
 .filtros {
     position: relative;
-    z-index: 1;
+    z-index: 30;
     height: auto;
     display: flex;
     gap: 10px;
@@ -159,22 +159,24 @@ body {
 }
 .filtro-tc[data-tooltip]::after {
     position: absolute;
-    z-index: 1102;
+    z-index: 1002;
     top: calc(100% + 8px);
     left: 0;
     display: none;
     width: min(320px, 80vw);
     padding: 10px 12px;
     border-radius: 8px;
-    background: #20242a;
-    color: #fff;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
     content: attr(data-tooltip);
     font-size: 12px;
     font-weight: 400;
     line-height: 1.45;
     text-align: left;
     white-space: normal;
-    box-shadow: 0 4px 14px rgb(0 0 0 / 20%);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 24%);
+    pointer-events: none;
 }
 .filtro-tc[data-tooltip]:hover::after,
 .filtro-tc[data-tooltip]:focus-visible::after { display: block; }

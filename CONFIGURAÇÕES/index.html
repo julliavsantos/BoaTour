@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/menurodape.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=settings-refresh-20261026">
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
@@ -150,9 +150,9 @@
 
             <!-- ================= MENU LATERAL ================= -->
 
-            <aside class="config-menu">
+            <aside class="config-menu" role="tablist" aria-label="Categorias de configuração" aria-orientation="vertical">
 
-                <button class="config-link ativo" data-secao="conta">
+                <button class="config-link ativo" type="button" id="aba-conta" role="tab" aria-controls="conta" data-secao="conta" aria-selected="true">
                     <span>👤</span>
 
                     <div>
@@ -162,7 +162,7 @@
                 </button>
 
 
-                <button class="config-link" data-secao="aparencia">
+                <button class="config-link" type="button" id="aba-aparencia" role="tab" aria-controls="aparencia" data-secao="aparencia" aria-selected="false" tabindex="-1">
                     <span>🎨</span>
 
                     <div>
@@ -172,7 +172,7 @@
                 </button>
 
 
-                <button class="config-link" data-secao="notificacoes">
+                <button class="config-link" type="button" id="aba-notificacoes" role="tab" aria-controls="notificacoes" data-secao="notificacoes" aria-selected="false" tabindex="-1">
                     <span>🔔</span>
 
                     <div>
@@ -182,7 +182,7 @@
                 </button>
 
 
-                <button class="config-link" data-secao="preferencias">
+                <button class="config-link" type="button" id="aba-preferencias" role="tab" aria-controls="preferencias" data-secao="preferencias" aria-selected="false" tabindex="-1">
                     <span>🌎</span>
 
                     <div>
@@ -192,7 +192,7 @@
                 </button>
 
 
-                <button class="config-link" data-secao="privacidade">
+                <button class="config-link" type="button" id="aba-privacidade" role="tab" aria-controls="privacidade" data-secao="privacidade" aria-selected="false" tabindex="-1">
                     <span>🔒</span>
 
                     <div>
@@ -211,7 +211,7 @@
 
                 <!-- ================= CONTA ================= -->
 
-                <div class="config-secao ativa" id="conta">
+                <div class="config-secao ativa" id="conta" role="tabpanel" aria-labelledby="aba-conta">
 
                     <div class="secao-titulo">
                         <div class="icone-secao">👤</div>
@@ -296,7 +296,7 @@
 
                 <!-- ================= APARÊNCIA ================= -->
 
-                <div class="config-secao" id="aparencia">
+                <div class="config-secao" id="aparencia" role="tabpanel" aria-labelledby="aba-aparencia" hidden>
 
                     <div class="secao-titulo">
 
@@ -406,7 +406,7 @@
 
                 <!-- ================= NOTIFICAÇÕES ================= -->
 
-                <div class="config-secao" id="notificacoes">
+                <div class="config-secao" id="notificacoes" role="tabpanel" aria-labelledby="aba-notificacoes" hidden>
 
                     <div class="secao-titulo">
 
@@ -525,7 +525,7 @@
 
                 <!-- ================= PREFERÊNCIAS ================= -->
 
-                <div class="config-secao" id="preferencias">
+                <div class="config-secao" id="preferencias" role="tabpanel" aria-labelledby="aba-preferencias" hidden>
 
                     <div class="secao-titulo">
 
@@ -612,7 +612,7 @@
 
                 <!-- ================= PRIVACIDADE ================= -->
 
-                <div class="config-secao" id="privacidade">
+                <div class="config-secao" id="privacidade" role="tabpanel" aria-labelledby="aba-privacidade" hidden>
 
                     <div class="secao-titulo">
 
@@ -641,7 +641,7 @@
                             </p>
                         </div>
 
-                        <button class="btn-secundario">
+                        <button class="btn-secundario" type="button" id="abrirAlteracaoSenha">
                             Alterar senha
                         </button>
 
@@ -658,9 +658,9 @@
                             </p>
                         </div>
 
-                        <a href="#" class="btn-secundario">
+                        <button type="button" class="btn-secundario" id="abrirPoliticaPrivacidade">
                             Visualizar
-                        </a>
+                        </button>
 
                     </div>
 
@@ -679,6 +679,7 @@
                         </div>
 
                         <button
+                            type="button"
                             class="btn-excluir"
                             id="btnExcluirConta"
                         >
@@ -694,6 +695,40 @@
         </div>
 
     </main>
+
+    <div class="config-status" id="configStatus" role="status" aria-live="polite" hidden></div>
+
+    <dialog class="config-dialog" id="modalSenhaConfig" aria-labelledby="tituloSenhaConfig">
+        <form id="formSenhaConfig">
+            <button class="config-dialog-fechar" type="button" data-fechar-dialog aria-label="Fechar">&times;</button>
+            <span class="configuracoes-subtitulo">SEGURANÇA DA CONTA</span>
+            <h2 id="tituloSenhaConfig">Alterar senha</h2>
+            <p>Confirme sua senha atual e escolha uma nova.</p>
+            <label for="senhaAtualConfig">Senha atual</label>
+            <input id="senhaAtualConfig" type="password" autocomplete="current-password" required>
+            <label for="novaSenhaConfig">Nova senha</label>
+            <input id="novaSenhaConfig" type="password" autocomplete="new-password" minlength="6" required>
+            <label for="confirmarSenhaConfig">Confirmar nova senha</label>
+            <input id="confirmarSenhaConfig" type="password" autocomplete="new-password" minlength="6" required>
+            <p class="config-dialog-erro" id="erroSenhaConfig" role="alert"></p>
+            <div class="config-dialog-acoes">
+                <button class="btn-secundario" type="button" data-fechar-dialog>Cancelar</button>
+                <button class="btn-salvar" type="submit">Salvar nova senha</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog class="config-dialog" id="modalAvisoPrivacidade" aria-labelledby="tituloAvisoPrivacidade">
+        <div class="config-dialog-conteudo">
+            <button class="config-dialog-fechar" type="button" data-fechar-privacidade aria-label="Fechar">&times;</button>
+            <span class="configuracoes-subtitulo">PRIVACIDADE</span>
+            <h2 id="tituloAvisoPrivacidade">Aviso do projeto</h2>
+            <p>O BoaTour é um projeto acadêmico em desenvolvimento. Uma política de privacidade formal ainda precisa ser definida antes de qualquer publicação ou uso com dados reais.</p>
+            <div class="config-dialog-acoes">
+                <button class="btn-salvar" type="button" data-fechar-privacidade>Entendi</button>
+            </div>
+        </div>
+    </dialog>
 
 
     <!-- ================= FOOTER ================= -->
@@ -901,8 +936,8 @@
 
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>
-    <script src="../js/darkmode.js"></script>
-    <script src="script.js"></script>
+    <script src="../js/darkmodedemais.js?v=settings-theme-sync-20261026"></script>
+    <script src="script.js?v=settings-refresh-20261026"></script>
 
     <script src="../js/feedback.js"></script>
 </body>

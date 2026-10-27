@@ -12,8 +12,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const logo = document.getElementById("logoBoatour");
     const fundo = document.querySelector(".fundo");
 
+    const lerCookie = () => document.cookie.match(/(?:^|;\s*)boatour-dark-mode=(ativo|desativado)(?:;|$)/)?.[1] || "";
+    function salvarModo(modoEscuro) {
+        const valor = modoEscuro ? "ativo" : "desativado";
+        localStorage.setItem("boatour-dark-mode", valor);
+        document.cookie = "boatour-dark-mode=" + valor + "; path=/; max-age=31536000; SameSite=Lax";
+    }
+
     // Atualiza os elementos conforme o tema
-    function atualizarTema(modoEscuro) {
+    function atualizarTema(modoEscuro, salvar = true) {
         document.body.classList.toggle("dark-mode", modoEscuro);
 
         // Ícone do botão
@@ -36,15 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Salva a preferência
-        localStorage.setItem(
-            "boatour-dark-mode",
-            modoEscuro ? "ativo" : "desativado"
-        );
+        if (salvar) salvarModo(modoEscuro);
     }
 
     // Recupera o tema salvo
-    const modoSalvo = localStorage.getItem("boatour-dark-mode");
+    const modoSalvo = lerCookie() || localStorage.getItem("boatour-dark-mode") || "desativado";
     const modoEscuroInicial = modoSalvo === "ativo";
+    if (!lerCookie()) salvarModo(modoEscuroInicial);
 
     // Insere o botão na navegação
     const perfil = nav.querySelector(".perfil-area");
@@ -56,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Aplica o tema inicial sem esperar um clique
-    atualizarTema(modoEscuroInicial);
+    atualizarTema(modoEscuroInicial, false);
 
     // Alterna o tema ao clicar
     botao.addEventListener("click", () => {
@@ -64,5 +69,16 @@ document.addEventListener("DOMContentLoaded", () => {
             !document.body.classList.contains("dark-mode");
 
         atualizarTema(modoEscuro);
+    });
+    const sincronizarTemaCompartilhado = () => {
+        const modoAtual = lerCookie();
+        if (!modoAtual) return;
+        localStorage.setItem("boatour-dark-mode", modoAtual);
+        atualizarTema(modoAtual === "ativo", false);
+    };
+    window.addEventListener("focus", sincronizarTemaCompartilhado);
+    window.addEventListener("pageshow", sincronizarTemaCompartilhado);
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) sincronizarTemaCompartilhado();
     });
 });
