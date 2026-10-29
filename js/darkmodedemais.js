@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const perfil = nav.querySelector(".perfil-area");
     if (perfil) nav.insertBefore(botao, perfil);
     else nav.appendChild(botao);
-    atualizarTema(modoInicial === "ativo");
 
     botao.addEventListener("click", () => {
         window.boatourDefinirTema(document.body.classList.contains("dark-mode") ? "claro" : "escuro");

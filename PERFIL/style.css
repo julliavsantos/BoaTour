@@ -70,7 +70,8 @@ body {
     align-items: start;
 }
 .sidebar{
-    width: 17%;
+    width: clamp(215px, 17vw, 270px);
+    min-width: 215px;
     height: 100vh;
     background-color: var(--bg-soft);
     position: sticky;

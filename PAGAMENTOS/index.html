@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamentos</title>
-    <link rel="stylesheet" href="pagamentos.css">
+    <link rel="stylesheet" href="pagamentos.css?v=account-sidebar-20261029">
     <link rel="stylesheet" href="../css/menurodape.css">
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="stylesheet" href="../css/assistente.css">
@@ -100,7 +100,20 @@
             </div>
         </div>
 
-    <main class="pagamentos">
+    <div class="account-layout">
+        <aside class="account-sidebar" aria-label="Minha conta">
+            <div class="account-sidebar-space"></div>
+            <nav class="account-sidebar-links">
+                <a href="../PERFIL/index.html#perfil"><span><img src="../img/icones/perfil2.png" alt=""></span><strong>Meu Perfil</strong></a>
+                <a href="../PERFIL/index.html#viagens"><span><img src="../img/icones/aviao2.png" alt=""></span><strong>Minhas Viagens</strong></a>
+                <a href="../PERFIL/index.html#favoritos"><span><img src="../img/icones/coracao.png" alt=""></span><strong>Favoritos</strong></a>
+                <a class="ativo" href="index.html" aria-current="page"><span><img src="../img/icones/cartao2.png" alt=""></span><strong>Pagamentos</strong></a>
+                <a href="../PERFIL/index.html#notificacoes"><span><img src="../img/icones/sino.png" alt=""></span><strong>Notificações</strong></a>
+                <a href="../CONFIGURAÇÕES/index.html"><span><img src="../img/icones/engrenagem.png" alt=""></span><strong>Configurações</strong></a>
+                <a href="#" id="btnSairConta"><span><img src="../img/icones/sair.png" alt=""></span><strong>Sair</strong></a>
+            </nav>
+        </aside>
+    <main class="pagamentos account-content">
         <div class="pagamentos-space">
 
         </div>
@@ -280,6 +293,7 @@
         </section>
 
     </main>
+    </div>
 
     <footer class="footer">
 
@@ -426,7 +440,7 @@
     <script src="script.js"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>
-    <script src="../js/darkmodedemais.js?v=theme-preference-sync-20261026"></script>
+    <script src="../js/darkmodedemais.js?v=theme-preference-sync-20261029"></script>
     <script src="../js/assistente-flutuante.js?v=theme-sync-20261026"></script>
 
 

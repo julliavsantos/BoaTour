@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/menurodape.css">
-    <link rel="stylesheet" href="style.css?v=settings-refresh-20261026">
+    <link rel="stylesheet" href="style.css?v=account-sidebar-20261029">
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
@@ -45,7 +45,6 @@
         </div>
     </div>
     <div class="perfil-overlay" id="perfilOverlay"></div>
-
     <div class="perfil-menu" id="perfilMenu">
 
         <div class="perfil-topo">
@@ -53,12 +52,10 @@
             <div class="avatar">
                 <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
             </div>
-
             <div>
                 <h3 id="nomePerfil">Olá, viajante!</h3>
                     <p id="descricaoPerfil">Acesse sua conta</p>
             </div>
-
             <button class="fechar-perfil" id="fecharPerfil">
                 &times;
             </button>
@@ -123,37 +120,36 @@
 
     </div>
 
+    <div class="account-layout">
+        <aside class="account-sidebar" aria-label="Minha conta">
+            <div class="account-sidebar-space"></div>
+            <nav class="account-sidebar-links">
+                <a href="../PERFIL/index.html#perfil"><span><img src="../img/icones/perfil2.png" alt=""></span><strong>Meu Perfil</strong></a>
+                <a href="../PERFIL/index.html#viagens"><span><img src="../img/icones/aviao2.png" alt=""></span><strong>Minhas Viagens</strong></a>
+                <a href="../PERFIL/index.html#favoritos"><span><img src="../img/icones/coracao.png" alt=""></span><strong>Favoritos</strong></a>
+                <a href="../PAGAMENTOS/index.html"><span><img src="../img/icones/cartao2.png" alt=""></span><strong>Pagamentos</strong></a>
+                <a href="../PERFIL/index.html#notificacoes"><span><img src="../img/icones/sino.png" alt=""></span><strong>Notificações</strong></a>
+                <a class="ativo" href="index.html" aria-current="page"><span><img src="../img/icones/engrenagem.png" alt=""></span><strong>Configurações</strong></a>
+                <a href="#" id="btnSairConta"><span><img src="../img/icones/sair.png" alt=""></span><strong>Sair</strong></a>
+            </nav>
+        </aside>
 
-    <!-- ================= CONTEÚDO ================= -->
-
-    <main class="configuracoes-container">
-
+    <main class="configuracoes-container account-content">
         <div class="configuracoes-cabecalho">
-
             <div>
-                <span class="configuracoes-subtitulo">
-                    SUA CONTA
-                </span>
-
+                <span class="configuracoes-subtitulo">SUA CONTA</span>
                 <h1>Configurações</h1>
-
-                <p>
-                    Personalize sua experiência na BoaTour.
-                </p>
+                <p>Personalize sua experiência na BoaTour.</p>
             </div>
 
         </div>
 
-
         <div class="configuracoes-layout">
-
-
-            <!-- ================= MENU LATERAL ================= -->
 
             <aside class="config-menu" role="tablist" aria-label="Categorias de configuração" aria-orientation="vertical">
 
                 <button class="config-link ativo" type="button" id="aba-conta" role="tab" aria-controls="conta" data-secao="conta" aria-selected="true">
-                    <span>👤</span>
+                    <img src="../img/icones/user.png" alt="">
 
                     <div>
                         <strong>Conta</strong>
@@ -163,7 +159,7 @@
 
 
                 <button class="config-link" type="button" id="aba-aparencia" role="tab" aria-controls="aparencia" data-secao="aparencia" aria-selected="false" tabindex="-1">
-                    <span>🎨</span>
+                    <img src="../img/icones/aparencia.png" alt="">
 
                     <div>
                         <strong>Aparência</strong>
@@ -173,7 +169,7 @@
 
 
                 <button class="config-link" type="button" id="aba-notificacoes" role="tab" aria-controls="notificacoes" data-secao="notificacoes" aria-selected="false" tabindex="-1">
-                    <span>🔔</span>
+                    <img src="../img/icones/sino.png" alt="">
 
                     <div>
                         <strong>Notificações</strong>
@@ -183,7 +179,7 @@
 
 
                 <button class="config-link" type="button" id="aba-preferencias" role="tab" aria-controls="preferencias" data-secao="preferencias" aria-selected="false" tabindex="-1">
-                    <span>🌎</span>
+                    <img src="../img/icones/globo2.png" alt="">
 
                     <div>
                         <strong>Preferências</strong>
@@ -193,7 +189,7 @@
 
 
                 <button class="config-link" type="button" id="aba-privacidade" role="tab" aria-controls="privacidade" data-secao="privacidade" aria-selected="false" tabindex="-1">
-                    <span>🔒</span>
+                    <img src="../img/icones/cadeado2.png" alt="">
 
                     <div>
                         <strong>Privacidade</strong>
@@ -203,25 +199,18 @@
 
             </aside>
 
-
-            <!-- ================= ÁREA DAS CONFIGURAÇÕES ================= -->
-
             <section class="config-conteudo">
-
-
-                <!-- ================= CONTA ================= -->
 
                 <div class="config-secao ativa" id="conta" role="tabpanel" aria-labelledby="aba-conta">
 
                     <div class="secao-titulo">
-                        <div class="icone-secao">👤</div>
+                        <div class="icone-secao"><img src="../img/icones/user.png" alt=""></div>
 
                         <div>
                             <h2>Conta</h2>
                             <p>Gerencie seus dados pessoais.</p>
                         </div>
                     </div>
-
 
                     <div class="formulario-config">
 
@@ -230,52 +219,37 @@
                                 Nome completo
                             </label>
 
-                            <input
-                                type="text"
-                                id="nome"
-                                placeholder="Digite seu nome"
-                            >
+                            <input type="text" id="nome" placeholder="Digite seu nome">
+                        </div>
+
+                        <div class="campo-config">
+                            <label for="email">E-mail</label>
+
+                            <input type="email" id="email" placeholder="seuemail@email.com">
+                        </div>
+                        <div class="campo-config">
+                            <label for="telefone">Telefone</label>
+
+                            <input type="tel" id="telefone" placeholder="(00) 00000-0000">
                         </div>
 
 
                         <div class="campo-config">
-                            <label for="email">
-                                E-mail
-                            </label>
+                            <label for="cpf">CPF</label>
 
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="seuemail@email.com"
-                            >
+                            <input type="text" id="cpf" placeholder="000.000.000-00">
                         </div>
 
-
-                        <div class="campo-config">
-                            <label for="telefone">
-                                Telefone
-                            </label>
-
-                            <input
-                                type="tel"
-                                id="telefone"
-                                placeholder="(00) 00000-0000"
-                            >
-                        </div>
-
-
-                        <div class="campo-config">
-                            <label for="cpf">
-                                CPF
-                            </label>
-
-                            <input
-                                type="text"
-                                id="cpf"
-                                placeholder="000.000.000-00"
-                            >
-                        </div>
-
+                        <div class="campo campo-completo data-campo" id="campoDataNascimentoPerfil">
+                <label for="dataNascimentoPerfil">Data de nascimento</label>
+                <div class="input-data">
+                    <input type="text" id="dataNascimentoPerfil" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="bday" readonly>
+                    <button type="button" class="btn-calendario" id="abrirCalendarioNascimento" aria-label="Abrir calendário">
+                        <img src="../img/icones/calendario.png" alt="">
+                    </button>
+                </div>
+                <div class="calendario" id="calendarioNascimentoPerfil"></div>
+            </div>
                     </div>
 
 
@@ -293,16 +267,10 @@
 
                 </div>
 
-
-                <!-- ================= APARÊNCIA ================= -->
-
                 <div class="config-secao" id="aparencia" role="tabpanel" aria-labelledby="aba-aparencia" hidden>
 
                     <div class="secao-titulo">
-
-                        <div class="icone-secao">
-                            🎨
-                        </div>
+                        <div class="icone-secao"><img src="../img/icones/aparencia.png" alt=""></div>
 
                         <div>
                             <h2>Aparência</h2>
@@ -316,16 +284,11 @@
 
                         <div class="opcao-info">
 
-                            <div class="opcao-icone">
-                                ☀️
-                            </div>
+                            <div class="opcao-icone"><img src="../img/icones/sol2.png" alt=""></div>
 
                             <div>
                                 <strong>Modo claro</strong>
-
-                                <small>
-                                    Utilize o visual claro da BoaTour.
-                                </small>
+                                <small>Utilize o visual claro da BoaTour.</small>
                             </div>
 
                         </div>
@@ -347,7 +310,7 @@
                         <div class="opcao-info">
 
                             <div class="opcao-icone">
-                                🌙
+                                <img src="../img/icones/lua2.png" alt="">
                             </div>
 
                             <div>
@@ -377,7 +340,7 @@
                         <div class="opcao-info">
 
                             <div class="opcao-icone">
-                                💻
+                                <img src="../img/icones/computador.png" alt="">
                             </div>
 
                             <div>
@@ -404,14 +367,12 @@
                 </div>
 
 
-                <!-- ================= NOTIFICAÇÕES ================= -->
-
                 <div class="config-secao" id="notificacoes" role="tabpanel" aria-labelledby="aba-notificacoes" hidden>
 
                     <div class="secao-titulo">
 
                         <div class="icone-secao">
-                            🔔
+                            <img src="../img/icones/sino.png" alt="">
                         </div>
 
                         <div>
@@ -427,7 +388,7 @@
                         <div class="opcao-info">
 
                             <div class="opcao-icone">
-                                🏷️
+                                <img src="../img/icones/etiqueta.png" alt="">
                             </div>
 
                             <div>
@@ -460,7 +421,7 @@
                         <div class="opcao-info">
 
                             <div class="opcao-icone">
-                                ✈️
+                                <img src="../img/icones/aviao2.png" alt="">
                             </div>
 
                             <div>
@@ -493,7 +454,7 @@
                         <div class="opcao-info">
 
                             <div class="opcao-icone">
-                                🌎
+                                <img src="../img/icones/globo2.png" alt="">
                             </div>
 
                             <div>
@@ -522,75 +483,79 @@
 
                 </div>
 
-
-                <!-- ================= PREFERÊNCIAS ================= -->
-
                 <div class="config-secao" id="preferencias" role="tabpanel" aria-labelledby="aba-preferencias" hidden>
 
                     <div class="secao-titulo">
-
-                        <div class="icone-secao">
-                            🌎
-                        </div>
-
-                        <div>
-                            <h2>Preferências</h2>
-                            <p>Defina suas preferências de navegação.</p>
-                        </div>
-
+                        <div class="icone-secao"><img src="../img/icones/globo2.png" alt=""></div>
+                    <div>
+                        <h2>Preferências</h2>
+                        <p>Defina suas preferências de navegação.</p>
                     </div>
-
+                
+                </div>
 
                     <div class="formulario-config">
+                        
+<div class="campo-config">
+    <label>Idioma</label>
 
-                        <div class="campo-config">
+    <div class="opcoes-config" id="opcoesIdioma"
+         role="group" aria-label="Selecionar idioma">
 
-                            <label for="idioma">
-                                Idioma
-                            </label>
+        <button type="button" class="opcao-config ativa"
+                data-valor="pt" aria-pressed="true">
+            Português
+        </button>
 
-                            <select id="idioma">
+        <button type="button" class="opcao-config"
+                data-valor="en" aria-pressed="false">
+            English
+        </button>
 
-                                <option value="pt">
-                                    Português (Brasil)
-                                </option>
+        <button type="button" class="opcao-config"
+                data-valor="es" aria-pressed="false">
+            Español
+        </button>
+    </div>
 
-                                <option value="en">
-                                    English
-                                </option>
+    <!-- Mantém compatibilidade com seu JavaScript atual -->
+    <select id="idioma" hidden>
+        <option value="pt">Português (Brasil)</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+    </select>
+</div>
 
-                                <option value="es">
-                                    Español
-                                </option>
+<div class="campo-config">
+    <label>Moeda</label>
 
-                            </select>
+    <div class="opcoes-config" id="opcoesMoeda"
+         role="group" aria-label="Selecionar moeda">
 
-                        </div>
+        <button type="button" class="opcao-config ativa"
+                data-valor="brl" aria-pressed="true">
+            <span class="simbolo-moeda">R$</span> Real
+        </button>
 
+        <button type="button" class="opcao-config"
+                data-valor="usd" aria-pressed="false">
+            <span class="simbolo-moeda">US$</span> Dólar
+        </button>
 
-                        <div class="campo-config">
+        <button type="button" class="opcao-config"
+                data-valor="eur" aria-pressed="false">
+            <span class="simbolo-moeda">€</span> Euro
+        </button>
+    </div>
 
-                            <label for="moeda">
-                                Moeda
-                            </label>
+    <!-- Mantém compatibilidade com seu JavaScript atual -->
+    <select id="moeda" hidden>
+        <option value="brl">Real brasileiro (R$)</option>
+        <option value="usd">Dólar americano (US$)</option>
+        <option value="eur">Euro (€)</option>
+    </select>
+</div>
 
-                            <select id="moeda">
-
-                                <option value="brl">
-                                    Real brasileiro (R$)
-                                </option>
-
-                                <option value="usd">
-                                    Dólar americano (US$)
-                                </option>
-
-                                <option value="eur">
-                                    Euro (€)
-                                </option>
-
-                            </select>
-
-                        </div>
 
                     </div>
 
@@ -617,7 +582,7 @@
                     <div class="secao-titulo">
 
                         <div class="icone-secao">
-                            🔒
+                            <img src="../img/icones/cadeado2.png" alt="">
                         </div>
 
                         <div>
@@ -695,6 +660,7 @@
         </div>
 
     </main>
+    </div>
 
     <div class="config-status" id="configStatus" role="status" aria-live="polite" hidden></div>
 
@@ -729,9 +695,6 @@
             </div>
         </div>
     </dialog>
-
-
-    <!-- ================= FOOTER ================= -->
 
     <footer class="footer">
 
@@ -872,9 +835,6 @@
 
     </div>
 
-
-    <!-- ================= MODAL LOGIN ================= -->
-
     <div class="modal-login" id="modalLogin">
 
         <div class="login">
@@ -930,9 +890,6 @@
         </div>
 
     </div>
-
-
-    <!-- ================= SCRIPTS ================= -->
 
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>

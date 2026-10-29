@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
-@media screen and (min-width: 1440px) {
 
 * {
     margin: 0;
@@ -336,4 +335,56 @@ body {
     background-color: #f3f6f6;
 }
 
+/* Barra lateral da área da conta — mesma navegação visual do Perfil. */
+.account-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg);
+}
+.account-sidebar {
+    width: clamp(215px, 17vw, 270px);
+    min-width: 215px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    background: var(--bg-soft);
+    box-shadow: 0 4px 15px rgb(0 0 0 / 20%);
+}
+.account-sidebar-space { height: 76px; }
+.account-sidebar-links { display: flex; flex-direction: column; gap: 3px; padding: 15px; }
+.account-sidebar-links a {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px;
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    text-decoration: none;
+    transition: background .2s ease, transform .2s ease;
+}
+.account-sidebar-links a:hover,
+.account-sidebar-links a.ativo { background: var(--surface-strong); }
+.account-sidebar-links a:hover { transform: translateX(3px); }
+.account-sidebar-links a > span,
+.account-sidebar-links a > span > img { width: 38px; height: 38px; flex: 0 0 38px; border-radius: 50%; }
+.account-sidebar-links a > span { display: grid; place-items: center; background: var(--surface-strong); }
+.account-sidebar-links a.ativo > span { background: var(--card); }
+.account-sidebar-links strong { font-weight: 650; }
+.account-layout .pagamentos {
+    width: min(1400px, calc(100% - 72px));
+    max-width: none;
+    margin: 0 auto;
+    padding: 130px 0 80px;
+}
+.account-layout .pagamentos-space { display: none; }
+
+@media (max-width: 980px) {
+    .account-layout { display: block; }
+    .account-sidebar { width: 100%; min-width: 0; height: auto; position: static; box-shadow: none; border-bottom: 1px solid var(--border); }
+    .account-sidebar-space { display: none; }
+    .account-sidebar-links { flex-direction: row; overflow-x: auto; padding: 12px max(16px, 4vw); }
+    .account-sidebar-links a { flex: 0 0 auto; }
+    .account-layout .pagamentos { width: min(92%, 1000px); padding-top: 105px; }
 }
