@@ -79,6 +79,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const moeda = document.getElementById("moeda");
     if (idioma) idioma.value = configuracoes.idioma;
     if (moeda) moeda.value = configuracoes.moeda;
+    const ligarBotoesOpcao = (grupoId, controle, valorPadrao) => {
+        const grupo = document.getElementById(grupoId);
+        if (!grupo || !controle) return;
+
+        const atualizarSelecao = valor => {
+            const botaoSelecionado = [...grupo.querySelectorAll("button[data-valor]")]
+                .find(botao => botao.dataset.valor === valor);
+            if (!botaoSelecionado) return;
+
+            controle.value = valor;
+            grupo.querySelectorAll("button[data-valor]").forEach(botao => {
+                const ativo = botao === botaoSelecionado;
+                botao.classList.toggle("ativa", ativo);
+                botao.setAttribute("aria-pressed", String(ativo));
+            });
+        };
+
+        grupo.addEventListener("click", evento => {
+            const botao = evento.target.closest("button[data-valor]");
+            if (botao && grupo.contains(botao)) atualizarSelecao(botao.dataset.valor);
+        });
+        atualizarSelecao(controle.value || valorPadrao);
+    };
+
+    ligarBotoesOpcao("opcoesIdioma", idioma, "pt");
+    ligarBotoesOpcao("opcoesMoeda", moeda, "brl");
     document.getElementById("salvarPreferencias")?.addEventListener("click", () => {
         configuracoes.idioma = idioma?.value || "pt";
         configuracoes.moeda = moeda?.value || "brl";
@@ -102,7 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Carrega os dados da conta e mantém o menu/header sincronizados.
+    const dataNascimentoConta = document.getElementById("dataNascimentoPerfil");
+    dataNascimentoConta?.addEventListener("input", () => {
+        const digitos = dataNascimentoConta.value.replace(/\D/g, "").slice(0, 8);
+        dataNascimentoConta.value = digitos
+            .replace(/^(\d{2})(\d)/, "$1/$2")
+            .replace(/^(\d{2}\/\d{2})(\d)/, "$1/$2");
+    });
+
     const camposConta = {
+        nascimento: dataNascimentoConta,
         nome: document.getElementById("nome"),
         email: document.getElementById("email"),
         telefone: document.getElementById("telefone"),
@@ -114,6 +149,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (camposConta.email) camposConta.email.value = usuario.email || "";
         if (camposConta.telefone) camposConta.telefone.value = usuario.telefone || "";
         if (camposConta.cpf) camposConta.cpf.value = usuario.cpf || "";
+        if (camposConta.nascimento) {
+            const partes = String(usuario.data_nascimento || "").slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            camposConta.nascimento.value = partes ? `${partes[3]}/${partes[2]}/${partes[1]}` : "";
+        }
     };
     preencherConta(lerUsuario());
     if (token()) {
@@ -139,11 +178,29 @@ document.addEventListener("DOMContentLoaded", () => {
             avisar("Entre na sua conta para salvar os dados pessoais.", "erro");
             return;
         }
+        const dataDigitada = camposConta.nascimento?.value.trim() || "";
+        const partesData = dataDigitada.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        let dataNascimento = null;
+        if (partesData) {
+            const [, dia, mes, ano] = partesData;
+            const dataValidada = new Date(Number(ano), Number(mes) - 1, Number(dia));
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            if (dataValidada.getFullYear() === Number(ano)
+                && dataValidada.getMonth() === Number(mes) - 1
+                && dataValidada.getDate() === Number(dia)
+                && dataValidada <= hoje) {
+                dataNascimento = `${ano}-${mes}-${dia}`;
+            }
+        }
+        if (dataDigitada && !dataNascimento) return avisar("Informe uma data de nascimento válida em dd/mm/aaaa.", "erro");
+
         const dados = {
             nome: camposConta.nome?.value.trim().replace(/\s+/g, " ") || "",
             email: camposConta.email?.value.trim().toLowerCase() || "",
             telefone: camposConta.telefone?.value.trim() || "",
-            cpf: (camposConta.cpf?.value || "").replace(/\D/g, "")
+            cpf: (camposConta.cpf?.value || "").replace(/\D/g, ""),
+            data_nascimento: dataNascimento
         };
         const cpfValido = cpf => {
             if (!/^\d{11}$/.test(cpf) || /^(\d)\1{10}$/.test(cpf)) return false;

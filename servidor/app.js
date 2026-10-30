@@ -839,6 +839,29 @@ const callback = (req, res) => {
     return buscaVoos(res, rota.query);
     }
 
+    // Encaminha o chat mantendo a página na origem principal do BoaTour.
+    if (req.method === 'POST' && p === '/chat') {
+        const encaminhar = http.request({
+            hostname: '127.0.0.1',
+            port: Number(process.env.CHATBOT_PORT || 3001),
+            path: '/chat',
+            method: 'POST',
+            headers: { 'Content-Type': req.headers['content-type'] || 'application/json' }
+        }, respostaChat => {
+            res.writeHead(respostaChat.statusCode || 502, {
+                'Content-Type': respostaChat.headers['content-type'] || 'application/json; charset=utf-8'
+            });
+            respostaChat.pipe(res);
+        });
+        encaminhar.on('error', () => {
+            if (!res.headersSent) json(res, 503, { resposta: 'A Central de ajuda está temporariamente indisponível.' });
+        });
+        req.pipe(encaminhar);
+        return;
+    }
+    if (p.startsWith('/global-css/')) return servirArquivoPublico(res, p.replace('/global-css/', '/css/'));
+    if (p.startsWith('/global-img/')) return servirArquivoPublico(res, p.replace('/global-img/', '/img/'));
+    if (p.startsWith('/global-js/')) return servirArquivoPublico(res, p.replace('/global-js/', '/js/'));
     // Páginas
     if (p === '/') return servirArquivoPublico(res, '/index.html');
     if (p === '/destinos/') return servirArquivoPublico(res, '/DESTINOS/index.html');
@@ -860,6 +883,7 @@ const callback = (req, res) => {
         p.startsWith('/FAVORITOS/') ||
         p.startsWith('/COMPRAR/') ||
         p.startsWith('/TURISMO CONSCIENTE/') ||
+        p.startsWith('/CHATBOT/public/') ||
         p.endsWith('.html')
     ) {
         return servirArquivoPublico(res, p);

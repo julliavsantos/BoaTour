@@ -710,29 +710,25 @@ body.dark-mode .account-layout {
     flex-wrap: wrap;
     gap: 10px;
 }
-
+#preferencias .opcoes-config button {
+    width: 360.5px;
+}
 /* Botões não selecionados */
 #preferencias .opcao-config {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     min-height: 44px;
     padding: 11px 20px;
-
     border: 1px solid var(--border);
     border-radius: 11px;
-
     background: var(--card);
     color: var(--text);
-
     font-family: inherit;
     font-size: 13px;
     font-weight: 550;
-
     cursor: pointer;
-
     transition:
         background .2s ease,
         border-color .2s ease,
@@ -759,7 +755,6 @@ body.dark-mode .account-layout {
     border-color: var(--accent);
     color: var(--heading);
     font-weight: 650;
-
     box-shadow: 0 2px 8px rgb(0 0 0 / 4%);
 }
 
@@ -807,4 +802,143 @@ body.dark-mode .account-layout {
         transform: none;
     }
 }
+/* PADRONIZAÇÃO DOS BOTÕES DE IDIOMA E MOEDA */
+#preferencias .opcoes-config {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
+/* Todos os botões com dimensões iguais */
+#preferencias .opcao-config {
+    box-sizing: border-box;
+    width: 150px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 550;
+    white-space: nowrap;
+
+    cursor: pointer;
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease;
+}
+
+/* Tamanho padronizado das bandeiras */
+#preferencias .bandeira {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 41px;
+    height: 15px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* Efeito ao passar o mouse */
+#preferencias .opcao-config:hover {
+    border-color: var(--accent);
+    background: var(--surface-alt);
+}
+
+/* Botão selecionado */
+#preferencias .opcao-config.ativa {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 13%, var(--card));
+    color: var(--heading);
+    font-weight: 650;
+}
+
+/* Acessibilidade pelo teclado */
+#preferencias .opcao-config:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 600px) {
+    #preferencias .opcao-config {
+        width: 135px;
+        height: 46px;
+        min-height: 46px;
+        padding: 0 9px;
+        font-size: 12px;
+    }
+}
+
+
+/* Data de nascimento segue o padrão dos demais campos da conta. */
+#campoDataNascimentoPerfil {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+}
+
+#campoDataNascimentoPerfil .input-data {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 45px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-alt);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#campoDataNascimentoPerfil .input-data:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+#campoDataNascimentoPerfil .input-data input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 13px 15px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    box-shadow: none;
+}
+
+#campoDataNascimentoPerfil .input-data input:focus {
+    border: 0;
+    box-shadow: none;
+}
+
+#campoDataNascimentoPerfil .input-data input::placeholder {
+    color: var(--muted);
+}
+
+#campoDataNascimentoPerfil .btn-calendario {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 100%;
+    border-radius: 0 9px 9px 0;
+    background: transparent;
+}
+
+#campoDataNascimentoPerfil .btn-calendario:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -4px;
+}

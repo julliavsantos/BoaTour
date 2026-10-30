@@ -1,0 +1,146 @@
+/* Campos de formulário: uma base visual comum em todo o site. */
+:root {
+    --field-height: 46px;
+    --field-radius: 10px;
+    --field-border: var(--border, #dce5e9);
+    --field-bg: var(--surface-alt, #f7f9fa);
+    --field-focus: var(--accent, #518d93);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]):not([type="file"]):not([type="range"]):not([type="hidden"]):not([maxlength="1"]):not(.input-data input):not(.seletor-data-compra input):not(.seletor-nascimento-viajante input),
+select,
+textarea {
+    box-sizing: border-box;
+    min-height: var(--field-height);
+    padding: 11px 14px;
+    border: 1px solid var(--field-border);
+    border-radius: var(--field-radius);
+    background-color: var(--field-bg);
+    color: var(--text, #222);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.45;
+    outline: none;
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+textarea {
+    min-height: 112px;
+    padding: 12px 14px;
+    resize: vertical;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]):not([type="file"]):not([type="range"]):not([type="hidden"]):not([maxlength="1"]):not(.input-data input):not(.seletor-data-compra input):not(.seletor-nascimento-viajante input)::placeholder,
+textarea::placeholder {
+    color: var(--muted, #777);
+    opacity: .82;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]):not([type="file"]):not([type="range"]):not([type="hidden"]):not([maxlength="1"]):not(.input-data input):not(.seletor-data-compra input):not(.seletor-nascimento-viajante input):focus,
+select:focus,
+textarea:focus {
+    border-color: var(--field-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--field-focus) 18%, transparent);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+}
+
+input[readonly]:not(.input-data input):not(.seletor-data-compra input):not(.seletor-nascimento-viajante input) {
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]):not([type="file"]):not([type="range"]):not([type="hidden"]):not([maxlength="1"]):not(.input-data input):not(.seletor-data-compra input):not(.seletor-nascimento-viajante input),
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+/* Mantém os campos de data no mesmo tom em todas as páginas. */
+.input-data,
+.seletor-data-compra {
+    background-color: var(--field-bg);
+}
+
+.input-data input,
+.seletor-data-compra input {
+    background-color: transparent;
+}
+
+.input-data .btn-calendario,
+.abrir-calendario-compra {
+    background-color: var(--field-bg);
+}
+
+input[type="date"] {
+    background-color: var(--field-bg);
+}
+/* O campo e o botão do calendário formam uma superfície contínua. */
+.input-data input,
+.seletor-data-compra input {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.input-data .btn-calendario,
+.abrir-calendario-compra {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+/* Contorno externo único para os campos com calendário. */
+.input-data,
+.seletor-data-compra {
+    box-sizing: border-box;
+    border: 1px solid var(--field-border);
+    border-radius: var(--field-radius);
+    overflow: hidden;
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.input-data:focus-within,
+.seletor-data-compra:focus-within {
+    border-color: var(--field-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--field-focus) 18%, transparent);
+}
+/* Cores dos controles quando o tema escuro estiver ativo. */
+body.dark-mode input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]):not([type="file"]):not([type="range"]):not([type="hidden"]):not([maxlength="1"]):not(.input-data input):not(.seletor-data-compra input):not(.seletor-nascimento-viajante input),
+body.dark-mode select,
+body.dark-mode textarea {
+    border-color: var(--border);
+    background-color: var(--surface-alt);
+    color: var(--text);
+    color-scheme: dark;
+}
+
+body.dark-mode input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]):not([type="file"]):not([type="range"]):not([type="hidden"]):not([maxlength="1"]):not(.input-data input):not(.seletor-data-compra input):not(.seletor-nascimento-viajante input)::placeholder,
+body.dark-mode textarea::placeholder {
+    color: var(--muted);
+}
+
+body.dark-mode .input-data,
+body.dark-mode .seletor-data-compra,
+body.dark-mode .input-data .btn-calendario,
+body.dark-mode .abrir-calendario-compra {
+    background-color: var(--surface-alt);
+}
+
+body.dark-mode .input-data input,
+body.dark-mode .seletor-data-compra input {
+    border: 0;
+    background-color: transparent;
+    color: var(--text);
+    color-scheme: dark;
+}
+
+body.dark-mode .input-data:focus-within,
+body.dark-mode .seletor-data-compra:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}

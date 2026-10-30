@@ -26,8 +26,13 @@ const pastaJsUniversal = path.join(__dirname, "../../js");
 
 // --- ARQUIVOS ESTÁTICOS ---
 
+// Recursos compartilhados continuam acessíveis quando o chatbot é aberto isoladamente.
+app.use("/css", express.static(pastaCssUniversal));
+app.use("/img", express.static(pastaImgUniversal));
+app.use("/js", express.static(pastaJsUniversal));
 // Arquivos próprios do chatbot
 app.use(express.static(pastaPublic));
+app.use("/CHATBOT/public", express.static(pastaPublic));
 
 // Arquivos universais do BoaTour
 app.use("/global-img", express.static(pastaImgUniversal));

@@ -128,6 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputDataNascimento = document.getElementById("dataNascimentoPerfil");
     const calendarioNascimento = document.getElementById("calendarioNascimentoPerfil");
     const botaoCalendarioNascimento = document.getElementById("abrirCalendarioNascimento");
+
+    inputDataNascimento?.addEventListener("input", () => {
+        const digitos = inputDataNascimento.value.replace(/\D/g, "").slice(0, 8);
+        inputDataNascimento.value = digitos
+            .replace(/^(\d{2})(\d)/, "$1/$2")
+            .replace(/^(\d{2}\/\d{2})(\d)/, "$1/$2");
+    });
     const hojeNascimento = new Date();
     let mesCalendarioNascimento = new Date(hojeNascimento.getFullYear(), hojeNascimento.getMonth(), 1);
 

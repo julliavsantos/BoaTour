@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
+    <link rel="stylesheet" href="../css/forms.css?v=dark-inputs-20261029">
 </head>
 <body>
     <div class="container">
@@ -102,7 +103,7 @@
             </a>
 
 
-            <a href="http://localhost:3001/">
+            <a href="/CHATBOT/public/index.html">
                 <span>?</span>
 
                 <div>
@@ -240,10 +241,10 @@
                             <input type="text" id="cpf" placeholder="000.000.000-00">
                         </div>
 
-                        <div class="campo campo-completo data-campo" id="campoDataNascimentoPerfil">
+                        <div class="campo-config campo-completo data-campo" id="campoDataNascimentoPerfil">
                 <label for="dataNascimentoPerfil">Data de nascimento</label>
                 <div class="input-data">
-                    <input type="text" id="dataNascimentoPerfil" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="bday" readonly>
+                    <input type="text" id="dataNascimentoPerfil" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="bday">
                     <button type="button" class="btn-calendario" id="abrirCalendarioNascimento" aria-label="Abrir calendário">
                         <img src="../img/icones/calendario.png" alt="">
                     </button>
@@ -499,24 +500,22 @@
 <div class="campo-config">
     <label>Idioma</label>
 
-    <div class="opcoes-config" id="opcoesIdioma"
-         role="group" aria-label="Selecionar idioma">
+    <div class="opcoes-config" id="opcoesIdioma" role="group" aria-label="Selecionar idioma">
+    <button type="button" class="opcao-config ativa" data-valor="pt" aria-pressed="true">
+        <img class="bandeira" src="../img/icones/portugues.png" alt="">
+        <span>Português</span>
+    </button>
 
-        <button type="button" class="opcao-config ativa"
-                data-valor="pt" aria-pressed="true">
-            Português
-        </button>
+    <button type="button" class="opcao-config" data-valor="en" aria-pressed="false">
+        <img class="bandeira" src="../img/icones/ingles.png" alt="">
+        <span>Inglês(English)</span>
+    </button>
 
-        <button type="button" class="opcao-config"
-                data-valor="en" aria-pressed="false">
-            English
-        </button>
-
-        <button type="button" class="opcao-config"
-                data-valor="es" aria-pressed="false">
-            Español
-        </button>
-    </div>
+    <button type="button" class="opcao-config" data-valor="es" aria-pressed="false">
+        <img class="bandeira" src="../img/icones/espanhol.png" alt="">
+        <span>Espanhol(Español)</span>
+    </button>
+</div>
 
     <!-- Mantém compatibilidade com seu JavaScript atual -->
     <select id="idioma" hidden>
@@ -529,24 +528,22 @@
 <div class="campo-config">
     <label>Moeda</label>
 
-    <div class="opcoes-config" id="opcoesMoeda"
-         role="group" aria-label="Selecionar moeda">
+    <div class="opcoes-config" id="opcoesMoeda" role="group" aria-label="Selecionar moeda">
+    <button type="button" class="opcao-config ativa" data-valor="brl" aria-pressed="true">
+        <span class="simbolo-moeda">R$</span>
+        <span>Real</span>
+    </button>
 
-        <button type="button" class="opcao-config ativa"
-                data-valor="brl" aria-pressed="true">
-            <span class="simbolo-moeda">R$</span> Real
-        </button>
+    <button type="button" class="opcao-config" data-valor="usd" aria-pressed="false">
+        <span class="simbolo-moeda">US$</span>
+        <span>Dólar</span>
+    </button>
 
-        <button type="button" class="opcao-config"
-                data-valor="usd" aria-pressed="false">
-            <span class="simbolo-moeda">US$</span> Dólar
-        </button>
-
-        <button type="button" class="opcao-config"
-                data-valor="eur" aria-pressed="false">
-            <span class="simbolo-moeda">€</span> Euro
-        </button>
-    </div>
+    <button type="button" class="opcao-config" data-valor="eur" aria-pressed="false">
+        <span class="simbolo-moeda">€</span>
+        <span>Euro</span>
+    </button>
+</div>
 
     <!-- Mantém compatibilidade com seu JavaScript atual -->
     <select id="moeda" hidden>
@@ -574,9 +571,7 @@
 
                 </div>
 
-
-                <!-- ================= PRIVACIDADE ================= -->
-
+                
                 <div class="config-secao" id="privacidade" role="tabpanel" aria-labelledby="aba-privacidade" hidden>
 
                     <div class="secao-titulo">

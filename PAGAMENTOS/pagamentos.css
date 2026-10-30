@@ -11,14 +11,13 @@ html {
 }
 body {
     min-height: 100vh;
-    background: var(--bg);
     color: var(--text);
 }
 .pagamentos-space{
     height: 70px;
 }
 .pagamentos {
-    width: 88%;
+    width: 90%;
     max-width: 1400px;
     margin: 55px auto 80px;
 }
@@ -334,12 +333,19 @@ body {
 .btn-fechar:hover {
     background-color: #f3f6f6;
 }
-
-/* Barra lateral da área da conta — mesma navegação visual do Perfil. */
 .account-layout {
+    width: 100%;
     display: flex;
     min-height: 100vh;
     background: var(--bg);
+    background-image: url(../img/banners/fundo-config.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+body.dark-mode .account-layout{
+    background-image: url("../img/banners/fundo-config-dark.png");
 }
 .account-sidebar {
     width: clamp(215px, 17vw, 270px);
@@ -373,7 +379,7 @@ body {
 .account-sidebar-links a.ativo > span { background: var(--card); }
 .account-sidebar-links strong { font-weight: 650; }
 .account-layout .pagamentos {
-    width: min(1400px, calc(100% - 72px));
+    width: 78%;
     max-width: none;
     margin: 0 auto;
     padding: 130px 0 80px;

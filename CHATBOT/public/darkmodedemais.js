@@ -32,9 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const atualizarTema = ativo => {
         document.body.classList.toggle("dark-mode", ativo);
         botao.innerHTML = ativo
-            ? '<img src="/global-img/icones/sol.png" alt="Modo claro">'
-            : '<img src="/global-img/icones/lua.png" alt="Modo escuro">';
-        if (logo) logo.src = ativo ? "/global-img/logo/logodarkmode.png" : "/global-img/logo/logo.png";
+            ? '<img src="/img/icones/sol.png" alt="Modo claro">'
+            : '<img src="/img/icones/lua.png" alt="Modo escuro">';
+        if (logo) logo.src = ativo ? "/img/logo/logodarkmode.png" : "/img/logo/logo.png";
     };
 
     const perfil = nav.querySelector(".perfil-area");
