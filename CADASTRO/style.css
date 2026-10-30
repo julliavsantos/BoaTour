@@ -252,8 +252,13 @@ body.dark-mode{
     padding: 3px;
     transition: .2s;
 }
-body.dark-mode .campo-senha input { color: #fff; caret-color: #fff; }
-body.dark-mode .mostrar-senha { color: #fff; }
+body.dark-mode .campo-senha input {
+    color: #fff;
+    caret-color: #fff; 
+}
+body.dark-mode .mostrar-senha {
+    color: #fff; 
+}
 .mostrar-senha:hover {
     color: #073b40;
 }

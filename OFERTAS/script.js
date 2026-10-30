@@ -547,7 +547,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        window.location.href = `../COMPRAR/index.html?tipo=oferta&id=${encodeURIComponent(idOferta)}`;
+        const parametrosCompra = new URLSearchParams({ tipo: "oferta", id: idOferta });
+        if (new URLSearchParams(window.location.search).get("adicionarAoPedido") === "1") parametrosCompra.set("adicionarAoPedido", "1");
+        window.location.href = `../COMPRAR/index.html?${parametrosCompra.toString()}`;
         return;
     }
 

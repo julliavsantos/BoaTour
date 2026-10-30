@@ -1068,6 +1068,9 @@ document.addEventListener("click", event => {
         if (checkin) urlCompra.searchParams.set("checkin", checkin);
         if (checkout) urlCompra.searchParams.set("checkout", checkout);
     }
+    if (new URLSearchParams(window.location.search).get("adicionarAoPedido") === "1") {
+        urlCompra.searchParams.set("adicionarAoPedido", "1");
+    }
     window.location.href = urlCompra.href;
 });
 

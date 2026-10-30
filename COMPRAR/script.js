@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const parametros = new URLSearchParams(window.location.search);
     const tipo = parametros.get("tipo") || (parametros.has("oferta") ? "oferta" : "");
     const idItem = Number(parametros.get("id") || parametros.get("oferta"));
+    const adicionandoAoPedido = parametros.get("adicionarAoPedido") === "1";
+    const chavePacote = "boatourPacoteEmMontagem";
     const titulo = document.getElementById("tituloOfertaCompra");
     const botaoContinuar = document.querySelector(".continuar-info");
     const formatarMoeda = valor => Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -262,10 +264,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     let rotuloViajante = "Passageiro";
     let viajantes = [];
     let indiceViajanteEditado = null;
+    let itensPacote = [];
+    try {
+        const pacoteSalvo = JSON.parse(sessionStorage.getItem(chavePacote) || "null");
+        itensPacote = Array.isArray(pacoteSalvo?.itens) ? pacoteSalvo.itens : [];
+    } catch { itensPacote = []; }
     const listaViajantes = document.getElementById("listaViajantes");
     const modalViajante = document.getElementById("modalViajante");
     const formViajante = document.getElementById("formViajante");
     const erroViajante = document.getElementById("erroViajante");
+
+    const resumoItemAtual = () => ({
+        chave: `${tipo}:${idItem}`,
+        tipo,
+        id: idItem,
+        nome: configuracao?.nome(itemCarregado) || "Item da viagem",
+        valor: Number(precoBaseCompra) || 0,
+        imagem: document.getElementById("imagemOfertaCompra")?.getAttribute("src") || "",
+        icone: tipo === "voo" ? "../img/icones/aviao2.png" : tipo === "hotel" ? "../img/icones/cama.png" : tipo === "atividade" ? "../img/icones/atividade.png" : "../img/icones/globo.png"
+    });
+    const renderizarItensAdicionaisPacote = () => {
+        const lista = document.getElementById("itensAdicionaisPacote");
+        if (!lista || !itemCarregado) return;
+        lista.replaceChildren();
+        const chaveAtual = `${tipo}:${idItem}`;
+        itensPacote.filter(item => item.chave !== chaveAtual).forEach(item => {
+            const linha = document.createElement("div");
+            linha.className = "linha-compra2 linha-item-adicional";
+            const icone = document.createElement("img");
+            icone.src = item.icone || "../img/icones/globo.png";
+            icone.alt = "";
+            const nome = document.createElement("p");
+            nome.textContent = `${item.nome} · item adicional`;
+            const valor = document.createElement("h3");
+            valor.textContent = formatarMoeda(item.valor);
+            linha.append(icone, nome, valor);
+            lista.append(linha);
+        });
+    };
 
     const apenasNumeros = valor => String(valor || "").replace(/\D/g, "");
     const cpfValido = valor => {
@@ -369,6 +405,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("cpfUsuario")?.addEventListener("input", evento => { evento.target.value = mascararCpf(evento.target.value); });
     document.getElementById("telefoneUsuario")?.addEventListener("input", evento => { evento.target.value = mascararTelefone(evento.target.value); });
     document.getElementById("cpfViajante")?.addEventListener("input", evento => { evento.target.value = mascararCpf(evento.target.value); });
+
+    const modalAdicionarPedido = document.getElementById("modalAdicionarPedido");
+    const botaoAbrirAdicionarPedido = document.getElementById("abrirAdicionarPedido");
+    const botaoFecharAdicionarPedido = modalAdicionarPedido?.querySelector(".fechar-modal-adicionar");
+    const abrirModalAdicionarPedido = () => {
+        if (!modalAdicionarPedido) return;
+        modalAdicionarPedido.hidden = false;
+        modalAdicionarPedido.querySelector(".fechar-modal-adicionar")?.focus();
+    };
+    const fecharModalAdicionarPedido = () => {
+        if (!modalAdicionarPedido) return;
+        modalAdicionarPedido.hidden = true;
+        botaoAbrirAdicionarPedido?.focus();
+    };
+    botaoAbrirAdicionarPedido?.addEventListener("click", abrirModalAdicionarPedido);
+    botaoFecharAdicionarPedido?.addEventListener("click", fecharModalAdicionarPedido);
+    modalAdicionarPedido?.querySelector(".continuar-sem-adicionar")?.addEventListener("click", fecharModalAdicionarPedido);
+    modalAdicionarPedido?.addEventListener("click", evento => {
+        if (evento.target === modalAdicionarPedido) fecharModalAdicionarPedido();
+    });
+    document.addEventListener("keydown", evento => {
+        if (evento.key === "Escape" && modalAdicionarPedido && !modalAdicionarPedido.hidden) fecharModalAdicionarPedido();
+    });
+    modalAdicionarPedido?.querySelectorAll("[data-destino]").forEach(botao => {
+        botao.addEventListener("click", () => {
+            if (!itemCarregado) return;
+            const atual = resumoItemAtual();
+            itensPacote = [...itensPacote.filter(item => item.chave !== atual.chave), atual];
+            sessionStorage.setItem(chavePacote, JSON.stringify({ itens: itensPacote }));
+            const destino = new URL(botao.dataset.destino, window.location.href);
+            destino.searchParams.set("adicionarAoPedido", "1");
+            window.location.href = destino.href;
+        });
+    });
     document.getElementById("adicionarViajante")?.addEventListener("click", () => abrirModalViajante());
     document.querySelector(".fechar-modal-viajante")?.addEventListener("click", fecharModalViajante);
     document.querySelector(".btn-cancelar-viajante")?.addEventListener("click", fecharModalViajante);
@@ -484,7 +554,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const valorTransporte = baseExtras * 0.05;
         const subtotal = base + valorAlimentacao + valorAtividades + valorTransporte;
         const seguro = subtotal * 0.10;
-        const total = subtotal + seguro;
+        const valorItensAdicionais = itensPacote
+            .filter(item => item.chave !== `${tipo}:${idItem}`)
+            .reduce((soma, item) => soma + (Number(item.valor) || 0), 0);
+        const total = subtotal + seguro + valorItensAdicionais;
 
         const ofertaHotelComercial = tipo === "oferta" && itemCarregado.tipo_alvo === "produto" && itemCarregado.tipo_produto === "hotel";
         const ofertaVooComercial = tipo === "oferta" && itemCarregado.tipo_alvo === "produto" && itemCarregado.tipo_produto === "voo";
@@ -543,6 +616,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("precoTransporteCompra").textContent = formatarMoeda(valorTransporte);
         document.getElementById("precoSeguroCompra").textContent = formatarMoeda(seguro);
         document.getElementById("totalOfertaCompra").textContent = formatarMoeda(total);
+        renderizarItensAdicionaisPacote();
         atualizarDataResumo();
     }
 
@@ -695,6 +769,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         fimCompra?.addEventListener("change", atualizarValores);
 
+        if (adicionandoAoPedido) {
+            const atual = resumoItemAtual();
+            itensPacote = [...itensPacote.filter(item => item.chave !== atual.chave), atual];
+            sessionStorage.setItem(chavePacote, JSON.stringify({ itens: itensPacote }));
+        }
         atualizarValores();
         botaoContinuar.addEventListener("click", event => {
             const comprador = {
@@ -751,6 +830,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             };
             sessionStorage.setItem("boatourCompraPendente", JSON.stringify(compraPendente));
+            sessionStorage.removeItem(chavePacote);
             window.location.href = "../COMPRAR FINAL/index.html?checkout=1";
         });
     } catch (erro) {

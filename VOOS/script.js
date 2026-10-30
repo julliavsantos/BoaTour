@@ -665,6 +665,7 @@ function renderizarVoos() {
             event.stopPropagation();
             const parametrosCompra = new URLSearchParams({ tipo: "voo", id: voo.id_voo });
             if (imagemDestinoInicial) parametrosCompra.set("imagemDestino", imagemDestinoInicial);
+            if (new URLSearchParams(window.location.search).get("adicionarAoPedido") === "1") parametrosCompra.set("adicionarAoPedido", "1");
             window.location.href = `../COMPRAR/index.html?${parametrosCompra.toString()}`;
         });
 

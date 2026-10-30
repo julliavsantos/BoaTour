@@ -286,7 +286,15 @@
         </div>
         
          <div class="linha-cima"></div>
-          <div class="dados-compra2">
+          <section class="pacote-pedido" aria-label="Pacote do pedido">
+            <div class="pacote-pedido__cabecalho">
+                <img src="../img/icones/mala.png" alt="">
+                <div>
+                    <span>SEU PACOTE</span>
+                    <h3>Itens do pedido</h3>
+                </div>
+            </div>
+            <div class="dados-compra2">
                 <div class="linha-compra2" id="linhaItemSelecionadoCompra">
                     <img src="../img/icones/aviao3.png" alt="">
                     <p id="nomePrecoOfertaCompra">Oferta</p>
@@ -302,6 +310,7 @@
                     <p id="nomeHotelCompra">Hotel</p>
                     <h3 id="precoHotelCompra">—</h3>
                 </div>
+                <div id="itensAdicionaisPacote" aria-label="Itens adicionais do pedido"></div>
                 <div class="linha-compra2 linha-extra-compra" id="linhaAlimentacaoCompra">
                     <img src="../img/icones/alimentacao.png" alt="">
                     <p>Alimentação <small>15%</small></p>
@@ -322,7 +331,8 @@
                     <p id="nomeSeguroCompra">Seguro viagem <small>10% do subtotal</small></p>
                     <h3 id="precoSeguroCompra">Incluso</h3>
                 </div>
-          </div>
+            </div>
+          </section>
  <div class="linha-cima"></div>
               
  <div class="valor-total">
@@ -337,6 +347,10 @@
                     </div>
                 </div>
 
+   <button class="btn-adicionar-pedido" id="abrirAdicionarPedido" type="button">
+        <span aria-hidden="true">+</span>
+        Adicionar mais ao pedido
+    </button>
 
    <div class="continuar">
         <button class="continuar-info">Continuar para pagamento➔</button>
@@ -462,6 +476,23 @@
                 <button class="btn-salvar-viajante" type="submit">Salvar informações</button>
             </div>
         </form>
+    </div>
+
+    <div class="modal-adicionar-pedido" id="modalAdicionarPedido" hidden role="dialog" aria-modal="true" aria-labelledby="tituloAdicionarPedido" aria-describedby="descricaoAdicionarPedido">
+        <div class="modal-adicionar-pedido__conteudo">
+            <button class="fechar-modal-adicionar" type="button" aria-label="Fechar">&times;</button>
+            <img class="mascote-adicionar-pedido" src="../img/icones/mascote.png" alt="Mascote da BoaTour">
+            <p class="modal-adicionar-pedido__rotulo">MONTE A SUA VIAGEM</p>
+            <h2 id="tituloAdicionarPedido">Deseja adicionar mais algo ao pedido?</h2>
+            <p id="descricaoAdicionarPedido">Escolha uma categoria e encontre o complemento ideal para a sua viagem.</p>
+            <div class="opcoes-adicionar-pedido" role="group" aria-label="Categorias para adicionar ao pedido">
+                <button type="button" data-destino="../VOOS/index.html"><span aria-hidden="true"><img src="../img/icones/aviao3.png" alt=""></span> Voo</button>
+                <button type="button" data-destino="../HOTEIS/index.html"><span aria-hidden="true"><img src="../img/icones/cama.png" alt=""></span> Hotel</button>
+                <button type="button" data-destino="../OFERTAS/index.html"><span aria-hidden="true"><img src="../img/icones/etiqueta.png" alt=""></span> Oferta</button>
+                <button type="button" data-destino="../ATIVIDADES/index.html"><span aria-hidden="true"><img src="../img/icones/atividade.png" alt=""></span> Atividade</button>
+            </div>
+            <button class="continuar-sem-adicionar" type="button">Continuar somente com este item</button>
+        </div>
     </div>
     <script src="script.js?v=checkout-data-20261026"></script>
     <script src="darkmode-compra.js?v=theme-sync-20261026"></script>
