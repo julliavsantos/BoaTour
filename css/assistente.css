@@ -1,3 +1,5 @@
+.assistente-flutuante.rastreador-flutuante { bottom: 98px; z-index: 1199; }
+
 .assistente-flutuante {
     position: fixed;
     right: 24px;
@@ -67,6 +69,8 @@
 }
 
 @media (max-width: 600px) {
+    .assistente-flutuante.rastreador-flutuante { right: 16px; bottom: 92px; }
+
     .assistente-flutuante {
         right: 16px;
         bottom: 16px;
@@ -93,6 +97,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .rastreador-flutuante { transition: none; }
     .assistente-flutuante {
         transition: none;
     }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastreador de voos - BoaTour</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="../css/menurodape.css">
+    <link rel="stylesheet" href="../css/assistente.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-rastreador">
+
+<div class="nav">
+    <div class="logo">
+        <img id="logoBoatour" src="../img/logo/logo.png" alt="BOATOUR">
+    </div>
+
+    <ul class="menu">
+        <li><a href="../index.html#inicio">Início</a></li>
+        <li><a href="../DESTINOS/index.html">Destinos</a></li>
+        <li><a href="../VOOS/index.html">Voos</a></li>
+        <li><a href="../HOTEIS/index.html">Hotéis</a></li>
+        <li><a href="../ATIVIDADES/index.html">Atividades</a></li>
+        <li><a href="../OFERTAS/index.html">Ofertas</a></li>
+        <li><a href="../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="../index.html#sobre">Sobre Nós</a></li>
+    </ul>
+</div>
+
+<main class="rastreador">
+    <div id="mapa" aria-label="Mapa da rota do voo"></div>
+
+    <button type="button" class="btn-abrir-modal" id="btnAbrirModal">&#9992; Rastrear voo</button>
+
+    <!-- Painel com os dados do voo (aparece depois da verificação) -->
+    <aside class="painel-voo" id="painelVoo" hidden>
+        <h2 id="painelTitulo"></h2>
+        <p class="painel-companhia" id="painelCompanhia"></p>
+
+        <div class="painel-rota">
+            <div>
+                <strong id="rotaOrigemIata"></strong>
+                <span id="rotaOrigemCidade"></span>
+            </div>
+            <span class="painel-seta">&#9992;</span>
+            <div>
+                <strong id="rotaDestinoIata"></strong>
+                <span id="rotaDestinoCidade"></span>
+            </div>
+        </div>
+
+        <dl class="painel-dados">
+            <dt>Avião</dt>
+            <dd id="painelAviao"></dd>
+            <dt>Matrícula / ICAO24</dt>
+            <dd id="painelCodigoAviao"></dd>
+            <dt>Distância</dt>
+            <dd id="painelDistancia"></dd>
+            <dt>Situação</dt>
+            <dd id="painelStatus"></dd>
+            <dt data-sim hidden>Horário previsto</dt>
+            <dd data-sim hidden id="painelHorario"></dd>
+            <dt data-sim hidden>Hora no voo</dt>
+            <dd data-sim hidden id="painelAgora"></dd>
+            <dt data-sim hidden>Altitude</dt>
+            <dd data-sim hidden id="painelAltitude"></dd>
+            <dt data-sim hidden>Velocidade</dt>
+            <dd data-sim hidden id="painelVelocidade"></dd>
+        </dl>
+        <div class="painel-progresso" id="painelProgressoBox" hidden>
+            <div class="painel-progresso-barra"><div id="painelProgresso"></div></div>
+            <small id="painelProgressoTexto"></small>
+        </div>
+    </aside>
+</main>
+
+<!-- MODAL: pede o código do voo e o código do avião -->
+<div class="rastreador-modal ativo" id="modalRastreador" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="rastreador-caixa">
+        <button type="button" class="rastreador-fechar" id="fecharModal" aria-label="Fechar">&times;</button>
+
+        <h2 id="modalTitulo">Rastrear <span>voo</span></h2>
+        <p class="rastreador-texto">Informe o código do voo e o código do avião que aparecem no comprovante da sua compra.</p>
+
+        <label for="codigoVoo">Código do voo</label>
+        <input type="text" id="codigoVoo" placeholder="Ex.: BT1001" maxlength="8" autocomplete="off">
+        <p class="erro-campo" id="erroVoo" role="alert"></p>
+
+        <label for="codigoAviao">Código do avião</label>
+        <input type="text" id="codigoAviao" placeholder="Ex.: PR-XYZ" maxlength="10" autocomplete="off">
+        <p class="erro-campo" id="erroAviao" role="alert"></p>
+
+        <button type="button" class="rastreador-confirmar" id="btnConfirmar">Confirmar</button>
+        <p class="erro-campo erro-geral" id="erroGeral" role="alert"></p>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+<script src="../js/darkmodedemais.js"></script>
+<script src="../js/assistente-flutuante.js"></script>
+</body>
+</html>

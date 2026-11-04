@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamentos</title>
-    <link rel="stylesheet" href="pagamentos.css?v=account-sidebar-20261029">
+    <link rel="stylesheet" href="pagamentos.css?v=sync-rewards-20261103">
     <link rel="stylesheet" href="../css/menurodape.css">
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="stylesheet" href="../css/assistente.css">
@@ -121,7 +121,7 @@
         <div class="titulo-pagina">
             <span><a href="../PERFIL/index.html">Minha conta</a></span>
             <h1>Meus pagamentos</h1>
-            <p>Confira o histórico dos seus pagamentos e reservas.</p>
+            <p>Confira seus pagamentos, cupons e saldo BoaPay.</p>
         </div>
 
         <section class="resumo-pagamentos">
@@ -131,7 +131,7 @@
 
                 <div>
                     <p>Total pago</p>
-                    <h2>R$ 4.070,00</h2>
+                    <h2 id="totalPagoResumo">R$ 0,00</h2>
                 </div>
             </div>
 
@@ -140,7 +140,7 @@
 
                 <div>
                     <p>Pagamentos aprovados</p>
-                    <h2>2</h2>
+                    <h2 id="pagamentosAprovadosResumo">0</h2>
                 </div>
             </div>
 
@@ -148,8 +148,8 @@
                 <span class="icone2"><img src="../img/icones/aviao2.png" alt=""></span>
 
                 <div>
-                    <p>Viagens reservadas</p>
-                    <h2>2</h2>
+                    <p>Saldo BoaPay</p>
+                    <h2 id="saldoBoaPayResumo">R$ 0,00</h2>
                 </div>
             </div>
 
@@ -164,133 +164,17 @@
                     <option value="todos">Todos</option>
                     <option value="aprovado">Aprovados</option>
                     <option value="pendente">Pendentes</option>
-                    <option value="cancelado">Cancelados</option>
+                    <option value="recusado">Recusados</option>
                 </select>
             </div>
 
-            <article class="pagamento-card" data-status="aprovado">
+            <div id="historicoPagamentosDados" aria-live="polite"></div>
 
-                <div class="destino-imagem">
-                    <img src="../img/ofertas/paris.jpg" alt="Paris">
-                </div>
+        </section>
 
-                <div class="pagamento-info">
-
-                    <div class="pagamento-destino">
-                        <span>Viagem</span>
-                        <h3>Paris, França</h3>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Data</span>
-                        <strong>15/09/2026</strong>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Pagamento</span>
-                        <strong>Pix</strong>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Valor</span>
-                        <strong>R$ 2.620,00</strong>
-                    </div>
-
-                    <div class="status aprovado">
-                        ✓ Pago
-                    </div>
-
-                    <button class="btn-detalhes"
-                            onclick="abrirModal('Paris, França', '15/09/2026', 'Pix', 'R$ 2.620,00', 'BT-45821', 'aprovado')">
-                        Ver detalhes
-                    </button>
-
-                </div>
-
-            </article>
-
-            <article class="pagamento-card" data-status="aprovado">
-
-                <div class="destino-imagem">
-                    <img src="../img/ofertas/riodejaneiro.jpg" alt="Rio de Janeiro">
-                </div>
-
-                <div class="pagamento-info">
-
-                    <div class="pagamento-destino">
-                        <span>Viagem</span>
-                        <h3>Rio de Janeiro</h3>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Data</span>
-                        <strong>10/07/2026</strong>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Pagamento</span>
-                        <strong>Cartão •••• 4521</strong>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Valor</span>
-                        <strong>R$ 1.450,00</strong>
-                    </div>
-
-                    <div class="status aprovado">
-                        ✓ Pago
-                    </div>
-
-                    <button class="btn-detalhes"
-                            onclick="abrirModal('Rio de Janeiro', '10/07/2026', 'Cartão •••• 4521', 'R$ 1.450,00', 'BT-39214', 'aprovado')">
-                        Ver detalhes
-                    </button>
-
-                </div>
-
-            </article>
-
-            <article class="pagamento-card" data-status="pendente">
-
-                <div class="destino-imagem">
-                    <img src="../img/ofertas/gramado.jpg" alt="Gramado">
-                </div>
-
-                <div class="pagamento-info">
-
-                    <div class="pagamento-destino">
-                        <span>Viagem</span>
-                        <h3>Gramado, Brasil</h3>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Data</span>
-                        <strong>20/12/2026</strong>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Pagamento</span>
-                        <strong>Boleto</strong>
-                    </div>
-
-                    <div class="info-item">
-                        <span>Valor</span>
-                        <strong>R$ 1.890,00</strong>
-                    </div>
-
-                    <div class="status pendente">
-                        ! Pendente
-                    </div>
-
-                    <button class="btn-detalhes"
-                            onclick="abrirModal('Gramado, Brasil', '20/12/2026', 'Boleto', 'R$ 1.890,00', 'BT-51032', 'pendente')">
-                        Ver detalhes
-                    </button>
-
-                </div>
-
-            </article>
-
+        <section class="historico">
+            <div class="cabecalho-historico"><h2>Cupons de recompensa</h2></div>
+            <div id="cuponsRecompensaDados" aria-live="polite"></div>
         </section>
 
     </main>
@@ -438,11 +322,11 @@
     </div>
 
 
-    <script src="script.js"></script>
+    <script src="script.js?v=payment-flow-fix-20261103"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>
     <script src="../js/darkmodedemais.js?v=theme-preference-sync-20261029"></script>
-    <script src="../js/assistente-flutuante.js?v=theme-sync-20261026"></script>
+    <script src="../js/assistente-flutuante.js?v=rastreador-floating-button-20261103"></script>
 
 
     <script src="../js/feedback.js"></script>

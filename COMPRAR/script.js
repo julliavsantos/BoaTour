@@ -265,10 +265,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     let viajantes = [];
     let indiceViajanteEditado = null;
     let itensPacote = [];
+    const idParticipante = viajante => String(viajante?.id || String(viajante?.cpf || "").replace(/\D/g, ""));
+    let participantesDoItemAtual = [];
+    let valorPorParticipanteAtual = null;
+    let indiceSliderPacote = 0;
+    let imagemItemAtual = "";
+    let descricaoItemAtual = "";
+    let tipoResumoItemAtual = "RESUMO DA VIAGEM";
     try {
         const pacoteSalvo = JSON.parse(sessionStorage.getItem(chavePacote) || "null");
-        itensPacote = Array.isArray(pacoteSalvo?.itens) ? pacoteSalvo.itens : [];
+        viajantes = Array.isArray(pacoteSalvo?.viajantes)
+            ? pacoteSalvo.viajantes.map(viajante => ({ ...viajante, id: idParticipante(viajante) }))
+            : [];
+        itensPacote = Array.isArray(pacoteSalvo?.itens)
+            ? pacoteSalvo.itens.map(item => ({
+                ...item,
+                participantesIds: Array.isArray(item.participantesIds)
+                    ? item.participantesIds.map(String)
+                    : viajantes.map(idParticipante)
+            }))
+            : [];
     } catch { itensPacote = []; }
+    const chaveAtualCompra = `${tipo}:${idItem}`;
+    participantesDoItemAtual = [...(itensPacote.find(item => item.chave === chaveAtualCompra)?.participantesIds || viajantes.map(idParticipante))];
+    const salvarPacoteMontagem = (incluirItemAtual = true) => {
+        if (incluirItemAtual && itemCarregado) {
+            const atual = resumoItemAtual();
+            itensPacote = [...itensPacote.filter(item => item.chave !== atual.chave), atual];
+        }
+        sessionStorage.setItem(chavePacote, JSON.stringify({ itens: itensPacote, viajantes }));
+    };
     const listaViajantes = document.getElementById("listaViajantes");
     const modalViajante = document.getElementById("modalViajante");
     const formViajante = document.getElementById("formViajante");
@@ -277,30 +303,188 @@ document.addEventListener("DOMContentLoaded", async () => {
     const resumoItemAtual = () => ({
         chave: `${tipo}:${idItem}`,
         tipo,
+        categoria: rotuloViajante === "Hóspede" ? "hotel" : rotuloViajante === "Participante" ? "atividade" : tipo,
         id: idItem,
         nome: configuracao?.nome(itemCarregado) || "Item da viagem",
-        valor: Number(precoBaseCompra) || 0,
-        imagem: document.getElementById("imagemOfertaCompra")?.getAttribute("src") || "",
+        valor: Number(valorPorParticipanteAtual ?? precoBaseCompra) || 0,
+        valorPorParticipante: Number(valorPorParticipanteAtual ?? precoBaseCompra) || 0,
+        participantesIds: [...participantesDoItemAtual],
+        ods: [verdade(itemCarregado?.ods8) ? "8" : null, verdade(itemCarregado?.ods12) ? "12" : null].filter(Boolean),
+        descricao: descricaoItemAtual,
+        detalhes: Array.from(document.querySelectorAll(".dados-compra .dados-icones .linha-compra:not([hidden])"), linha => ({
+            icone: linha.querySelector("img")?.getAttribute("src") || "",
+            texto: linha.querySelector("p")?.textContent.replace(/\s+/g, " ").trim() || ""
+        })).filter(detalhe => detalhe.texto),
+        imagem: imagemItemAtual || document.getElementById("imagemOfertaCompra")?.getAttribute("src") || "",
         icone: tipo === "voo" ? "../img/icones/aviao2.png" : tipo === "hotel" ? "../img/icones/cama.png" : tipo === "atividade" ? "../img/icones/atividade.png" : "../img/icones/globo.png"
     });
     const renderizarItensAdicionaisPacote = () => {
         const lista = document.getElementById("itensAdicionaisPacote");
-        if (!lista || !itemCarregado) return;
-        lista.replaceChildren();
+        const titulo = document.getElementById("tituloOfertaCompra");
+        const imagem = document.getElementById("imagemOfertaCompra");
+        const etiquetaImagem = document.getElementById("etiquetaImagemCompra");
+        const tipoResumo = document.getElementById("tipoResumoCompra");
+        const subtitulo = document.getElementById("subtituloResumoCompra");
+        const detalhesOriginais = document.querySelector(".dados-compra .dados-icones");
+        const detalhesSlide = document.getElementById("detalhesItemSlider");
+        const listaParticipantes = document.getElementById("participantesItemSlider");
+        const controles = document.getElementById("controlesItensCompra");
+        const contador = document.getElementById("contadorItensCompra");
+        const botaoAnterior = document.getElementById("anteriorItemCompra");
+        const botaoProximo = document.getElementById("proximoItemCompra");
+        const botaoRemover = document.getElementById("removerItemCompra");
+        if (!itemCarregado) return;
         const chaveAtual = `${tipo}:${idItem}`;
-        itensPacote.filter(item => item.chave !== chaveAtual).forEach(item => {
-            const linha = document.createElement("div");
-            linha.className = "linha-compra2 linha-item-adicional";
-            const icone = document.createElement("img");
-            icone.src = item.icone || "../img/icones/globo.png";
-            icone.alt = "";
-            const nome = document.createElement("p");
-            nome.textContent = `${item.nome} · item adicional`;
-            const valor = document.createElement("h3");
-            valor.textContent = formatarMoeda(item.valor);
-            linha.append(icone, nome, valor);
-            lista.append(linha);
-        });
+        const itens = [
+            ...itensPacote.filter(item => item.chave !== chaveAtual),
+            { ...resumoItemAtual(), atual: true }
+        ];
+        let indice = Math.min(indiceSliderPacote, itens.length - 1);
+        const renderizarSelecaoItem = (item, indiceItem) => {
+            if (imagem) {
+                imagem.src = item.imagem || "../img/banners/banner.png";
+                imagem.alt = item.nome || "Item do pedido";
+            }
+            if (titulo) titulo.textContent = item.nome || "Item do pedido";
+            if (etiquetaImagem) etiquetaImagem.textContent = item.atual ? "Selecionado agora" : "No seu pedido";
+            if (tipoResumo) {
+                tipoResumo.textContent = item.categoria === "hotel" ? "HOSPEDAGEM NO PEDIDO"
+                    : item.categoria === "atividade" ? "ATIVIDADE NO PEDIDO"
+                        : item.categoria === "voo" ? "VOO NO PEDIDO"
+                            : item.categoria === "oferta" ? "PACOTE NO PEDIDO" : "ITEM NO PEDIDO";
+            }
+            if (subtitulo) {
+                subtitulo.textContent = item.descricao || "";
+                subtitulo.hidden = !item.descricao;
+            }
+            if (detalhesOriginais) detalhesOriginais.hidden = !item.atual;
+            if (detalhesSlide) {
+                detalhesSlide.replaceChildren();
+                detalhesSlide.hidden = item.atual;
+                if (!item.atual) (item.detalhes || []).forEach(detalhe => {
+                    const linha = document.createElement("div");
+                    linha.className = "linha-compra";
+                    const icone = document.createElement("img");
+                    icone.src = detalhe.icone || "../img/icones/globo.png";
+                    icone.alt = "";
+                    const texto = document.createElement("p");
+                    texto.textContent = detalhe.texto || "";
+                    linha.append(icone, texto);
+                    detalhesSlide.append(linha);
+                });
+            }
+            const selo = document.getElementById("seloTurismoConsciente");
+            if (selo) {
+                if (selo.dataset.hiddenInicial === undefined) selo.dataset.hiddenInicial = String(selo.hidden);
+                selo.hidden = item.atual ? selo.dataset.hiddenInicial === "true" : true;
+            }
+            if (listaParticipantes) {
+                listaParticipantes.replaceChildren();
+                const selecionados = new Set((item.participantesIds || []).map(String));
+                const rotulo = document.createElement("span");
+                rotulo.className = "participantes-item-slider__rotulo";
+                rotulo.textContent = item.categoria === "hotel" ? "Hóspedes desta hospedagem"
+                    : item.categoria === "atividade" ? "Participantes desta atividade" : "Participantes deste item";
+                listaParticipantes.append(rotulo);
+                const opcoes = document.createElement("div");
+                opcoes.className = "participantes-item-slider__opcoes";
+                if (!viajantes.length) {
+                    const aviso = document.createElement("p");
+                    aviso.className = "participantes-item-slider__vazio";
+                    aviso.textContent = "Cadastre os viajantes uma vez; depois escolha quem vai em cada item.";
+                    opcoes.append(aviso);
+                } else viajantes.forEach(viajante => {
+                    const opcao = document.createElement("label");
+                    opcao.className = "participantes-item-slider__opcao";
+                    const caixa = document.createElement("input");
+                    caixa.type = "checkbox";
+                    caixa.checked = selecionados.has(idParticipante(viajante));
+                    caixa.setAttribute("aria-label", `${viajante.nome} · ${item.nome}`);
+                    caixa.addEventListener("change", () => {
+                        const itemSalvo = itensPacote.find(registro => registro.chave === item.chave);
+                        const ids = new Set((item.atual ? participantesDoItemAtual : itemSalvo?.participantesIds || []).map(String));
+                        if (caixa.checked) ids.add(idParticipante(viajante));
+                        else ids.delete(idParticipante(viajante));
+                        if (item.atual) participantesDoItemAtual = [...ids];
+                        else if (itemSalvo) itemSalvo.participantesIds = [...ids];
+                        atualizarValores();
+                        salvarPacoteMontagem();
+                    });
+                    const nomeParticipante = document.createElement("span");
+                    nomeParticipante.textContent = viajante.nome;
+                    opcao.append(caixa, nomeParticipante);
+                    opcoes.append(opcao);
+                });
+                listaParticipantes.append(opcoes);
+                const resumoQuantidade = document.createElement("span");
+                resumoQuantidade.className = "participantes-item-slider__quantidade";
+                const quantidade = selecionados.size;
+                const pessoa = item.categoria === "hotel" ? "hóspede" : item.categoria === "atividade" ? "participante" : "viajante";
+                resumoQuantidade.textContent = `${quantidade} ${quantidade === 1 ? pessoa : `${pessoa}s`} selecionados`;
+                listaParticipantes.append(resumoQuantidade);
+            }
+            if (controles) controles.hidden = itens.length < 2;
+            if (contador) contador.textContent = `${indiceItem + 1} / ${itens.length}`;
+            if (botaoRemover) botaoRemover.setAttribute("aria-label", `Excluir ${item.nome || "item"} do pedido`);
+        };
+        const atualizarSlide = () => {
+            indiceSliderPacote = indice;
+            renderizarSelecaoItem(itens[indice], indice);
+        };
+        if (botaoAnterior) botaoAnterior.onclick = () => { indice = (indice - 1 + itens.length) % itens.length; atualizarSlide(); };
+        if (botaoProximo) botaoProximo.onclick = () => { indice = (indice + 1) % itens.length; atualizarSlide(); };
+        if (botaoRemover) botaoRemover.onclick = () => {
+            const item = itens[indice];
+            if (!item || !window.confirm(`Excluir “${item.nome}” do pedido?`)) return;
+            itensPacote = itensPacote.filter(registro => registro.chave !== item.chave);
+            if (!item.atual) {
+                indiceSliderPacote = Math.min(indice, itensPacote.filter(registro => registro.chave !== chaveAtual).length);
+                atualizarValores();
+                salvarPacoteMontagem();
+                return;
+            }
+
+            salvarPacoteMontagem(false);
+            const restantes = itensPacote.filter(registro => registro.chave !== item.chave);
+            if (restantes.length) {
+                const proximoItem = restantes[0];
+                const destino = new URL(window.location.href);
+                destino.searchParams.set("tipo", proximoItem.tipo);
+                destino.searchParams.set("id", String(proximoItem.id));
+                destino.searchParams.delete("oferta");
+                destino.searchParams.set("adicionarAoPedido", "1");
+                window.location.href = destino.href;
+                return;
+            }
+            salvarPacoteMontagem(false);
+            const catalogos = {
+                oferta: "../OFERTAS/index.html",
+                atividade: "../ATIVIDADES/index.html",
+                hotel: "../HOTEIS/index.html",
+                destino: "../DESTINOS/index.html",
+                voo: "../VOOS/index.html"
+            };
+            window.location.href = catalogos[item.tipo] || "../index.html";
+        };
+        if (lista) {
+            lista.replaceChildren();
+            itens.filter(item => !item.atual).forEach(item => {
+                const linha = document.createElement("div");
+                linha.className = "linha-compra2 linha-item-adicional";
+                const icone = document.createElement("img");
+                icone.src = item.icone || "../img/icones/globo.png";
+                icone.alt = "";
+                const nome = document.createElement("p");
+                const quantidade = (item.participantesIds || []).length;
+                const rotuloPessoa = item.categoria === "hotel" ? "hóspedes" : item.categoria === "atividade" ? "participantes" : "viajantes";
+                nome.textContent = `${item.nome || "Item adicional"} · ${quantidade} ${rotuloPessoa}`;
+                const valor = document.createElement("h3");
+                valor.textContent = formatarMoeda((Number(item.valorPorParticipante ?? item.valor) || 0) * quantidade);
+                linha.append(icone, nome, valor);
+                lista.append(linha);
+            });
+        }
+        atualizarSlide();
     };
 
     const apenasNumeros = valor => String(valor || "").replace(/\D/g, "");
@@ -372,9 +556,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             remover.textContent = "Remover";
             remover.setAttribute("aria-label", "Remover " + viajante.nome);
             remover.addEventListener("click", () => {
+                const participanteId = idParticipante(viajantes[indice]);
                 viajantes.splice(indice, 1);
+                participantesDoItemAtual = participantesDoItemAtual.filter(id => id !== participanteId);
+                itensPacote.forEach(item => { item.participantesIds = (item.participantesIds || []).filter(id => String(id) !== participanteId); });
                 renderizarViajantes();
                 atualizarValores();
+                salvarPacoteMontagem();
             });
             const acoes = document.createElement("div");
             acoes.className = "passageiro-acoes";
@@ -433,7 +621,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!itemCarregado) return;
             const atual = resumoItemAtual();
             itensPacote = [...itensPacote.filter(item => item.chave !== atual.chave), atual];
-            sessionStorage.setItem(chavePacote, JSON.stringify({ itens: itensPacote }));
+            salvarPacoteMontagem();
             const destino = new URL(botao.dataset.destino, window.location.href);
             destino.searchParams.set("adicionarAoPedido", "1");
             window.location.href = destino.href;
@@ -457,10 +645,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             erroViajante.textContent = "Já existe um viajante cadastrado com este CPF.";
             return;
         }
-        if (indiceViajanteEditado === null) viajantes.push(dados);
-        else viajantes[indiceViajanteEditado] = dados;
+        dados.id = indiceViajanteEditado === null
+            ? apenasNumeros(dados.cpf)
+            : idParticipante(viajantes[indiceViajanteEditado]);
+        if (indiceViajanteEditado === null) {
+            viajantes.push(dados);
+            const participanteId = idParticipante(dados);
+            participantesDoItemAtual = [...new Set([...participantesDoItemAtual, participanteId])];
+            itensPacote.forEach(item => { item.participantesIds = [...new Set([...(item.participantesIds || []), participanteId])]; });
+        } else viajantes[indiceViajanteEditado] = dados;
         renderizarViajantes();
         atualizarValores();
+        salvarPacoteMontagem();
         fecharModalViajante();
     });
     preencherComprador();
@@ -530,7 +726,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!itemCarregado) return;
         // Até o primeiro cadastro, o resumo mostra o valor para uma pessoa.
         // Cada viajante incluído passa a compor o valor total da reserva.
-        const quantidadeViajantes = Math.max(viajantes.length, 1);
+        const quantidadeViajantes = viajantes.length ? participantesDoItemAtual.length : 1;
         const descricaoQuantidade = `${quantidadeViajantes} ${quantidadeViajantes === 1 ? rotuloViajante.toLocaleLowerCase("pt-BR") : `${rotuloViajante.toLocaleLowerCase("pt-BR")}s`}`;
         const noites = ehHospedagem ? calcularNoites(inicioCompra?.value, fimCompra?.value) : 0;
         if (ehHospedagem && noites <= 0) {
@@ -556,8 +752,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         const seguro = subtotal * 0.10;
         const valorItensAdicionais = itensPacote
             .filter(item => item.chave !== `${tipo}:${idItem}`)
-            .reduce((soma, item) => soma + (Number(item.valor) || 0), 0);
+            .reduce((soma, item) => {
+                const quantidade = (item.participantesIds || []).length;
+                const valorPorPessoa = Number(item.valorPorParticipante ?? item.valor) || 0;
+                return soma + valorPorPessoa * quantidade;
+            }, 0);
         const total = subtotal + seguro + valorItensAdicionais;
+        if (quantidadeViajantes > 0) {
+            valorPorParticipanteAtual = base / quantidadeViajantes;
+        } else {
+            const basePorPessoa = ehHospedagem ? precoDiariaHotel * noites : precoBaseCompra;
+            valorPorParticipanteAtual = basePorPessoa;
+        }
 
         const ofertaHotelComercial = tipo === "oferta" && itemCarregado.tipo_alvo === "produto" && itemCarregado.tipo_produto === "hotel";
         const ofertaVooComercial = tipo === "oferta" && itemCarregado.tipo_alvo === "produto" && itemCarregado.tipo_produto === "voo";
@@ -652,6 +858,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             voo: ["VOO SELECIONADO", "Voo"]
         }[tipo] || ["SUA COMPRA", "Selecionado"];
         if (tipoResumo) tipoResumo.textContent = rotulosResumo[0];
+        tipoResumoItemAtual = rotulosResumo[0];
         if (etiquetaImagem) etiquetaImagem.textContent = rotulosResumo[1];
         if (subtituloResumo) {
             const contexto = tipo === "voo"
@@ -665,6 +872,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             : [itemCarregado.cidade, itemCarregado.pais].filter(Boolean);
             subtituloResumo.textContent = contexto.join(" · ");
             subtituloResumo.hidden = !contexto.length;
+            descricaoItemAtual = subtituloResumo.textContent;
         }
         document.getElementById("nomePrecoOfertaCompra").textContent = configuracao.nome(itemCarregado);
         document.getElementById("itensOfertaCompra").textContent = configuracao.itens(itemCarregado);
@@ -678,6 +886,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const imagem = document.getElementById("imagemOfertaCompra");
             imagem.src = /^(https?:|data:|\/)/i.test(caminhoImagem) ? caminhoImagem : `../${String(caminhoImagem).replace(/^\.\.\//, "").replace(/^\/+/, "")}`;
             imagem.alt = configuracao.nome(itemCarregado);
+            imagemItemAtual = imagem.getAttribute("src") || "";
         }
 
         const seloTC = document.getElementById("seloTurismoConsciente");
@@ -770,9 +979,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         fimCompra?.addEventListener("change", atualizarValores);
 
         if (adicionandoAoPedido) {
+            atualizarValores();
             const atual = resumoItemAtual();
             itensPacote = [...itensPacote.filter(item => item.chave !== atual.chave), atual];
-            sessionStorage.setItem(chavePacote, JSON.stringify({ itens: itensPacote }));
+            salvarPacoteMontagem();
         }
         atualizarValores();
         botaoContinuar.addEventListener("click", event => {
@@ -794,6 +1004,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById("adicionarViajante").focus();
                 return;
             }
+            const itensSemParticipantes = [...itensPacote.filter(item => item.chave !== `${tipo}:${idItem}`), resumoItemAtual()]
+                .filter(item => !(item.participantesIds || []).length);
+            if (itensSemParticipantes.length) {
+                event.preventDefault();
+                alert(`Escolha ao menos um participante para: ${itensSemParticipantes.map(item => item.nome).join(", ")}.`);
+                document.getElementById("abrirAdicionarPedido").focus();
+                return;
+            }
             if (ehHospedagem && calcularNoites(inicioCompra.value, fimCompra.value) <= 0) {
                 event.preventDefault();
                 alert("Informe as datas de check-in e check-out para calcular a hospedagem.");
@@ -813,17 +1031,29 @@ document.addEventListener("DOMContentLoaded", async () => {
                     id: idItem,
                     nome: configuracao.nome(itemCarregado),
                     valorTotal: document.getElementById("totalOfertaCompra").textContent,
-                    imagem: document.getElementById("imagemOfertaCompra")?.getAttribute("src") || "",
-                    tipoResumo: document.getElementById("tipoResumoCompra")?.textContent || "RESUMO DA VIAGEM",
-                    detalhes: Array.from(document.querySelectorAll(".dados-compra .linha-compra:not([hidden])"), linha => ({
+                    imagem: imagemItemAtual || document.getElementById("imagemOfertaCompra")?.getAttribute("src") || "",
+                    itensSelecionados: [...itensPacote.filter(item => item.chave !== `${tipo}:${idItem}`), resumoItemAtual()],
+                    tipoResumo: tipoResumoItemAtual,
+                    detalhes: Array.from(document.querySelectorAll(".dados-compra .dados-icones .linha-compra:not([hidden])"), linha => ({
                         icone: linha.querySelector("img")?.getAttribute("src") || "",
                         texto: linha.querySelector("p")?.textContent.replace(/\s+/g, " ").trim() || ""
                     })).filter(detalhe => detalhe.texto),
-                    itensResumo: Array.from(document.querySelectorAll(".conteudo-right .dados-compra2 .linha-compra2:not([hidden])"), linha => ({
-                        icone: linha.querySelector("img")?.getAttribute("src") || "",
-                        nome: linha.querySelector("p")?.textContent.replace(/\s+/g, " ").trim() || "",
-                        valor: linha.querySelector("h3")?.textContent.trim() || ""
-                    })).filter(item => item.nome),
+                    itensResumo: [
+                        ...Array.from(document.querySelectorAll(".conteudo-right .dados-compra2 .linha-compra2:not([hidden])"), linha => ({
+                            icone: linha.querySelector("img")?.getAttribute("src") || "",
+                            nome: linha.querySelector("p")?.textContent.replace(/\s+/g, " ").trim() || "",
+                            valor: linha.querySelector("h3")?.textContent.trim() || ""
+                        })).filter(item => item.nome),
+                        ...itensPacote.filter(item => item.chave !== `${tipo}:${idItem}`).map(item => {
+                            const quantidade = (item.participantesIds || []).length;
+                            const valorPorPessoa = Number(item.valorPorParticipante ?? item.valor) || 0;
+                            return {
+                                icone: item.icone || "../img/icones/globo.png",
+                                nome: `${item.nome} · ${quantidade} ${quantidade === 1 ? "participante" : "participantes"}`,
+                                valor: formatarMoeda(valorPorPessoa * quantidade)
+                            };
+                        })
+                    ],
                     rotuloViajante,
                     checkin: inicioCompra?.value || "",
                     checkout: fimCompra?.value || ""

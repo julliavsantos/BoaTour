@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css?v=payment-accent-20261026">
+    <link rel="stylesheet" href="style.css?v=payment-simulator-handoff-20261103">
     <link rel="stylesheet" href="../css/menurodape.css">
-    <link rel="stylesheet" href="../css/assistente.css?v=checkout-chatbot-20261026">
+    <link rel="stylesheet" href="../css/assistente.css?v=rastreador-floating-button-fix-20261103">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
-    <link rel="stylesheet" href="../css/forms.css?v=dark-inputs-20261029">
+    <link rel="stylesheet" href="../css/forms.css?v=uniform-date-fields-20261103">
 </head>
 <body>
     <div class="nav">
@@ -33,7 +33,7 @@
     <div class="perfil-area">
 
         <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
-            <img src="" alt="Perfil">
+            <img class="foto-perfil-header" src="../img/icones/perfil.png" alt="Perfil">
         </button>
 
         
@@ -153,8 +153,16 @@
                 </div>
 
                   <div class="dados-compra">
-                    <img id="imagemResumoViagem" src="../img/destinos/cancun.jpg" alt="">
+                    <div class="galeria-resumo" id="galeriaResumoViagem" aria-label="Itens selecionados no pedido">
+                        <img id="imagemResumoViagem" src="../img/destinos/cancun.jpg" alt="">
+                        <div class="controles-galeria-resumo" id="controlesGaleriaResumo" hidden>
+                            <button type="button" id="anteriorImagemResumo" aria-label="Ver item anterior">‹</button>
+                            <span id="contadorImagensResumo" aria-live="polite"></span>
+                            <button type="button" id="proximaImagemResumo" aria-label="Ver próximo item">›</button>
+                        </div>
+                    </div>
                     <div class="compra-info">
+                     <div class="resumo-item-kicker" id="kickerItemResumo">DETALHES DO PEDIDO</div>
                      <h3 id="nomeResumoViagem">Cancun, México</h3>
                    <div class="dados-icones" id="detalhesResumoViagem">
                         <div class="linha-compra" id="linhaDataResumoCompra">
@@ -177,6 +185,10 @@
                             <img src="../img/icones/globo.png" alt="">
                             <p id="atividadesResumoCompra"></p>
                         </div>
+                    </div>
+                    <div class="resumo-item-rodape" id="rodapeItemResumo">
+                        <span class="resumo-item-rodape__icone" aria-hidden="true">✓</span>
+                        <span id="textoRodapeItemResumo">Este item está incluído no seu pedido</span>
                     </div>
                     </div>
                 
@@ -374,7 +386,7 @@
                 <label class="opcao-pagamento">
                     <input type="radio" name="metodoPagamento" value="cartao">
                     <img src="../img/icones/cartao2 - Copia.png" alt="" class="opcao-pagamento-icone"></img>
-                    <span><strong>Cartão de crédito</strong><small>Informe os dados do cartão</small></span>
+                    <span><strong>Cartão de crédito</strong><small>Os dados serão preenchidos na simulação</small></span>
                 </label>
                 <label class="opcao-pagamento">
                     <input type="radio" name="metodoPagamento" value="pix">
@@ -387,24 +399,7 @@
                     <span><strong>Boleto</strong><small>Pagamento por boleto bancário</small></span>
                 </label>
             </div>
-            <div id="dadosCartao" class="dados-cartao" hidden>
-                <div class="campo-viajante campo-viajante-amplo">
-                    <label for="numeroCartaoPagamento">Número do cartão</label>
-                    <input id="numeroCartaoPagamento" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000">
-                </div>
-                <div class="campo-viajante campo-viajante-amplo">
-                    <label for="nomeCartaoPagamento">Nome no cartão</label>
-                    <input id="nomeCartaoPagamento" type="text" autocomplete="cc-name" placeholder="Como está impresso no cartão">
-                </div>
-                <div class="campo-viajante">
-                    <label for="validadeCartaoPagamento">Validade</label>
-                    <input id="validadeCartaoPagamento" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5">
-                </div>
-                <div class="campo-viajante">
-                    <label for="cvvCartaoPagamento">CVV</label>
-                    <input id="cvvCartaoPagamento" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="000" maxlength="4">
-                </div>
-            </div>
+            <p class="dica-pagamento-simulacao">Você continuará para o ambiente de simulação, onde poderá concluir ou testar o pagamento.</p>
             <p id="erroPagamento" class="erro-viajante" role="alert"></p>
             <div class="acoes-modal-viajante">
                 <button class="btn-cancelar-pagamento btn-cancelar-viajante" type="button">Cancelar</button>
@@ -484,11 +479,11 @@
             </div>
         </form>
     </div>
-    <script src="script.js?v=checkout-data-20261026"></script>
+    <script src="script.js?v=sync-rewards-20261103"></script>
     <script src="../js/darkmodedemais.js?v=theme-preference-sync-20261029"></script>
     <script src="../js/menu.js?v=profile-avatar-20261026"></script>
     <script src="../js/modais.js"></script>
-    <script src="../js/assistente-flutuante.js?v=theme-sync-20261026"></script>
+    <script src="../js/assistente-flutuante.js?v=rastreador-floating-button-20261103"></script>
     <script src="../js/feedback.js"></script>
 </body>
 </html>

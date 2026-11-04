@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css?v=align-panels-20261026">
+    <link rel="stylesheet" href="style.css?v=cart-delete-item-20261103">
     <link rel="stylesheet" href="../css/menurodape.css">
-    <link rel="stylesheet" href="../css/assistente.css?v=checkout-chatbot-20261026">
+    <link rel="stylesheet" href="../css/assistente.css?v=rastreador-floating-button-fix-20261103">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
-    <link rel="stylesheet" href="../css/forms.css?v=dark-inputs-20261029">
+    <link rel="stylesheet" href="../css/forms.css?v=uniform-date-fields-20261103">
 </head>
 <body>
     <div class="nav">
@@ -252,6 +252,12 @@
                 <div class="imagem-compra">
                     <img id="imagemOfertaCompra" src="../img/destinos/cancun.jpg" alt="">
                     <span id="etiquetaImagemCompra" class="etiqueta-imagem-compra">Sua viagem</span>
+                    <div class="controles-itens-compra" id="controlesItensCompra" hidden>
+                        <button type="button" id="anteriorItemCompra" aria-label="Ver item anterior">‹</button>
+                        <span id="contadorItensCompra" aria-live="polite"></span>
+                        <button type="button" id="proximoItemCompra" aria-label="Ver próximo item">›</button>
+                    </div>
+                    <button type="button" class="remover-item-compra" id="removerItemCompra" aria-label="Excluir item deste pedido" title="Excluir item">×</button>
                 </div>
                     <div class="compra-info">
                      <span id="tipoResumoCompra" class="tipo-resumo-compra">RESUMO DA VIAGEM</span>
@@ -272,14 +278,16 @@
                             <p id="detalheVooCompra"></p>
                         </div>
                         <div class="linha-compra" id="linhaItensOfertaCompra" hidden>
-                            <img src="../img/icones/globo.png" alt="">
+                            <img src="../img/icones/calendario2.png" alt="">
                             <p id="itensOfertaCompra">Itens incluídos na oferta</p>
                         </div>
                         <div class="linha-compra" id="linhaAtividadesResumoCompra" hidden>
-                            <img src="../img/icones/globo.png" alt="">
+                            <img src="../img/icones/atividade.png" alt="">
                             <p id="atividadesResumoCompra"></p>
                         </div>
                     </div>
+                    <div class="detalhes-item-slider" id="detalhesItemSlider" hidden></div>
+                    <div class="participantes-item-slider" id="participantesItemSlider"></div>
                     </div>
 
 
@@ -494,11 +502,11 @@
             <button class="continuar-sem-adicionar" type="button">Continuar somente com este item</button>
         </div>
     </div>
-    <script src="script.js?v=checkout-data-20261026"></script>
+    <script src="script.js?v=sync-rewards-20261103"></script>
     <script src="darkmode-compra.js?v=theme-sync-20261026"></script>
     <script src="../js/menu.js?v=profile-avatar-20261026"></script>
     <script src="../js/modais.js"></script>
-    <script src="../js/assistente-flutuante.js?v=theme-sync-20261026"></script>
+    <script src="../js/assistente-flutuante.js?v=rastreador-floating-button-20261103"></script>
     <script src="../js/feedback.js"></script>
 </body>
 </html>

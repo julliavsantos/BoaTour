@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let viajantes = Array.isArray(pendente?.viajantes) ? pendente.viajantes : [];
     let indicePassageiroEditado = null;
     let pagamento = { metodo: pendente?.pagamento?.metodo || "", ultimosDigitos: pendente?.pagamento?.ultimosDigitos || "" };
-    let cartaoCompletoNestaSessao = Boolean(pagamento.metodo && pagamento.metodo !== "cartao");
+    let cartaoCompletoNestaSessao = Boolean(pagamento.metodo);
 
     const salvarPendente = () => {
         const compra = pendente || {};
@@ -89,6 +89,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const detalhes = document.getElementById("detalhesResumoViagem");
         const listaResumo = document.getElementById("listaResumoPedidoFinal");
         const total = document.getElementById("totalResumoFinal");
+        const itens = Array.isArray(item.itensSelecionados) && item.itensSelecionados.length
+            ? item.itensSelecionados
+            : [{ nome: item.nome || "Viagem selecionada", imagem: item.imagem || "", valor: "", icone: "../img/icones/globo.png" }];
+        let indiceImagem = 0;
 
         if (nome) nome.textContent = item.nome || "Viagem selecionada";
         if (imagem && item.imagem) {
@@ -96,9 +100,12 @@ document.addEventListener("DOMContentLoaded", () => {
             imagem.alt = item.nome || "Viagem selecionada";
         }
 
-        if (detalhes && Array.isArray(item.detalhes)) {
+        const controlesGaleria = document.getElementById("controlesGaleriaResumo");
+        const contadorGaleria = document.getElementById("contadorImagensResumo");
+        const renderizarDetalhesResumo = lista => {
+            if (!detalhes) return;
             detalhes.replaceChildren();
-            item.detalhes.forEach(detalhe => {
+            (Array.isArray(lista) ? lista : []).forEach(detalhe => {
                 if (!detalhe?.texto) return;
                 const linha = document.createElement("div");
                 linha.className = "linha-compra";
@@ -110,7 +117,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 linha.append(icone, texto);
                 detalhes.append(linha);
             });
-        }
+        };
+        const renderizarImagemResumo = () => {
+            const selecionado = itens[indiceImagem];
+            if (!selecionado) return;
+            if (imagem && selecionado.imagem) {
+                imagem.src = selecionado.imagem;
+                imagem.alt = selecionado.nome || "Item selecionado";
+            }
+            if (nome) nome.textContent = selecionado.nome || item.nome || "Viagem selecionada";
+            if (contadorGaleria) contadorGaleria.textContent = `${indiceImagem + 1} / ${itens.length}`;
+            renderizarDetalhesResumo(selecionado.detalhes ?? item.detalhes);
+            const kicker = document.getElementById("kickerItemResumo");
+            const rodape = document.getElementById("textoRodapeItemResumo");
+            const categoria = selecionado.categoria || selecionado.tipo || "item";
+            if (kicker) kicker.textContent = `${String(categoria).replace(/[-_]/g, " ").toLocaleUpperCase("pt-BR")} · ITEM ${indiceImagem + 1} DE ${itens.length}`;
+            if (rodape) rodape.textContent = itens.length > 1
+                ? `${itens.length} itens reunidos em um pedido · Exibindo ${indiceImagem + 1} de ${itens.length}`
+                : "Este item está incluído no seu pedido";
+        };
+        if (controlesGaleria) controlesGaleria.hidden = itens.length < 2;
+        document.getElementById("anteriorImagemResumo")?.addEventListener("click", () => {
+            indiceImagem = (indiceImagem - 1 + itens.length) % itens.length;
+            renderizarImagemResumo();
+        });
+        document.getElementById("proximaImagemResumo")?.addEventListener("click", () => {
+            indiceImagem = (indiceImagem + 1) % itens.length;
+            renderizarImagemResumo();
+        });
+        renderizarImagemResumo();
 
         if (listaResumo) {
             listaResumo.replaceChildren();
@@ -201,6 +236,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const rotuloPagamento = metodo => ({ cartao: "Cartão de crédito", pix: "Pix", boleto: "Boleto" })[metodo] || "";
+    const valorNumerico = valor => {
+        if (typeof valor === "number") return valor;
+        const convertido = Number(String(valor || "").replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", "."));
+        return Number.isFinite(convertido) ? convertido : 0;
+    };
     const atualizarStatusPagamento = () => {
         const resumo = document.getElementById("resumoPagamento");
         const icone = document.getElementById("iconeStatusPagamento");
@@ -221,13 +261,13 @@ document.addEventListener("DOMContentLoaded", () => {
             botao.textContent = "✎ Completar";
         } else {
             titulo.textContent = rotuloPagamento(pagamento.metodo) + " selecionado";
-            descricao.textContent = pagamento.metodo === "cartao" ? "Cartão final " + pagamento.ultimosDigitos : "Forma de pagamento pronta para finalizar.";
+            descricao.textContent = pagamento.metodo === "cartao" ? "Cartão escolhido · informe os dados no simulador." : "Forma de pagamento pronta para continuar no simulador.";
             botao.textContent = "✎ Alterar";
         }
     };
     const atualizarCamposCartao = () => {
         const escolhido = document.querySelector("input[name=metodoPagamento]:checked")?.value || "";
-        dadosCartao.hidden = escolhido !== "cartao";
+        if (dadosCartao) dadosCartao.hidden = escolhido !== "cartao";
     };
     const abrirPagamento = () => {
         metodoPagamentoInputs.forEach(input => { input.checked = input.value === pagamento.metodo; });
@@ -237,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const fecharPagamento = () => {
         formPagamento.reset();
-        dadosCartao.hidden = true;
+        if (dadosCartao) dadosCartao.hidden = true;
         erroPagamento.textContent = "";
         modalPagamento.hidden = true;
     };
@@ -263,21 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
             erroPagamento.textContent = "Selecione uma forma de pagamento.";
             return;
         }
-        if (metodo === "cartao") {
-            const numero = apenasNumeros(numeroCartaoPagamento.value);
-            const nome = nomeCartaoPagamento.value.trim();
-            const validade = validadeCartaoPagamento.value.trim();
-            const cvv = apenasNumeros(cvvCartaoPagamento.value);
-            if (numero.length < 13 || nome.length < 3 || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(validade) || cvv.length < 3) {
-                erroPagamento.textContent = "Confira o número, nome, validade e CVV do cartão.";
-                return;
-            }
-            pagamento = { metodo: "cartao", ultimosDigitos: numero.slice(-4) };
-            cartaoCompletoNestaSessao = true;
-        } else {
-            pagamento = { metodo, ultimosDigitos: "" };
-            cartaoCompletoNestaSessao = true;
-        }
+        pagamento = { metodo, ultimosDigitos: "" };
+        cartaoCompletoNestaSessao = true;
         salvarPendente();
         atualizarStatusPagamento();
         fecharPagamento();
@@ -286,7 +313,33 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!pagamento.metodo || (pagamento.metodo === "cartao" && !cartaoCompletoNestaSessao)) {
             evento.preventDefault();
             abrirPagamento();
+            return;
         }
+        const item = pendente?.item;
+        const valor = valorNumerico(item?.valorTotal);
+        if (!item || valor <= 0) {
+            evento.preventDefault();
+            alert("Não encontrei os dados do pedido para abrir a simulação. Volte à compra e tente novamente.");
+            return;
+        }
+        const itens = Array.isArray(item.itensSelecionados) ? item.itensSelecionados : [];
+        const pedidoSimulado = {
+            titulo: itens.length > 1 ? itens.map(produto => produto.nome).filter(Boolean).join(" + ") : item.nome || "Compra BoaTour",
+            valor,
+            origem: item.origem || "",
+            destino: item.destino || "",
+            ida: item.checkin || "",
+            volta: item.checkout || "",
+            imagem: item.imagem || "",
+            itens,
+            comprador: pendente.comprador || {},
+            viajantes: pendente.viajantes || [],
+            ods: [...new Set(itens.flatMap(produto => Array.isArray(produto.ods) ? produto.ods : []))]
+        };
+        salvarPendente();
+        sessionStorage.setItem("boatourPedido", JSON.stringify(pedidoSimulado));
+        sessionStorage.setItem("boatourCheckoutMetodo", pagamento.metodo);
+        window.location.href = "../PAGAMENTOS/SIMULADOR/index.html?checkout=1";
     });
     document.getElementById("editarComprador")?.addEventListener("click", abrirComprador);
     document.querySelector(".fechar-modal-comprador")?.addEventListener("click", fecharComprador);

@@ -394,3 +394,7 @@ body.dark-mode .account-layout{
     .account-sidebar-links a { flex: 0 0 auto; }
     .account-layout .pagamentos { width: min(92%, 1000px); padding-top: 105px; }
 }
+ .sem-pagamentos { padding: 24px; color: var(--muted, #64748b); text-align: center; }
+.cupom-recompensa-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 10px 0; padding: 16px 18px; border: 1px dashed var(--primary, #2f8588); border-radius: 14px; background: color-mix(in srgb, var(--primary, #2f8588) 7%, var(--surface, #fff)); }
+.cupom-recompensa-card strong { color: var(--primary, #2f8588); font-family: monospace; font-size: 15px; letter-spacing: .04em; }
+.cupom-recompensa-card span { color: var(--muted, #64748b); font-size: 13px; }

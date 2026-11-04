@@ -1,0 +1,350 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.pagina-rastreador {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* o menu do site é transparente; aqui ele precisa de fundo sobre o mapa */
+.pagina-rastreador .nav {
+    background: var(--card);
+    box-shadow: 0 2px 14px rgb(0 0 0 / 12%);
+}
+
+.pagina-rastreador .menu a.ativo {
+    font-weight: 800;
+}
+
+/* ---------- MAPA ---------- */
+.rastreador {
+    position: relative;
+    height: 100vh;
+    padding-top: 8vh;
+}
+
+#mapa {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* mapa escuro quando o modo escuro do site está ativo */
+body.dark-mode .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(.9) contrast(.9);
+}
+
+body.dark-mode .leaflet-container {
+    background: #101719;
+}
+
+.btn-abrir-modal {
+    position: absolute;
+    top: calc(8vh + 16px);
+    left: 60px;
+    z-index: 500;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 999px;
+    background: var(--primary-strong);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 25%);
+    transition: transform .25s ease, background-color .25s ease;
+}
+
+.btn-abrir-modal:hover {
+    transform: translateY(-2px);
+    background: var(--primary-dark);
+}
+
+/* ---------- PAINEL DO VOO ---------- */
+.painel-voo {
+    position: absolute;
+    left: 20px;
+    bottom: 24px;
+    z-index: 500;
+    width: min(340px, calc(100% - 40px));
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 12px 34px rgb(0 0 0 / 22%);
+}
+
+.painel-voo[hidden] {
+    display: none;
+}
+
+.painel-voo h2 {
+    font-size: 22px;
+    color: var(--heading);
+}
+
+.painel-companhia {
+    margin-top: 2px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.painel-rota {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 16px 0;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--surface-alt);
+}
+
+.painel-rota div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.painel-rota strong {
+    font-size: 24px;
+    color: var(--primary-strong);
+}
+
+.painel-rota span {
+    font-size: 12px;
+    color: var(--muted-dark);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.painel-rota .painel-seta {
+    font-size: 22px;
+    color: var(--accent-strong);
+    transform: rotate(45deg);
+}
+
+.painel-dados {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 14px;
+    font-size: 14px;
+}
+
+.painel-dados dt {
+    color: var(--muted);
+}
+
+.painel-dados dd {
+    font-weight: 600;
+    text-align: right;
+}
+
+/* ---------- MODAL ---------- */
+.rastreador-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, .55);
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.rastreador-modal.ativo {
+    display: flex;
+}
+
+.rastreador-caixa {
+    position: relative;
+    width: min(420px, 100%);
+    padding: 34px 32px 28px;
+    border-radius: 18px;
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+}
+
+.rastreador-caixa h2 {
+    font-size: 26px;
+    color: var(--heading);
+}
+
+.rastreador-caixa h2 span {
+    color: var(--primary-strong);
+}
+
+.rastreador-texto {
+    margin: 8px 0 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted-dark);
+}
+
+.rastreador-caixa label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rastreador-caixa input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-soft);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    text-transform: uppercase;
+    outline: none;
+    transition: border-color .2s ease;
+}
+
+.rastreador-caixa input::placeholder {
+    text-transform: none;
+    color: var(--muted);
+}
+
+.rastreador-caixa input:focus {
+    border-color: var(--accent-strong);
+}
+
+.rastreador-caixa input.invalido {
+    border-color: #d62828;
+}
+
+/* mensagem de erro em vermelho, embaixo do input */
+.erro-campo {
+    min-height: 20px;
+    margin: 5px 0 10px;
+    font-size: 13px;
+    color: #d62828;
+}
+
+.erro-geral {
+    margin: 12px 0 0;
+    text-align: center;
+}
+
+.rastreador-confirmar {
+    width: 100%;
+    margin-top: 6px;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: var(--primary-strong);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color .25s ease;
+}
+
+.rastreador-confirmar:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+
+.rastreador-confirmar:disabled {
+    opacity: .7;
+    cursor: wait;
+}
+
+.rastreador-fechar {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.rastreador-fechar:hover {
+    color: var(--text);
+}
+
+/* ---------- AVIÃO / PONTOS NO MAPA ---------- */
+.icone-aviao {
+    background: none;
+    border: none;
+}
+
+.icone-aviao img {
+    display: block;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 3px 12px rgb(0 0 0 / 35%);
+    transition: transform .3s ease;
+}
+
+@media (max-width: 700px) {
+    .btn-abrir-modal {
+        left: 56px;
+        top: calc(8vh + 12px);
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    .painel-voo {
+        left: 12px;
+        bottom: 96px;
+        width: calc(100% - 24px);
+    }
+
+    .rastreador-caixa {
+        padding: 28px 22px 24px;
+    }
+}
+
+/* progresso do voo simulado */
+.painel-dados [hidden] {
+    display: none;
+}
+
+.painel-progresso {
+    margin-top: 14px;
+}
+
+.painel-progresso[hidden] {
+    display: none;
+}
+
+.painel-progresso-barra {
+    height: 8px;
+    border-radius: 8px;
+    background: rgba(11, 153, 149, 0.18);
+    overflow: hidden;
+}
+
+.painel-progresso-barra div {
+    height: 100%;
+    width: 0;
+    border-radius: 8px;
+    background: #0b9995;
+    transition: width 0.8s linear;
+}
+
+.painel-progresso small {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    opacity: 0.8;
+}

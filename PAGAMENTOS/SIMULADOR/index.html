@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pagamentos - BoaTour</title>
+<link rel="icon" href="../../img/logo/apenaslogo.png">
+<link rel="stylesheet" href="../../css/menurodape.css">
+<link rel="stylesheet" href="../../css/assistente.css">
+<link rel="stylesheet" href="style.css?v=sync-rewards-20261103">
+
+</head>
+<body class="pagina-pagamentos">
+
+<div class="nav">
+    <div class="logo"><img id="logoBoatour" src="../../img/logo/logo.png" alt="BOATOUR"></div>
+    <ul class="menu">
+        <li><a href="../../index.html#inicio">Início</a></li>
+        <li><a href="../../DESTINOS/index.html">Destinos</a></li>
+        <li><a href="../../VOOS/index.html">Voos</a></li>
+        <li><a href="../../HOTEIS/index.html">Hotéis</a></li>
+        <li><a href="../../ATIVIDADES/index.html">Atividades</a></li>
+        <li><a href="../../OFERTAS/index.html">Ofertas</a></li>
+        <li><a href="../../TURISMO CONSCIENTE/index.html">Turismo Consciente</a></li>
+        <li><a href="../../index.html#sobre">Sobre Nós</a></li>
+        <li><button type="button" id="btnEntrar">Entrar</button></li>
+    </ul>
+    <div class="perfil-area">
+        <button class="btn-perfil" id="btnPerfil" aria-label="Abrir perfil">
+            <img class="foto-perfil-header" src="../../img/icones/perfil.png" alt="Perfil">
+        </button>
+    </div>
+</div>
+<div class="perfil-overlay" id="perfilOverlay"></div>
+<div class="perfil-menu" id="perfilMenu">
+    <div class="perfil-topo">
+        <div class="avatar"><img class="foto-viajante" src="../../img/icones/perfil.png" alt="Perfil"></div>
+        <div><h3 id="nomePerfil">Olá, viajante!</h3><p id="descricaoPerfil">Acesse sua conta</p></div>
+        <button class="fechar-perfil" id="fecharPerfil" aria-label="Fechar perfil">&times;</button>
+    </div>
+    <div class="perfil-login"><button id="abrirLoginPerfil">Entrar na minha conta</button></div>
+    <div class="perfil-links">
+        <a href="../../PERFIL/index.html#viagens"><span>✈</span><div><strong>Minhas viagens</strong><small>Veja suas reservas</small></div></a>
+        <a href="../../PERFIL/index.html#favoritos"><span>❤︎</span><div><strong>Favoritos</strong><small>Destinos salvos</small></div></a>
+        <a href="../../CONFIGURAÇÕES/index.html"><span>⚙</span><div><strong>Configurações</strong><small>Preferências da conta</small></div></a>
+        <a href="/CHATBOT/public/index.html"><span>?</span><div><strong>Central de ajuda</strong><small>Precisa de ajuda?</small></div></a>
+    </div>
+    <div class="perfil-footer"><p>Viaje com a BoaTour ✈</p></div>
+</div>
+
+<main class="pag">
+    <header class="pag-topo">
+        <div>
+            <span class="selo">Ambiente de simulação · nenhum valor real é cobrado</span>
+            <h1>Seus pagamentos <span>BoaPay</span></h1>
+            <p>Conclua sua compra no ambiente de simulação BoaPay.</p>
+        </div>
+    </header>
+
+    <div class="pag-grade">
+        <section class="painel">
+            <div class="aba-conteudo ativa" id="aba-pagar">
+
+                <h2>1. O que você está pagando</h2>
+                <div class="pedido" id="pedido"></div>
+
+                <div class="cupom-pagamento" id="areaCupom">
+                    <label for="codigoCupomPagamento">Cupom ODS 8</label>
+                    <div class="cupom-pagamento__linha">
+                        <input id="codigoCupomPagamento" autocomplete="off" placeholder="Digite seu código">
+                        <button type="button" id="aplicarCupomPagamento">Aplicar</button>
+                    </div>
+                    <p id="estadoCupomPagamento" aria-live="polite"></p>
+                </div>
+
+                <h2>2. Forma de pagamento</h2>
+                <div class="metodos" id="metodos">
+                    <label class="metodo"><input type="radio" name="metodo" value="pix" checked><span><b>Pix</b><small>Aprovação na hora</small></span></label>
+                    <label class="metodo"><input type="radio" name="metodo" value="cartao"><span><b>Cartão de crédito</b><small>Em até 12x</small></span></label>
+                    <label class="metodo"><input type="radio" name="metodo" value="boleto"><span><b>Boleto</b><small>Compensa em 1 a 3 dias</small></span></label>
+                    <label class="metodo"><input type="radio" name="metodo" value="saldo"><span><b>Saldo BoaPay</b><small id="saldoMetodo">R$ 0,00</small></span></label>
+                </div>
+
+                <div class="campos-metodo" id="campos-cartao" hidden>
+                    <div class="campo"><label for="cNumero">Número do cartão</label>
+                        <input id="cNumero" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000" autocomplete="off">
+                        <p class="erro-campo" id="erro-cNumero"></p></div>
+                    <div class="campo"><label for="cNome">Nome impresso</label>
+                        <input id="cNome" placeholder="Como está no cartão" autocomplete="off">
+                        <p class="erro-campo" id="erro-cNome"></p></div>
+                    <div class="linha2">
+                        <div class="campo"><label for="cValidade">Validade</label>
+                            <input id="cValidade" inputmode="numeric" maxlength="5" placeholder="MM/AA" autocomplete="off">
+                            <p class="erro-campo" id="erro-cValidade"></p></div>
+                        <div class="campo"><label for="cCvv">CVV</label>
+                            <input id="cCvv" inputmode="numeric" maxlength="4" placeholder="123" type="password" autocomplete="off">
+                            <p class="erro-campo" id="erro-cCvv"></p></div>
+                    </div>
+                    <div class="campo"><label for="cParcelas">Parcelas</label><select id="cParcelas"></select></div>
+                    <p class="dica">Cartões de teste: final <b>1111</b> aprova · <b>2222</b> fica em análise · <b>0000</b> é recusado. Use qualquer número válido (Luhn), ex.: 4111 1111 1111 1111.</p>
+                </div>
+
+                <p class="erro-campo erro-geral" id="erro-geral"></p>
+                <button class="btn-principal" id="btnPagar">Pagar</button>
+            </div>
+
+        </section>
+
+        <aside class="lateral">
+            <div class="carteira">
+                <small>Saldo disponível</small>
+                <strong id="saldo">R$ 0,00</strong>
+                <div class="recarga">
+                    <input id="valorRecarga" inputmode="decimal" placeholder="Valor (ex.: 200,00)">
+                    <button id="btnRecarga">Adicionar via Pix</button>
+                </div>
+                <p class="erro-campo" id="erro-valorRecarga"></p>
+            </div>
+            <div class="resumo-lateral">
+                <h3>Resumo</h3>
+                <dl id="resumo"></dl>
+                <div class="cupons-boapay">
+                    <h4>Cupons BoaPay</h4>
+                    <ul id="listaCuponsBoaPay"></ul>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<!-- MODAL: resultado / comprovante -->
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-caixa">
+        <button class="modal-fechar" id="modalFechar" aria-label="Fechar">&times;</button>
+        <div id="modalConteudo"></div>
+        
+    </div>
+</div>
+
+<script src="script.js?v=payment-flow-fix-20261103"></script>
+<script src="../../js/menu.js?v=profile-avatar-payment-20261103"></script>
+<script src="../../js/darkmodedemais.js"></script>
+<script src="../../js/assistente-flutuante.js"></script>
+</body>
+</html>

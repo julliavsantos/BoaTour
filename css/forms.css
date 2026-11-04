@@ -78,7 +78,20 @@ input[readonly]:not(.input-data input):not(.seletor-data-compra input):not(.sele
 }
 
 input[type="date"] {
+    box-sizing: border-box;
+    border: 1px solid var(--field-border);
+    border-radius: var(--field-radius);
     background-color: var(--field-bg);
+    color: var(--text, #222);
+    font: inherit;
+    color-scheme: light;
+}
+
+body.dark-mode input[type="date"] {
+    border-color: var(--border);
+    background-color: var(--surface-alt);
+    color: var(--text);
+    color-scheme: dark;
 }
 /* O campo e o botão do calendário formam uma superfície contínua. */
 .input-data input,

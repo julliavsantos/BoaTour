@@ -15,6 +15,8 @@ const AeroportosBD = require('./database/AeroportosBD');
 const VoosBD = require('./database/VoosBD');
 const HotelBD = require('./database/HoteisBD');
 const AtividadesBD = require('./database/AtividadesBD');
+const { rastrearVoo, ErroRastreador } = require('./rastreador');
+const PagamentosBD = require('./database/PagamentosBD');
 
 const PORT = Number(process.env.PORT || 3000);
 const sessions = new Map();
@@ -721,6 +723,52 @@ function buscaAtividades(res) {
     });
 }
 
+function historicoPagamentos(req, res) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+    PagamentosBD.historico(sessao.id_usuario)
+        .then(dados => json(res, 200, dados))
+        .catch(erro => {
+            console.error('Erro ao carregar histórico de pagamentos:', erro);
+            json(res, 500, { error: 'Não foi possível carregar pagamentos, viagens e recompensas.' });
+        });
+}
+
+function validarCupomPagamento(req, res) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+    readJson(req, (erroBody, dados) => {
+        if (erroBody) return json(res, 400, { error: erroBody.message });
+        PagamentosBD.validarCupom(sessao.id_usuario, dados.codigo, dados.subtotal)
+            .then(resultado => json(res, 200, resultado))
+            .catch(erro => json(res, erro.statusCode || 500, { error: erro.message || 'Não foi possível validar o cupom.' }));
+    });
+}
+
+function registrarPagamento(req, res) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+    readJson(req, (erroBody, dados) => {
+        if (erroBody) return json(res, 400, { error: erroBody.message });
+        PagamentosBD.registrar(sessao.id_usuario, dados)
+            .then(resultado => json(res, 200, resultado))
+            .catch(erro => {
+                console.error('Erro ao registrar pagamento simulado:', erro);
+                json(res, erro.statusCode || 500, { error: erro.message || 'Não foi possível registrar o pagamento.' });
+            });
+    });
+}
+
+function rastreiaVoo(res, query) {
+    rastrearVoo(query.voo, query.aviao)
+        .then(dados => json(res, 200, dados))
+        .catch(erro => {
+            if (erro instanceof ErroRastreador) return json(res, erro.status, { error: erro.message, campo: erro.campo });
+            console.error('Erro no rastreador de voos:', erro);
+            return json(res, 500, { error: 'Erro ao rastrear o voo.', campo: 'geral' });
+        });
+}
+
 // ROTAS
 const callback = (req, res) => {
     setCors(res, req);
@@ -839,6 +887,12 @@ const callback = (req, res) => {
     return buscaVoos(res, rota.query);
     }
 
+    if (req.method === 'GET' && p === '/pagamentos/historico') return historicoPagamentos(req, res);
+    if (req.method === 'POST' && p === '/pagamentos/validar-cupom') return validarCupomPagamento(req, res);
+    if (req.method === 'POST' && p === '/pagamentos/registrar') return registrarPagamento(req, res);
+
+    if (req.method === 'GET' && p === '/rastrear-voo') return rastreiaVoo(res, rota.query);
+
     // Encaminha o chat mantendo a página na origem principal do BoaTour.
     if (req.method === 'POST' && p === '/chat') {
         const encaminhar = http.request({
@@ -874,6 +928,7 @@ const callback = (req, res) => {
         p.startsWith('/CADASTRO/') ||
         p.startsWith('/DESTINOS/') ||
         p.startsWith('/VOOS/') ||
+        p.startsWith('/RASTREADOR/') ||
         p.startsWith('/HOTEIS/') ||
         p.startsWith('/ATIVIDADES/') ||
         p.startsWith('/OFERTAS/') ||
@@ -897,7 +952,10 @@ const callback = (req, res) => {
 
 //SERVIDOR
 const server = http.createServer(callback);
-server.listen(PORT, () => {
-    console.log(`Servidor BoaTour rodando em http://localhost:${PORT}`);
-    console.log('Rotas de usuários: /registro, /login, /usuarios/me, /usuarios/:id, /usuarios/senha, /upload-foto, /logout');
-});
+PagamentosBD.inicializar()
+    .then(() => console.log('Tabelas de pagamentos e recompensas verificadas.'))
+    .catch(erro => console.error('Tabelas de pagamentos/recompensas não foram criadas. Confira a conexão com boatour_bd:', erro.message))
+    .finally(() => server.listen(PORT, () => {
+        console.log(`Servidor BoaTour rodando em http://localhost:${PORT}`);
+        console.log('Rotas de usuários: /registro, /login, /usuarios/me, /usuarios/:id, /usuarios/senha, /upload-foto, /logout');
+    }));

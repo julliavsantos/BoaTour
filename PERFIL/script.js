@@ -739,9 +739,78 @@ async function carregarFavoritosPerfil() {
 }
 
 
-// Carrega os favoritos quando a página termina de carregar
+async function carregarViagensPerfil() {
+    const grid = document.getElementById("minhasViagensGrid");
+    if (!grid) return;
+    const token = localStorage.getItem("boatourSessionToken");
+    if (!token) {
+        grid.innerHTML = '<p class="sem-viagens">Entre na sua conta para ver suas viagens.</p>';
+        return;
+    }
+    try {
+        const resposta = await fetch("http://localhost:3000/pagamentos/historico", { headers: { "X-Session-Token": token } });
+        const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.error || "Não foi possível carregar suas viagens.");
+        const viagens = Array.isArray(dados.viagens) ? dados.viagens : [];
+        grid.replaceChildren();
+        if (!viagens.length) {
+            grid.innerHTML = '<p class="sem-viagens">Suas compras aparecerão aqui depois da simulação de pagamento.</p>';
+            return;
+        }
+        const formatarDataViagem = valor => {
+            if (!valor) return "";
+            const data = new Date(`${String(valor).slice(0, 10)}T12:00:00`);
+            return Number.isNaN(data.getTime()) ? "" : data.toLocaleDateString("pt-BR");
+        };
+        viagens.forEach(viagem => {
+            const card = document.createElement("article");
+            card.className = "card-viagem";
+            const imagem = document.createElement("div");
+            imagem.className = "imagem-viagem";
+            const foto = document.createElement("img");
+            const caminho = String(viagem.imagem || "").trim();
+            foto.src = !caminho ? "../img/ofertas/cancun.jpg"
+                : /^(https?:|data:|\/)/i.test(caminho) ? caminho
+                    : caminho.startsWith("../") ? caminho : `../${caminho.replace(/^\.\//, "")}`;
+            foto.alt = viagem.titulo || "Viagem BoaTour";
+            imagem.append(foto);
+            const info = document.createElement("div");
+            info.className = "info-viagem";
+            const titulo = document.createElement("h3");
+            titulo.textContent = viagem.titulo || "Viagem BoaTour";
+            const datas = [formatarDataViagem(viagem.ida), formatarDataViagem(viagem.volta)].filter(Boolean).join(" → ");
+            const periodo = document.createElement("p");
+            periodo.textContent = datas || "Datas a confirmar";
+            const codigo = document.createElement("p");
+            codigo.textContent = `Reserva: ${viagem.id || viagem.id_viagem || "—"}`;
+            const voo = document.createElement("p");
+            voo.textContent = viagem.codigoVoo ? `Voo ${viagem.codigoVoo} · avião ${viagem.codigoAviao || "—"}` : (viagem.status || "");
+            const dadosPedido = viagem.dados?.pedido || {};
+            const nomesItens = (Array.isArray(dadosPedido.itens) ? dadosPedido.itens : []).map(item => item.nome).filter(Boolean);
+            const resumoItens = document.createElement("p");
+            resumoItens.textContent = nomesItens.length ? `Itens: ${nomesItens.join(" · ")}` : "";
+            const nomesViajantes = (Array.isArray(dadosPedido.viajantes) ? dadosPedido.viajantes : []).map(passageiro => passageiro.nome).filter(Boolean);
+            const resumoViajantes = document.createElement("p");
+            resumoViajantes.textContent = nomesViajantes.length ? `Viajantes: ${nomesViajantes.join(", ")}` : "";
+            const estado = document.createElement("p");
+            estado.className = "status-viagem";
+            estado.textContent = viagem.status === "confirmada" ? "Pagamento aprovado" : viagem.status || "Aguardando pagamento";
+            info.append(titulo, periodo, codigo, voo);
+            if (nomesItens.length) info.append(resumoItens);
+            if (nomesViajantes.length) info.append(resumoViajantes);
+            info.append(estado);
+            card.append(imagem, info);
+            grid.append(card);
+        });
+    } catch (erro) {
+        grid.innerHTML = `<p class="sem-viagens">${String(erro.message || "Não foi possível carregar suas viagens.")}</p>`;
+    }
+}
+
+// Carrega os favoritos e viagens quando a página termina de carregar
 document.addEventListener('DOMContentLoaded', () => {
     carregarFavoritosPerfil();
+    carregarViagensPerfil();
 });
 
 const btnVerTodosFavoritos =

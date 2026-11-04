@@ -5,6 +5,21 @@
         const caminhoBase = document.currentScript?.src
             ? new URL("../", document.currentScript.src)
             : new URL("../", window.location.href);
+        const botaoRastreador = document.createElement("a");
+        botaoRastreador.className = "assistente-flutuante rastreador-flutuante";
+        botaoRastreador.href = new URL("RASTREADOR/index.html", caminhoBase).href;
+        botaoRastreador.setAttribute("aria-label", "Rastrear um voo");
+        botaoRastreador.innerHTML = `<img src="${new URL("img/icones/mascote03.png", caminhoBase).href}" alt=""><span>Rastrear voos</span>`;
+        if (window.location.pathname.includes("/RASTREADOR/")) {
+            botaoRastreador.href = "#";
+            botaoRastreador.addEventListener("click", evento => {
+                evento.preventDefault();
+                document.getElementById("btnAbrirModal")?.click();
+                document.getElementById("codigoVoo")?.focus();
+            });
+        }
+        document.body.appendChild(botaoRastreador);
+
         const botao = document.createElement("a");
         botao.className = "assistente-flutuante";
         const hostname = window.location.hostname || "localhost";

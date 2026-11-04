@@ -733,6 +733,8 @@ body {
 
 
 
+}
+
 /* Alinhamento visual com a página COMPRAR */
 :root {
     color-scheme: light dark;
@@ -1029,7 +1031,8 @@ body {
 }
 
 /* Checkout visual inspirado no layout de referência */
-body { background: var(--bg); color: var(--text); }
+body { background: var(--bg); color: var(--text); color-scheme: light; }
+body.dark-mode { color-scheme: dark; }
 .fundo {
     position: relative;
     height: 300px;
@@ -1097,6 +1100,38 @@ body.dark-mode .titulo p { color: #c0d0d2; }
     border-color: var(--border); background: var(--card); border-radius: 14px;
 }
 .dados-compra > img { flex-basis: 185px; width: 185px; max-width: 38%; height: 132px; border-radius: 10px; }
+.galeria-resumo {
+    position: relative;
+    flex: 0 0 185px;
+    width: 185px;
+    max-width: 38%;
+    min-width: 0;
+    height: 132px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: 0 7px 18px rgba(18, 48, 54, .14);
+}
+.galeria-resumo > img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+    transition: opacity .2s ease, transform .45s ease; 
+}
+.galeria-resumo:hover > img {
+    transform: scale(1.035);
+}
+.controles-galeria-resumo { position: absolute; inset: 0 7px; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
+.controles-galeria-resumo[hidden] { display: none; }
+.controles-galeria-resumo button { display: grid; width: 30px; height: 30px; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(16, 37, 42, .68); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; pointer-events: auto; backdrop-filter: blur(8px); transition: transform .18s ease, background .18s ease; }
+.controles-galeria-resumo button:hover { transform: scale(1.08); background: rgba(16, 37, 42, .9); }
+.controles-galeria-resumo span { padding: 5px 9px; border: 1px solid rgba(255,255,255,.42); border-radius: 999px; background: rgba(16, 37, 42, .62); color: #fff; font-size: 10px; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,.3); backdrop-filter: blur(8px); }
+@media (max-width: 560px) {
+    .galeria-resumo { flex-basis: 38%; width: 38%; max-width: 38%; height: 112px; }
+}
 .dados-compra .compra-info > h3 { color: var(--heading); font-size: 16px; }
 .dados-compra .linha-compra p { color: var(--muted); font-size: 12px; }
 .campos, .campos2 {
@@ -1224,6 +1259,7 @@ body.dark-mode .titulo p { color: #c0d0d2; }
 .campo-viajante input, .campo-viajante select { box-sizing: border-box; width: 100%; height: 42px; padding: 0 11px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--text); font: inherit; font-size: 13px; }
 .campo-viajante input:focus, .campo-viajante select:focus { outline: 0; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(81,141,147,.15); }
 .erro-viajante { min-height: 18px; margin: 10px 0 0; color: #ba3030; font-size: 12px; }
+.dica-pagamento-simulacao { margin: 12px 0 4px; padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--primary) 7%, var(--surface)); color: var(--muted); font-size: 12px; line-height: 1.5; }
 .acoes-modal-viajante { display: flex; justify-content: flex-end; gap: 9px; margin-top: 10px; }
 .acoes-modal-viajante button { min-height: 40px; padding: 0 14px; border-radius: 8px; font: 700 13px 'Plus Jakarta Sans',sans-serif; cursor: pointer; }
 .btn-cancelar-viajante { border: 1px solid var(--border); background: transparent; color: var(--text); }
@@ -1846,7 +1882,7 @@ button.btn-editar-padrao:active { opacity: .7; transform: none; box-shadow: none
 }
 .conteudo-right .finalizaeButton:hover {
     transform: scale(1.01);
-    background: #fff;
+    background: var(--surface);
     color: var(--primary);
     filter: none;
     box-shadow: none;
@@ -1899,4 +1935,46 @@ button.btn-editar-padrao:active { opacity: .7; transform: none; box-shadow: none
 @media (max-width: 560px) {
     .passageiro-acoes { gap: 5px; }
     .btn-remover-passageiro { min-width: 0; min-height: 36px; padding: 0 8px; font-size: 12px; }
+}
+
+/* Galeria da viagem em um único quadro amplo e limpo */
+.dados-compra {
+    align-items: stretch;
+    gap: 20px;
+    padding: 16px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--card), color-mix(in srgb, var(--primary) 4%, var(--surface)));
+}
+.galeria-resumo {
+    box-sizing: border-box;
+    flex: 0 0 min(36%, 320px);
+    width: min(36%, 320px);
+    max-width: none;
+    min-width: 240px;
+    height: 214px;
+    border-radius: 16px;
+    box-shadow: 0 12px 26px rgba(15, 46, 51, .17);
+}
+.galeria-resumo::after { position: absolute; inset: 38% 0 0; z-index: 1; content: ""; background: linear-gradient(180deg, transparent, rgba(9, 27, 31, .42)); pointer-events: none; }
+.conteudo .dados-compra .galeria-resumo > #imagemResumoViagem { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; max-width: none; height: 100%; margin: 0; padding: 0; border: 0; border-radius: inherit; object-fit: cover; object-position: center; transform: none; }
+.galeria-resumo:hover > #imagemResumoViagem { transform: scale(1.025); }
+.controles-galeria-resumo { z-index: 2; inset: auto 12px 12px; display: grid; grid-template-columns: 38px 1fr 38px; gap: 8px; }
+.controles-galeria-resumo button { width: 38px; height: 38px; border-color: rgba(255,255,255,.35); background: rgba(10, 31, 35, .72); font-size: 25px; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+.controles-galeria-resumo span { justify-self: center; min-width: 46px; padding: 7px 12px; border-color: rgba(255,255,255,.3); background: rgba(10, 31, 35, .72); font-size: 11px; text-align: center; }
+.dados-compra .compra-info { display: flex; flex: 1 1 auto; min-width: 0; flex-direction: column; justify-content: center; gap: 6px; }
+.dados-compra .compra-info > h3 { margin: 0; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.22; letter-spacing: -.35px; }
+.dados-compra .dados-icones { display: grid; gap: 4px; }
+.dados-compra .linha-compra { min-height: 26px; padding: 2px 0; }
+.dados-compra .linha-compra p { font-size: 12px; line-height: 1.35; }
+.dados-compra .compra-info { align-items: flex-start; justify-content: center; gap: 10px; padding: 8px 10px 8px 2px; }
+.resumo-item-kicker { color: var(--primary); font-size: 10px; font-weight: 800; letter-spacing: .12em; line-height: 1.3; }
+.dados-compra .compra-info > h3 { max-width: 100%; font-size: clamp(20px, 1.8vw, 26px); }
+.dados-compra .dados-icones { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); width: 100%; gap: 6px 14px; }
+.dados-compra .linha-compra { min-width: 0; padding: 5px 8px; border: 1px solid var(--border); border-radius: 9px; background: color-mix(in srgb, var(--surface) 78%, transparent); }
+.resumo-item-rodape { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 2px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border)); border-radius: 11px; background: color-mix(in srgb, var(--primary) 7%, var(--surface)); color: var(--muted); font-size: 11px; line-height: 1.4; }
+.resumo-item-rodape__icone { display: grid; flex: 0 0 22px; width: 22px; height: 22px; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--primary) 15%, var(--surface)); color: var(--primary); font-size: 13px; font-weight: 800; }
+@media (max-width: 600px) {
+    .dados-compra { flex-direction: column; gap: 14px; padding: 12px; }
+    .galeria-resumo { flex: 0 0 auto; width: 100%; min-width: 0; max-width: none; height: 220px; }
+    .dados-compra .compra-info { width: 100%; padding: 2px; }
 }
