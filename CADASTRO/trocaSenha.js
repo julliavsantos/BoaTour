@@ -2,7 +2,7 @@
 // CONFIGURAÇÃO
 // ==========================================
 
-const API = "http://localhost:3000";
+const API = "";
 const CHAVE_EMAIL = "boatourRecuperacaoEmail";
 const ESPERA_REENVIO = 30; // segundos
 

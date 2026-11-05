@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- BUSCAR DESTINOS DO BANCO ---
 
-    fetch("http://localhost:3000/destinos")
+    fetch("/destinos")
     .then(response => {
         if (!response.ok) {
             throw new Error("Erro ao buscar destinos.");
@@ -184,7 +184,7 @@ async function carregarFavoritos() {
     try {
 
         const resposta = await fetch(
-            "http://localhost:3000/favoritos",
+            "/favoritos",
             {
                 method: "GET",
                 headers: {
@@ -476,7 +476,7 @@ document.addEventListener("click", async (event) => {
     try {
 
         const resposta = await fetch(
-            "http://localhost:3000/favoritos",
+            "/favoritos",
             {
                 method: metodo,
 

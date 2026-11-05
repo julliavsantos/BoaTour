@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API = "http://localhost:3000";
+    const API = "";
     const token = () => localStorage.getItem("boatourSessionToken") || "";
     const lerUsuario = () => {
         try { return JSON.parse(localStorage.getItem("boatourUsuario") || "null"); }

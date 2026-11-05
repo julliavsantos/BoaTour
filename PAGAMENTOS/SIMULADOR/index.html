@@ -7,7 +7,8 @@
 <link rel="icon" href="../../img/logo/apenaslogo.png">
 <link rel="stylesheet" href="../../css/menurodape.css">
 <link rel="stylesheet" href="../../css/assistente.css">
-<link rel="stylesheet" href="style.css?v=sync-rewards-20261103">
+<link rel="stylesheet" href="../../css/forms.css?v=select-popup-20261104">
+<link rel="stylesheet" href="style.css?v=payment-expiry-20261104">
 
 </head>
 <body class="pagina-pagamentos">
@@ -73,12 +74,20 @@
                     <p id="estadoCupomPagamento" aria-live="polite"></p>
                 </div>
 
-                <h2>2. Forma de pagamento</h2>
+                <h2>2. Desconto BoaPay</h2>
+                <div class="saldo-desconto">
+                    <label class="saldo-desconto__opcao" for="usarSaldoBoaPay">
+                        <input type="checkbox" id="usarSaldoBoaPay">
+                        <span><b>Usar saldo BoaPay como desconto</b><small id="saldoDescontoDisponivel">Saldo disponível: R$ 0,00</small></span>
+                    </label>
+                    <p id="saldoDescontoResumo" aria-live="polite">Marque para abater seu saldo do valor da compra.</p>
+                </div>
+
+                <h2>3. Forma de pagamento</h2>
                 <div class="metodos" id="metodos">
                     <label class="metodo"><input type="radio" name="metodo" value="pix" checked><span><b>Pix</b><small>Aprovação na hora</small></span></label>
                     <label class="metodo"><input type="radio" name="metodo" value="cartao"><span><b>Cartão de crédito</b><small>Em até 12x</small></span></label>
-                    <label class="metodo"><input type="radio" name="metodo" value="boleto"><span><b>Boleto</b><small>Compensa em 1 a 3 dias</small></span></label>
-                    <label class="metodo"><input type="radio" name="metodo" value="saldo"><span><b>Saldo BoaPay</b><small id="saldoMetodo">R$ 0,00</small></span></label>
+                    <label class="metodo metodo--boleto"><input type="radio" name="metodo" value="boleto"><span><b>Boleto</b><small>Compensa em 1 a 3 dias</small></span></label>
                 </div>
 
                 <div class="campos-metodo" id="campos-cartao" hidden>
@@ -137,7 +146,7 @@
     </div>
 </div>
 
-<script src="script.js?v=payment-flow-fix-20261103"></script>
+<script src="script.js?v=payment-expiry-20261104"></script>
 <script src="../../js/menu.js?v=profile-avatar-payment-20261103"></script>
 <script src="../../js/darkmodedemais.js"></script>
 <script src="../../js/assistente-flutuante.js"></script>

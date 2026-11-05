@@ -1,3 +1,4 @@
+const URL_API_BOATOUR = window.location.port === "3001" ? window.location.protocol + "//" + window.location.hostname + ":3000" : "";
 // --- MODAL DE LOGIN / PERFIL ---
 
 // Solicita login quando alguém tenta adicionar um favorito sem sessão.
@@ -182,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
         botaoEnviar.textContent = "Enviando...";
 
         try {
-            const resposta = await fetch("http://localhost:3000/enviarEmail", {
+            const resposta = await fetch(`${URL_API_BOATOUR}/enviarEmail`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: emailNormalizado })
@@ -420,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Envia para o servidor
 
                     const resposta = await fetch(
-                        "http://localhost:3000/login",
+                        `${URL_API_BOATOUR}/login`,
                         {
                             method: "POST",
 
@@ -965,7 +966,7 @@ function normalizarLocalDeVoo(valor) {
 window.abrirBuscaVoosDestino = async function (destino) {
     let aeroportos = [];
     try {
-        const resposta = await fetch("http://localhost:3000/aeroportos");
+        const resposta = await fetch(`${URL_API_BOATOUR}/aeroportos`);
         if (resposta.ok) {
             const dados = await resposta.json();
             aeroportos = Array.isArray(dados) ? dados : [];
@@ -1004,7 +1005,7 @@ window.abrirBuscaVoosDestino = async function (destino) {
     try {
         const parametrosRotas = new URLSearchParams({ destino: chegada });
         const respostaVoos = await fetch(
-            `http://localhost:3000/voos?${parametrosRotas.toString()}`
+            `${URL_API_BOATOUR}/voos?${parametrosRotas.toString()}`
         );
         if (respostaVoos.ok) {
             const voos = await respostaVoos.json();

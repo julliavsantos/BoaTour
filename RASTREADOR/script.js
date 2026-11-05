@@ -1,5 +1,13 @@
-const API_RASTREADOR = "http://localhost:3000/rastrear-voo";
+const API_RASTREADOR = "/rastrear-voo";
 const ICONE_AVIAO = "../img/icones/aviao2.png";
+
+async function lerRespostaRastreador(resposta) {
+    const tipoConteudo = resposta.headers.get("content-type") || "";
+    if (!tipoConteudo.includes("application/json")) {
+        throw new Error("A API de rastreamento não respondeu em JSON. Inicie o servidor BoaTour na porta 3000.");
+    }
+    return resposta.json();
+}
 
 /* ---------- elementos ---------- */
 const modal = document.getElementById("modalRastreador");
@@ -157,7 +165,7 @@ async function confirmar() {
             `${API_RASTREADOR}?voo=${encodeURIComponent(voo)}&aviao=${encodeURIComponent(aviao)}`,
             { signal: AbortSignal.timeout(20000) }
         );
-        const dados = await resposta.json();
+        const dados = await lerRespostaRastreador(resposta);
 
         if (!resposta.ok) {
             return mostrarErro(dados.campo || "geral", dados.error || "Não foi possível rastrear o voo.");
@@ -166,8 +174,8 @@ async function confirmar() {
         ultimaConsulta = { voo, aviao };
         fecharModal();
         mostrarRota(dados);
-    } catch {
-        mostrarErro("geral", "Não foi possível conectar ao servidor. Verifique se ele está ligado.");
+    } catch (erro) {
+        mostrarErro("geral", erro.message || "Não foi possível conectar ao servidor. Verifique se ele está ligado.");
     } finally {
         btnConfirmar.disabled = false;
         btnConfirmar.textContent = "Confirmar";
@@ -280,7 +288,7 @@ async function atualizarSimulacao() {
             `${API_RASTREADOR}?voo=${encodeURIComponent(ultimaConsulta.voo)}&aviao=${encodeURIComponent(ultimaConsulta.aviao)}`,
             { signal: AbortSignal.timeout(8000) }
         );
-        const dados = await resposta.json();
+        const dados = await lerRespostaRastreador(resposta);
         if (!resposta.ok || !dados.simulado) return;
 
         aplicarPosicao(dados);

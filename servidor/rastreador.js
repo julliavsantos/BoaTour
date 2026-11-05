@@ -117,7 +117,7 @@ async function rastrearVoo(vooBruto, aviaoBruto) {
     }
 
     // 1) Voos SIMULADOS do BoaTour (os códigos que o cliente recebe no pagamento)
-    const local = await RastreioBD.buscarPromessa(codigoVoo);
+    const local = await RastreioBD.buscarPromessa(codigoVoo, limparAviao(codigoAviao));
     if (local.viagem || local.voo) {
         const esperado = limparAviao(local.viagem && local.viagem.codigo_aviao);
         if (esperado && esperado !== limparAviao(codigoAviao)) {

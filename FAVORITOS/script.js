@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
 
         const respostaFavoritos = await fetch(
-            "http://localhost:3000/favoritos",
+            "/favoritos",
             {
                 method: "GET",
 
@@ -100,12 +100,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             await Promise.all([
 
                 fetch(
-                    "http://localhost:3000/destinos"
+                    "/destinos"
                 ),
 
-                fetch("http://localhost:3000/ofertas"),
-                fetch("http://localhost:3000/hoteis"),
-                fetch("http://localhost:3000/atividades")
+                fetch("/ofertas"),
+                fetch("/hoteis"),
+                fetch("/atividades")
 
             ]);
 
@@ -719,7 +719,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 const resposta =
                     await fetch(
-                        "http://localhost:3000/favoritos",
+                        "/favoritos",
                         {
                             method: "DELETE",
 

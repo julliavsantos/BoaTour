@@ -305,6 +305,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         tipo,
         categoria: rotuloViajante === "Hóspede" ? "hotel" : rotuloViajante === "Participante" ? "atividade" : tipo,
         id: idItem,
+        numeroVoo: tipo === "voo" ? (itemCarregado?.numero_voo || itemCarregado?.numeroVoo || itemCarregado?.codigoVoo || "") : "",
+        origem: tipo === "voo" ? (itemCarregado?.origem || "") : "",
+        destino: tipo === "voo" ? (itemCarregado?.destino || "") : "",
+        dataSaida: tipo === "voo" ? (itemCarregado?.data_saida || itemCarregado?.dataSaida || "") : "",
         nome: configuracao?.nome(itemCarregado) || "Item da viagem",
         valor: Number(valorPorParticipanteAtual ?? precoBaseCompra) || 0,
         valorPorParticipante: Number(valorPorParticipanteAtual ?? precoBaseCompra) || 0,
@@ -576,7 +580,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const token = localStorage.getItem("boatourSessionToken");
         if (token) {
             try {
-                const resposta = await fetch("http://localhost:3000/usuarios/me", { headers: { "X-Session-Token": token } });
+                const resposta = await fetch("/usuarios/me", { headers: { "X-Session-Token": token } });
                 if (resposta.ok) {
                     usuario = await resposta.json();
                     localStorage.setItem("boatourUsuario", JSON.stringify(usuario));
@@ -833,7 +837,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        const resposta = await fetch(`http://localhost:3000${configuracao.endpoint}`);
+        const resposta = await fetch(`${configuracao.endpoint}`);
         const itens = await resposta.json();
         if (!resposta.ok) throw new Error(itens.error || "Não foi possível carregar o item selecionado.");
 

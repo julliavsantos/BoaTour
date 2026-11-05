@@ -33,6 +33,7 @@ color 0.3s ease;
 --hover2: #253e27;
 --white: #ffffff;
 --btn: #253e27;
+--primary-strong: #253e27;
 
 }
 body.dark-mode {
@@ -45,6 +46,7 @@ body.dark-mode {
 --hover2: #dce8dc;
 --white: #ffffff;
 --btn: #253e27;
+--primary-strong: #253e27;
 }
 
 .cont {

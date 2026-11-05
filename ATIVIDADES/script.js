@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const resposta = await fetch(
-                "http://localhost:3000/favoritos",
+                "/favoritos",
                 {
                     method: "GET",
                     headers: {
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function buscarAtividades() {
         try {
             const resposta = await fetch(
-                "http://localhost:3000/atividades"
+                "/atividades"
             );
 
             if (!resposta.ok) {
@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const resposta = await fetch(
-                "http://localhost:3000/favoritos",
+                "/favoritos",
                 {
                     method: metodo,
                     headers: {

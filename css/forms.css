@@ -157,3 +157,74 @@ body.dark-mode .seletor-data-compra:focus-within {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
 }
+
+/* Lista aberta dos selects no mesmo padrão das sugestões de aeroportos. */
+select:not([hidden]) {
+    cursor: pointer;
+    color-scheme: light;
+}
+
+select option {
+    background-color: var(--surface-strong, #fff);
+    color: var(--text, #222);
+    padding: 10px 12px;
+}
+
+select option:checked {
+    background-color: color-mix(in srgb, var(--accent, #518d93) 18%, var(--surface-strong, #fff));
+    color: var(--text, #222);
+}
+
+@supports (appearance: base-select) {
+    select:not([hidden]),
+    select:not([hidden])::picker(select) {
+        appearance: base-select;
+    }
+
+    select:not([hidden]) {
+        padding-right: 14px;
+    }
+
+    select:not([hidden])::picker(select) {
+        margin-block: 6px;
+        padding: 6px;
+        border: 1px solid var(--field-border);
+        border-radius: 12px;
+        background: var(--surface-strong, #fff);
+        color: var(--text, #222);
+        box-shadow: 0 8px 24px rgba(24, 46, 60, .16);
+        overflow: auto;
+        max-height: min(320px, 45vh);
+    }
+
+    select:not([hidden]) option {
+        min-height: 40px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: transparent;
+        transition: background-color .16s ease;
+    }
+
+    select:not([hidden]) option:hover,
+    select:not([hidden]) option:focus-visible {
+        background: var(--hover, #edf4f4);
+    }
+
+    select:not([hidden]) option:checked {
+        background: color-mix(in srgb, var(--accent, #518d93) 14%, var(--surface-strong, #fff));
+        color: var(--text, #222);
+    }
+
+    select:not([hidden])::picker-icon {
+        color: var(--muted, #777);
+        transition: transform .18s ease;
+    }
+
+    select:not([hidden]):open::picker-icon {
+        transform: rotate(180deg);
+    }
+}
+
+body.dark-mode select:not([hidden]) {
+    color-scheme: dark;
+}

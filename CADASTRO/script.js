@@ -314,7 +314,7 @@ if (btnCadastro) {
         try {
 
             const resposta = await fetch(
-                "http://localhost:3000/registro",
+                "/registro",
                 {
 
                     method: "POST",
@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnEnviar.disabled = true;
         btnEnviar.textContent = 'Enviando...';
         try {
-            const resposta = await fetch('http://localhost:3000/enviarEmail', {
+            const resposta = await fetch('/enviarEmail', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })

@@ -1,3 +1,18 @@
+(() => {
+    if (window.location.port === "3001" || window.fetch.__boatourApiRouter) return;
+    const apiBase = `${window.location.protocol}//${window.location.hostname}:3000`;
+    const fetchOriginal = window.fetch.bind(window);
+    const fetchRoteado = (entrada, opcoes) => {
+        if (typeof entrada !== "string" && !(entrada instanceof URL)) return fetchOriginal(entrada, opcoes);
+        const requisicao = new URL(String(entrada), window.location.href);
+        if (requisicao.origin === window.location.origin && window.location.port !== "3000") {
+            return fetchOriginal(`${apiBase}${requisicao.pathname}${requisicao.search}`, opcoes);
+        }
+        return fetchOriginal(entrada, opcoes);
+    };
+    fetchRoteado.__boatourApiRouter = true;
+    window.fetch = fetchRoteado;
+})();
 document.addEventListener("DOMContentLoaded", () => {
 
     const nav = document.querySelector(".nav");
@@ -70,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.preventDefault();
                 event.stopPropagation();
                 window.location.href = window.location.port === "3001"
-                    ? "http://localhost:3000/PERFIL/index.html"
+                    ? `${window.location.protocol}//${window.location.hostname}:3000/PERFIL/index.html`
                     : new URL("/PERFIL/index.html", window.location.origin).href;
             };
             fotoDentroMenu.addEventListener("click", abrirPerfil);
@@ -174,13 +189,13 @@ function prepararSaidaMenu(perfilMenu) {
         if (!token) return window.alert("Sua sessão expirou. Faça login novamente.");
         if (!senha?.value) return window.boatourFieldError?.(senha, "Digite sua senha para continuar.");
         try {
-            const confirmacao = await fetch("http://localhost:3000/confirmar-senha", { method: "POST", headers: { "Content-Type": "application/json", "X-Session-Token": token }, body: JSON.stringify({ senha: senha.value }) });
+            const confirmacao = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/confirmar-senha`, { method: "POST", headers: { "Content-Type": "application/json", "X-Session-Token": token }, body: JSON.stringify({ senha: senha.value }) });
             const resultado = await confirmacao.json();
             if (!confirmacao.ok || resultado.error) return window.boatourFieldError?.(senha, resultado.error || "Senha incorreta.");
-            await fetch("http://localhost:3000/logout", { method: "POST", headers: { "X-Session-Token": token } });
+            await fetch(`${window.location.protocol}//${window.location.hostname}:3000/logout`, { method: "POST", headers: { "X-Session-Token": token } });
             localStorage.removeItem("boatourUsuario");
             localStorage.removeItem("boatourSessionToken");
-            window.location.href = window.location.port === "3001" ? "http://localhost:3000/index.html?saiu=sucesso" : new URL("/index.html?saiu=sucesso", window.location.origin).href;
+            window.location.href = window.location.port === "3001" ? `${window.location.protocol}//${window.location.hostname}:3000/index.html?saiu=sucesso` : new URL("/index.html?saiu=sucesso", window.location.origin).href;
         } catch { window.alert("Não foi possível sair da conta."); }
     });
 }
@@ -352,7 +367,7 @@ function atualizarMenuUsuario() {
         const caminho = fotoUsuario.replace(/^(\.\.\/)+/, "").replace(/^\/+/, "");
         const origemApi = window.location.port === "3000"
             ? window.location.origin
-            : "http://localhost:3000";
+            : `${window.location.protocol}//${window.location.hostname}:3000`;
         urlFoto = new URL(caminho, `${origemApi}/`).href;
     }
 
@@ -382,7 +397,7 @@ function atualizarBannerMenu(usuario) {
     } else {
         const caminhoRaiz = `/${String(caminho).replace(/^(\.\.\/)+/, "").replace(/^\/+/, "")}`;
         url = window.location.port === "3001"
-            ? `http://localhost:3000${caminhoRaiz}`
+            ? `${window.location.protocol}//${window.location.hostname}:3000${caminhoRaiz}`
             : new URL(caminhoRaiz, window.location.origin).href;
     }
 

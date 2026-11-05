@@ -21,11 +21,18 @@ h2{font-size:16px;margin:18px 0 12px}
 .pedido{border:1.5px solid var(--border);border-radius:18px;padding:16px;display:grid;gap:10px}
 .pedido select{padding:10px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit}
 .pedido .total{display:flex;justify-content:space-between;font-weight:800;font-size:18px}
-.metodos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metodos{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metodo--boleto{grid-column:1/-1}
 .metodo{cursor:pointer}.metodo input{position:absolute;opacity:0}
 .metodo span{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1.5px solid var(--border);border-radius:16px;transition:.15s}
 .metodo small{color:var(--muted);font-size:12px}
 .metodo input:checked+span{border-color:#2f8588;background:#2f858814;box-shadow:0 0 0 3px #2f858822}
+.saldo-desconto{margin:-2px 0 22px;padding:14px 16px;border:1.5px solid var(--border);border-radius:16px;background:var(--surface-alt)}
+.saldo-desconto__opcao{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.saldo-desconto__opcao input{width:18px;height:18px;margin-top:2px;accent-color:#2f8588}
+.saldo-desconto__opcao span{display:grid;gap:3px}
+.saldo-desconto__opcao small,.saldo-desconto p{color:var(--muted);font-size:12px;line-height:1.45}
+.saldo-desconto p{margin:8px 0 0 28px}
+.saldo-desconto p.saldo-desconto__ativo{color:var(--primary);font-weight:700}
 .campos-metodo{margin-top:16px;display:grid;gap:12px}
 .campo label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
 .campo input,.campo select{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:14px}
@@ -81,3 +88,4 @@ dl{display:grid;gap:10px}dl div{display:flex;justify-content:space-between;font-
 .cupons-boapay li{display:grid;gap:4px;padding:9px;border:1px solid var(--border);border-radius:10px}
 .cupons-boapay li button{justify-self:start;padding:5px 9px;font-family:monospace}
 .cupons-boapay li small{color:var(--muted);line-height:1.35}
+.prazo-pagamento{margin:12px 0;padding:10px 13px;border-radius:10px;background:#fff3d6;color:#8a6100;font-size:14px;font-weight:700;text-align:center}

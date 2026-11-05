@@ -50,7 +50,7 @@ body.dark-mode .cont {
     height: 80vh;
     min-height: 0;
     background-image: url("../img/banners/aviao.png");
-    background-size: 120%;
+    background-size: 100%;
     background-position: 40% 32%;
     background-repeat: no-repeat;
     padding-bottom: 30px;
@@ -726,11 +726,6 @@ body.dark-mode .cont {
 .qualidade p {
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--text);
-}
-.qualidade:hover {
-    transform: translateY(-3px);
-    background: var(--hover);
-    color: white;
 }
 .icon {
     width: 50px;

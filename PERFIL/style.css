@@ -1022,3 +1022,7 @@ body.dark-mode .btnCancelar:hover {
     font-weight: 500;
 }
 .sem-viagens { grid-column: 1 / -1; width: 100%; padding: 35px 20px; color: var(--text); text-align: center; }
+
+
+.viagens-text #btnVerTodasViagens { color: var(--primary); font-size: 15px; font-weight: 400; }
+.viagens-text #btnVerTodasViagens:hover { color: var(--primary-dark, var(--primary)); }

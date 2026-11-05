@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamentos</title>
-    <link rel="stylesheet" href="pagamentos.css?v=sync-rewards-20261103">
+    <link rel="stylesheet" href="pagamentos.css?v=coupons-pending-20261104">
     <link rel="stylesheet" href="../css/menurodape.css">
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="stylesheet" href="../css/assistente.css">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
-    <link rel="stylesheet" href="../css/forms.css?v=dark-inputs-20261029">
+    <link rel="stylesheet" href="../css/forms.css?v=select-popup-20261104">
 </head>
 <body>
     <div class="nav">
@@ -139,7 +139,7 @@
                 <span class="icone"><img src="../img/icones/missao.png" alt=""></span>
 
                 <div>
-                    <p>Pagamentos aprovados</p>
+                    <p>Pagamentos aprovados <span id="pagamentosPendentesResumo" class="contador-pendentes" hidden></span></p>
                     <h2 id="pagamentosAprovadosResumo">0</h2>
                 </div>
             </div>
@@ -155,7 +155,11 @@
 
         </section>
 
-        <section class="historico">
+                <section class="historico historico-cupons">
+            <div class="cabecalho-historico"><h2>Cupons de recompensa</h2></div>
+            <div id="cuponsRecompensaDados" aria-live="polite"></div>
+        </section>
+<section class="historico">
 
             <div class="cabecalho-historico">
                 <h2>Histórico de pagamentos</h2>
@@ -165,6 +169,7 @@
                     <option value="aprovado">Aprovados</option>
                     <option value="pendente">Pendentes</option>
                     <option value="recusado">Recusados</option>
+                    <option value="cancelada">Cancelados</option>
                 </select>
             </div>
 
@@ -172,10 +177,7 @@
 
         </section>
 
-        <section class="historico">
-            <div class="cabecalho-historico"><h2>Cupons de recompensa</h2></div>
-            <div id="cuponsRecompensaDados" aria-live="polite"></div>
-        </section>
+        
 
     </main>
     </div>
@@ -281,8 +283,28 @@
                 </div>
 
                 <div class="detalhe">
-                    <span>Data da viagem</span>
+                    <span>Data do pagamento</span>
                     <strong id="modalData">15/09/2026</strong>
+                </div>
+
+                <div class="detalhe" id="linhaDataViagem" hidden>
+                    <span>Data do voo</span>
+                    <strong id="modalDataViagem"></strong>
+                </div>
+
+                <div class="detalhe" id="linhaRotaVoo" hidden>
+                    <span>Rota</span>
+                    <strong id="modalRotaVoo"></strong>
+                </div>
+
+                <div class="detalhe" id="linhaCodigoVoo" hidden>
+                    <span>Código do voo</span>
+                    <strong id="modalCodigoVoo"></strong>
+                </div>
+
+                <div class="detalhe" id="linhaCodigoAviao" hidden>
+                    <span>Código do avião</span>
+                    <strong id="modalCodigoAviao"></strong>
                 </div>
 
                 <div class="detalhe">
@@ -307,6 +329,8 @@
 
             <div class="modal-acoes">
 
+                <a class="btn-rastrear-voo" id="btnRastrearVoo" hidden>Rastrear este voo</a>
+
                 <button class="btn-comprovante">
                     📄 Ver comprovante
                 </button>
@@ -322,7 +346,7 @@
     </div>
 
 
-    <script src="script.js?v=payment-flow-fix-20261103"></script>
+    <script src="script.js?v=coupons-pending-20261104"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>
     <script src="../js/darkmodedemais.js?v=theme-preference-sync-20261029"></script>

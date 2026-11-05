@@ -139,6 +139,8 @@ async function historico(idUsuario) {
     const conexao = criarConexao();
     await new Promise((resolve, reject) => conexao.connect(erro => erro ? reject(erro) : resolve()));
     try {
+        await query(conexao, `UPDATE boatour_pagamentos_simulados SET status = 'cancelada', motivo = ? WHERE id_usuario = ? AND status = 'pendente' AND criado_em <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)`, ['Prazo de pagamento expirado.', idUsuario]);
+        await query(conexao, `UPDATE boatour_viagens_simuladas v INNER JOIN boatour_pagamentos_simulados p ON p.id_pagamento = v.id_pagamento SET v.status = 'cancelada' WHERE p.id_usuario = ? AND p.status = 'cancelada' AND p.motivo = ?`, [idUsuario, 'Prazo de pagamento expirado.']);
         const [pagamentos, viagens, cupons, movimentos] = await Promise.all([
             query(conexao, 'SELECT * FROM boatour_pagamentos_simulados WHERE id_usuario = ? ORDER BY criado_em DESC', [idUsuario]),
             query(conexao, 'SELECT * FROM boatour_viagens_simuladas WHERE id_usuario = ? ORDER BY criado_em DESC', [idUsuario]),
@@ -186,8 +188,8 @@ async function registrar(idUsuario, dados) {
     const pedido = dados?.pedido || pagamento.pedido || {};
     const pagamentoId = String(pagamento.id || pagamento.id_pagamento || '').slice(0, 80);
     const valor = dinheiro(pagamento.valor);
-    if (!pagamentoId || !(valor > 0) || !['pix', 'cartao', 'boleto', 'saldo'].includes(pagamento.metodo)
-        || !['aprovado', 'pendente', 'recusado'].includes(pagamento.status)) {
+    if (!pagamentoId || !(valor > 0) || !['pix', 'cartao', 'boleto'].includes(pagamento.metodo)
+        || !['aprovado', 'pendente', 'recusado', 'cancelada'].includes(pagamento.status)) {
         const erro = new Error('Dados de pagamento inválidos.'); erro.statusCode = 400; throw erro;
     }
 
@@ -199,8 +201,25 @@ async function registrar(idUsuario, dados) {
         if (existente.length && Number(existente[0].id_usuario) !== Number(idUsuario)) {
             const erro = new Error('Este pagamento pertence a outra conta.'); erro.statusCode = 403; throw erro;
         }
+        const statusAnterior = existente[0]?.status;
+        const criadoEmExistente = existente.length ? new Date(existente[0].criado_em) : null;
+        const prazoExpirado = statusAnterior === 'pendente' && criadoEmExistente && !Number.isNaN(criadoEmExistente.getTime())
+            && Date.now() >= criadoEmExistente.getTime() + 5 * 60 * 1000;
+        if (prazoExpirado) {
+            pagamento.status = 'cancelada';
+            pagamento.motivo = 'Prazo de pagamento expirado.';
+        } else if (['aprovado', 'recusado', 'cancelada'].includes(statusAnterior) && pagamento.status !== statusAnterior) {
+            const erro = new Error('Este pagamento já foi finalizado e não pode ser alterado.'); erro.statusCode = 409; throw erro;
+        }
         const pedidoSalvo = existente.length ? jsonSeguro(existente[0].dados_pedido) : null;
-        const pedidoFinal = pedido && Object.keys(pedido).length ? pedido : pedidoSalvo || {};
+        const pedidoFinal = { ...(pedidoSalvo || {}), ...(pedido || {}) };
+        const subtotal = dinheiro(pagamento.subtotal ?? pedidoFinal.valor ?? valor);
+        const descontoSaldo = dinheiro(pagamento.descontoSaldo ?? pedidoFinal.descontoSaldo ?? 0);
+        if (descontoSaldo < 0 || (pagamento.tipo === 'recarga' && descontoSaldo > 0)) {
+            const erro = new Error('Desconto BoaPay inválido.'); erro.statusCode = 400; throw erro;
+        }
+        pedidoFinal.descontoSaldo = descontoSaldo;
+        let descontoCupom = 0;
         const cupomCodigo = String(pagamento.cupomCodigo || existente[0]?.cupom_codigo || '').trim().toUpperCase() || null;
         let cupom = null;
         if (cupomCodigo) {
@@ -211,19 +230,34 @@ async function registrar(idUsuario, dados) {
                 const erro = new Error('Cupom indisponível ou já utilizado.'); erro.statusCode = 409; throw erro;
             }
             if (cupom.ods !== 8) { const erro = new Error('Este cupom não é um cupom de desconto ODS 8.'); erro.statusCode = 400; throw erro; }
-            const subtotal = dinheiro(pagamento.subtotal ?? pedidoFinal.valor ?? valor);
             const percentual = Number(cupom.desconto_percentual) || percentualCupomOds8(subtotal);
             const desconto = dinheiro(subtotal * percentual / 100);
-            const baseComDesconto = Math.max(0, subtotal - desconto);
-            const parcelas = Math.max(1, Number(pagamento.parcelas) || 1);
-            const calculado = dinheiro(baseComDesconto * (parcelas > 3 ? 1 + 0.02 * (parcelas - 3) : 1));
-            if (Math.abs(calculado - valor) > 0.02) { const erro = new Error('O valor enviado não corresponde ao cupom aplicado. Atualize o resumo e tente novamente.'); erro.statusCode = 409; throw erro; }
+            descontoCupom = desconto;
             pagamento.descontoCupom = desconto;
             pagamento.descontoPercentual = percentual;
             pedidoFinal.cupom = { codigo: cupomCodigo, desconto, percentual };
         }
+        if (pagamento.tipo !== 'recarga') {
+            const baseComDescontos = Math.max(0, subtotal - descontoCupom - descontoSaldo);
+            if (descontoSaldo > Math.max(0, subtotal - descontoCupom - 0.01)) {
+                const erro = new Error('O desconto BoaPay não pode zerar o valor da compra.'); erro.statusCode = 409; throw erro;
+            }
+            const parcelas = Math.max(1, Number(pagamento.parcelas) || 1);
+            const calculado = dinheiro(baseComDescontos * (parcelas > 3 ? 1 + 0.02 * (parcelas - 3) : 1));
+            if (Math.abs(calculado - valor) > 0.02) {
+                const erro = new Error('O valor enviado não corresponde aos descontos aplicados. Atualize o resumo e tente novamente.'); erro.statusCode = 409; throw erro;
+            }
+            if (descontoSaldo > 0) {
+                const referenciaSaldo = pagamentoId + ':saldo';
+                const debitoExistente = await query(conexao, 'SELECT id_movimento FROM boatour_saldo_movimentos WHERE referencia = ? FOR UPDATE', [referenciaSaldo]);
+                const saldoAtual = await query(conexao, 'SELECT COALESCE(SUM(valor), 0) AS saldo FROM boatour_saldo_movimentos WHERE id_usuario = ?', [idUsuario]);
+                if (!debitoExistente.length && Number(saldoAtual[0]?.saldo || 0) < descontoSaldo) {
+                    const erro = new Error('Seu saldo BoaPay mudou. Atualize o pagamento e tente novamente.'); erro.statusCode = 409; throw erro;
+                }
+            }
+        }
 
-        const criadoEm = pagamento.criadoEm ? new Date(pagamento.criadoEm) : new Date();
+        const criadoEm = existente.length ? new Date(existente[0].criado_em) : new Date();
         const dataValida = Number.isNaN(criadoEm.getTime()) ? new Date() : criadoEm;
         const dadosPedidoJson = JSON.stringify(pedidoFinal);
         await query(conexao, `INSERT INTO boatour_pagamentos_simulados
@@ -236,7 +270,7 @@ async function registrar(idUsuario, dados) {
 
         if (viagem && pagamento.status !== 'recusado') {
             const viagemId = String(viagem.id || viagem.id_viagem || `VG-${pagamentoId.slice(-24)}`).slice(0, 80);
-            const statusViagem = pagamento.status === 'aprovado' ? 'confirmada' : 'aguardando pagamento';
+            const statusViagem = pagamento.status === 'aprovado' ? 'confirmada' : pagamento.status === 'cancelada' ? 'cancelada' : 'aguardando pagamento';
             await query(conexao, `INSERT INTO boatour_viagens_simuladas
                 (id_viagem, id_pagamento, id_usuario, titulo, imagem, origem, destino, data_ida, data_volta, codigo_voo, codigo_aviao, status, dados_viagem, criado_em)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -260,14 +294,14 @@ async function registrar(idUsuario, dados) {
         }
 
         if (pagamento.status === 'aprovado' && pagamento.tipo !== 'recarga') {
-            const referenciaDebito = `${pagamentoId}:saldo`;
-            if (pagamento.metodo === 'saldo') {
+            const referenciaDebito = pagamentoId + ':saldo';
+            if (descontoSaldo > 0) {
                 const jaDebitado = await query(conexao, 'SELECT id_movimento FROM boatour_saldo_movimentos WHERE referencia = ? FOR UPDATE', [referenciaDebito]);
                 if (!jaDebitado.length) {
                     const totalSaldo = await query(conexao, 'SELECT COALESCE(SUM(valor), 0) AS saldo FROM boatour_saldo_movimentos WHERE id_usuario = ?', [idUsuario]);
-                    if (Number(totalSaldo[0]?.saldo || 0) < valor) { const erro = new Error('Saldo BoaPay insuficiente.'); erro.statusCode = 409; throw erro; }
+                    if (Number(totalSaldo[0]?.saldo || 0) < descontoSaldo) { const erro = new Error('Saldo BoaPay insuficiente para aplicar o desconto.'); erro.statusCode = 409; throw erro; }
                     await query(conexao, 'INSERT INTO boatour_saldo_movimentos (id_usuario, referencia, id_pagamento, tipo, valor, descricao, criado_em) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                        [idUsuario, referenciaDebito, pagamentoId, 'uso', -valor, `Pagamento ${pagamento.descricao || ''}`.slice(0, 255), dataValida]);
+                        [idUsuario, referenciaDebito, pagamentoId, 'uso', -descontoSaldo, ('Desconto BoaPay em ' + (pagamento.descricao || 'compra')).slice(0, 255), dataValida]);
                 }
             }
 
@@ -307,6 +341,17 @@ async function registrar(idUsuario, dados) {
     } finally { conexao.end(); }
 }
 
+async function expirarPendentes() {
+    await inicializar();
+    const conexao = criarConexao();
+    await new Promise((resolve, reject) => conexao.connect(erro => erro ? reject(erro) : resolve()));
+    try {
+        await query(conexao, "UPDATE boatour_pagamentos_simulados SET status = 'cancelada', motivo = ? WHERE status = 'pendente' AND criado_em <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)", ['Prazo de pagamento expirado.']);
+        await query(conexao, "UPDATE boatour_viagens_simuladas v INNER JOIN boatour_pagamentos_simulados p ON p.id_pagamento = v.id_pagamento SET v.status = 'cancelada' WHERE p.status = 'cancelada' AND p.motivo = ?", ['Prazo de pagamento expirado.']);
+    } finally {
+        conexao.end();
+    }
+}
 async function saldoUsuario(conexao, idUsuario) {
     const linhas = await query(conexao, 'SELECT COALESCE(SUM(valor), 0) AS saldo FROM boatour_saldo_movimentos WHERE id_usuario = ?', [idUsuario]);
     return Number(linhas[0]?.saldo || 0);
@@ -328,4 +373,4 @@ async function validarCupom(idUsuario, codigo, subtotal) {
     } finally { conexao.end(); }
 }
 
-module.exports = { inicializar, historico, registrar, validarCupom, percentualCupomOds8, percentualCashbackOds12 };
+module.exports = { inicializar, historico, registrar, validarCupom, expirarPendentes, percentualCupomOds8, percentualCashbackOds12 };

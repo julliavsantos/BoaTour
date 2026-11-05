@@ -294,6 +294,7 @@ body {
     justify-content: space-between;
     border-bottom: 1px solid #e9eeee;
 }
+.detalhe[hidden] { display: none !important; }
 .detalhe span {
     color: var(--text);
     font-size: 12px;
@@ -308,7 +309,8 @@ body {
     gap: 10px;
 }
 .btn-comprovante,
-.btn-fechar {
+.btn-fechar,
+.btn-rastrear-voo {
     flex: 1;
     padding: 12px;
     border-radius: 8px;
@@ -316,6 +318,8 @@ body {
     font-weight: 700;
     cursor: pointer;
     transition: 0.2s ease;
+    text-align: center;
+    text-decoration: none;
 }
 .btn-comprovante {
     border: none;
@@ -325,6 +329,16 @@ body {
 .btn-comprovante:hover {
     background-color: #29494c;
 }
+.btn-rastrear-voo {
+    border: none;
+    background-color: var(--primary, #0b9995);
+    color: #ffffff;
+}
+.btn-rastrear-voo:hover {
+    background-color: var(--primary-dark, #087876);
+    color: #ffffff;
+}
+.btn-rastrear-voo[hidden] { display: none !important; }
 .btn-fechar {
     border: 1px solid #dce3e3;
     background-color: #ffffff;
@@ -398,3 +412,7 @@ body.dark-mode .account-layout{
 .cupom-recompensa-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 10px 0; padding: 16px 18px; border: 1px dashed var(--primary, #2f8588); border-radius: 14px; background: color-mix(in srgb, var(--primary, #2f8588) 7%, var(--surface, #fff)); }
 .cupom-recompensa-card strong { color: var(--primary, #2f8588); font-family: monospace; font-size: 15px; letter-spacing: .04em; }
 .cupom-recompensa-card span { color: var(--muted, #64748b); font-size: 13px; }
+
+.contador-pendentes { display: inline-flex; align-items: center; margin-left: 6px; padding: 3px 8px; border-radius: 999px; background: #fff3d6; color: #8a6100; font-size: 10px; font-weight: 700; vertical-align: middle; white-space: nowrap; }
+.contador-pendentes[hidden] { display: none; }
+.historico-cupons { margin: -20px 0 34px; }

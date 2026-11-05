@@ -190,7 +190,8 @@ body.dark-mode .fundo {
     border-radius: 50%;
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.15);
 }
-.chat .mensagem.bot strong {
+/* Só o nome do autor (filho direto) vira bloco. O negrito dentro do texto continua na mesma linha. */
+.chat .mensagem.bot > strong {
     display: block;
     margin-bottom: 3px;
     font-size: 15px;
@@ -208,7 +209,7 @@ body.dark-mode .fundo {
     border-radius: 20px 20px 6px 20px;
     box-shadow: 0 3px 8px rgba(0, 75, 140, 0.16);
 }
-.chat .mensagem.usuario strong {
+.chat .mensagem.usuario > strong {
     display: block;
     margin-bottom: 3px;
     font-size: 14px;
@@ -369,4 +370,153 @@ body.dark-mode .fundo {
 .opcao-rapida:hover {
     background-color: var(--hover);
     transform: translateX(3px);
+}
+
+/* Botão de ação dentro da mensagem do bot (ex.: promoções) */
+.chat .mensagem.bot .btn-acao-chat {
+    display: block;
+    width: fit-content;
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(21, 45, 48, 0.18);
+    transition: 0.2s ease;
+}
+.chat .mensagem.bot .btn-acao-chat:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+
+/* Espaço entre as mensagens (vale para <p> da saudação e <div> das mensagens criadas pelo script) */
+.chat .mensagem {
+    margin-bottom: 16px;
+}
+
+/* ===== Mensagens formatadas da Julianinha ===== */
+.chat .mensagem.bot {
+    display: block;
+    box-sizing: border-box;
+    width: fit-content;
+    max-width: calc(100% - 55px);
+    min-width: 0;
+    margin-left: 55px;
+    margin-right: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.chat .mensagem.bot .mensagem-autor {
+    display: block;
+    margin: 0 0 8px;
+}
+
+.chat .mensagem-conteudo {
+    display: block;
+    min-width: 0;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.chat .mensagem-conteudo p {
+    margin: 0 0 10px;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.chat .mensagem-conteudo p:last-child { margin-bottom: 0; }
+
+.chat .mensagem-conteudo h1,
+.chat .mensagem-conteudo h2,
+.chat .mensagem-conteudo h3,
+.chat .mensagem-conteudo h4 {
+    margin: 14px 0 7px;
+    color: var(--primary-dark);
+    font-weight: 800;
+    line-height: 1.35;
+}
+.chat .mensagem-conteudo h1 { font-size: 19px; }
+.chat .mensagem-conteudo h2 { font-size: 17px; }
+.chat .mensagem-conteudo h3,
+.chat .mensagem-conteudo h4 { font-size: 15px; }
+
+.chat .mensagem-conteudo ul,
+.chat .mensagem-conteudo ol {
+    margin: 7px 0 12px;
+    padding-left: 23px;
+}
+.chat .mensagem-conteudo li { margin: 5px 0; padding-left: 2px; }
+
+.chat .mensagem-conteudo strong {
+    display: inline;
+    margin: 0;
+    color: var(--primary-dark);
+    font-weight: 800;
+}
+
+.chat .mensagem-conteudo blockquote {
+    margin: 10px 0;
+    padding: 9px 13px;
+    border-left: 3px solid var(--primary);
+    border-radius: 0 9px 9px 0;
+    background: var(--surface-alt);
+}
+
+.chat .mensagem-conteudo .tabela-mensagem-scroll {
+    width: 100%;
+    max-width: 100%;
+    margin: 12px 0;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.chat .mensagem-conteudo table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    table-layout: auto;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.chat .mensagem-conteudo th,
+.chat .mensagem-conteudo td {
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+    overflow-wrap: anywhere;
+}
+.chat .mensagem-conteudo th {
+    background: var(--surface-alt);
+    color: var(--primary-dark);
+    font-weight: 800;
+}
+.chat .mensagem-conteudo tr:last-child td { border-bottom: 0; }
+.chat .mensagem-conteudo a {
+    color: var(--primary-dark);
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+}
+.chat .mensagem-conteudo code {
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: var(--surface-alt);
+    font-size: .92em;
+}
+.chat .mensagem-conteudo hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 12px 0;
+}
+.chat .mensagem.usuario {
+    white-space: normal;
+    overflow-wrap: anywhere;
 }

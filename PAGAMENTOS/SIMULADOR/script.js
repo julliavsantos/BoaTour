@@ -1,5 +1,12 @@
-const USAR_API = true;
-const API = "http://localhost:3000";
+const API = "";
+
+async function lerRespostaApi(resposta) {
+    const tipoConteudo = resposta.headers.get("content-type") || "";
+    if (!tipoConteudo.includes("application/json")) {
+        throw new Error("A API BoaTour não respondeu em JSON. Confira se o servidor da API está ativo na porta 3000.");
+    }
+    return resposta.json();
+}
 const PEDIDOS_EXEMPLO = [ // PASSO 5: remover quando a COMPRAR enviar o pedido real
     { titulo: "Voo Porto Alegre → Lisboa", valor: 3890.5, origem: "Porto Alegre", destino: "Lisboa", ida: "2027-03-10", volta: "2027-03-24" },
     { titulo: "Pacote Gramado (hotel + voo)", valor: 2150, origem: "São Paulo", destino: "Gramado", ida: "2027-01-15", volta: "2027-01-20" },
@@ -12,28 +19,36 @@ const brl = n => Number(n).toLocaleString("pt-BR", { style: "currency", currency
 const dataBr = d => new Date(d).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 let usuario = JSON.parse(localStorage.getItem("boatourUsuario") || "null");
 let token = localStorage.getItem("boatourSessionToken");
+let USAR_API = Boolean(token);
 let CHAVE = "boatourPagamentos:" + (usuario?.id_usuario || "visitante");
 let estado = { saldo: 0, pagamentos: [], viagens: [], cupons: [] };
 let pedido = null, cupomAplicado = null;
+let erroSessao = "";
+const DURACAO_PAGAMENTO_MS = 5 * 60 * 1000;
+let pagamentoAtivoId = null;
+let pedidoCheckoutInvalido = false;
+const pagamentosExpirando = new Set();
 
 /* ---------- ARMAZÉM: localStorage ou MySQL (mesma interface) ---------- */
 const Armazem = {
     async carregar() {
         if (USAR_API) {
             const r = await fetch(API + "/pagamentos/historico", { headers: { "X-Session-Token": token } });
-            const d = await r.json();
+            const d = await lerRespostaApi(r);
             if (!r.ok) {
                 const erro = new Error(d.error || "Falha ao carregar.");
                 erro.status = r.status;
                 throw erro;
             }
             // o MySQL devolve snake_case: adapta para o formato usado na tela
-            d.pagamentos = (d.pagamentos || []).map(p => ({ ...p, valor: Number(p.valor) }));
+            d.pagamentos = (d.pagamentos || []).map(p => ({ ...p, valor: Number(p.valor), descontoSaldo: Number(p.pedido?.descontoSaldo || 0) }));
             d.viagens = (d.viagens || []).map(v => ({ ...v, dados: typeof v.dados === "string" ? JSON.parse(v.dados) : v.dados }));
             d.cupons = Array.isArray(d.cupons) ? d.cupons : [];
             return d;
         }
-        return JSON.parse(localStorage.getItem(CHAVE) || '{"saldo":0,"pagamentos":[],"viagens":[]}');
+        const local = JSON.parse(localStorage.getItem(CHAVE) || '{"saldo":0,"pagamentos":[],"viagens":[]}' );
+        local.pagamentos ||= []; local.viagens ||= []; local.cupons ||= []; local.movimentos ||= [];
+        return local;
     },
     // pagamento: obrigatório; viagem: opcional; delta: variação do saldo
     async registrar(pagamento, viagem, pedidoAtual = pedido) {
@@ -43,14 +58,28 @@ const Armazem = {
                 headers: { "Content-Type": "application/json", "X-Session-Token": token },
                 body: JSON.stringify({ pagamento, viagem, pedido: pedidoAtual })
             });
-            const resposta = await r.json();
+            const resposta = await lerRespostaApi(r);
             if (!r.ok) throw new Error(resposta.error || "Falha ao registrar.");
             estado = await this.carregar();
+            const pagamentoSalvo = estado.pagamentos.find(item => item.id === pagamento.id);
+            if (pagamentoSalvo) Object.assign(pagamento, pagamentoSalvo);
+            if (viagem) {
+                const viagemSalva = estado.viagens.find(item => item.idPagamento === viagem.idPagamento);
+                if (viagemSalva) Object.assign(viagem, viagemSalva);
+            }
             return resposta;
         }
         const i = estado.pagamentos.findIndex(p => p.id === pagamento.id);
+        const pagamentoAnterior = i >= 0 ? estado.pagamentos[i] : null;
+        const descontoAnteriorAplicado = pagamentoAnterior?.status === "aprovado" ? Number(pagamentoAnterior.descontoSaldo || 0) : 0;
+        const descontoAtualAplicado = pagamento.status === "aprovado" ? Number(pagamento.descontoSaldo || 0) : 0;
+        estado.saldo = Math.max(0, Number(estado.saldo || 0) - Math.max(0, descontoAtualAplicado - descontoAnteriorAplicado));
         if (i >= 0) estado.pagamentos[i] = pagamento; else estado.pagamentos.unshift(pagamento);
-        if (viagem) estado.viagens.unshift(viagem);
+        if (viagem) {
+            const indiceViagem = estado.viagens.findIndex(item => item.idPagamento === viagem.idPagamento);
+            if (indiceViagem >= 0) estado.viagens[indiceViagem] = viagem;
+            else estado.viagens.unshift(viagem);
+        }
         localStorage.setItem(CHAVE, JSON.stringify(estado));
     }
 };
@@ -86,8 +115,17 @@ function qrFalso(texto) {
 
 /* ---------- PEDIDO ---------- */
 function carregarPedido() {
-    const salvo = sessionStorage.getItem("boatourPedido"); // PASSO 5
-    const lista = salvo ? [JSON.parse(salvo), ...(checkoutDaCompra ? [] : PEDIDOS_EXEMPLO)] : PEDIDOS_EXEMPLO;
+    const salvo = sessionStorage.getItem("boatourPedido");
+    let pedidoSalvo = null;
+    try { pedidoSalvo = salvo ? JSON.parse(salvo) : null; } catch { pedidoSalvo = null; }
+    if (checkoutDaCompra && (!pedidoSalvo || !Number.isFinite(Number(pedidoSalvo.valor)) || Number(pedidoSalvo.valor) <= 0)) {
+        pedidoCheckoutInvalido = true;
+        $("pedido").innerHTML = '<p class="erro-checkout">Não recebemos os dados da compra. Volte à confirmação e tente novamente.</p>';
+        $("btnPagar").disabled = true;
+        erroCampo("geral", "Dados da compra ausentes. Nenhum pagamento pode ser realizado.");
+        return;
+    }
+    const lista = pedidoSalvo ? [pedidoSalvo, ...(checkoutDaCompra ? [] : PEDIDOS_EXEMPLO)] : PEDIDOS_EXEMPLO;
     $("pedido").innerHTML = `<select id="selPedido">${lista.map((p, i) => `<option value="${i}">${p.titulo} - ${brl(p.valor)}</option>`).join("")}</select>
         <div class="total"><span>Total</span><span id="totalPedido"></span></div>`;
     if (checkoutDaCompra) {
@@ -109,7 +147,7 @@ async function aplicarCupom() {
             headers: { "Content-Type": "application/json", "X-Session-Token": token },
             body: JSON.stringify({ codigo, subtotal: pedido.valor })
         });
-        const dados = await resposta.json();
+        const dados = await lerRespostaApi(resposta);
         if (!resposta.ok) throw new Error(dados.error || "Cupom indisponível.");
         cupomAplicado = dados;
         status.textContent = `Cupom aplicado: −${brl(dados.desconto)} (${dados.percentual}% de desconto).`;
@@ -126,7 +164,16 @@ function montarParcelas() {
 }
 function atualizarTotal() {
     const p = metodo() === "cartao" ? +$("cParcelas").value : 1;
-    const base = Math.max(0, Number(pedido.valor) - Number(cupomAplicado?.desconto || 0));
+    const subtotalComCupom = Math.max(0, Number(pedido.valor) - Number(cupomAplicado?.desconto || 0));
+    const saldoDisponivel = Math.max(0, Number(estado.saldo) || 0);
+    const limiteDescontoSaldo = Math.max(0, subtotalComCupom - 0.01);
+    const descontoSaldo = $("usarSaldoBoaPay").checked ? Math.min(saldoDisponivel, limiteDescontoSaldo) : 0;
+    const base = Math.max(0, subtotalComCupom - descontoSaldo);
+    $("saldoDescontoDisponivel").textContent = "Saldo disponível: " + brl(saldoDisponivel);
+    $("saldoDescontoResumo").textContent = descontoSaldo > 0
+        ? "Desconto aplicado: " + brl(descontoSaldo) + " · falta pagar " + brl(total(base, p)) + "."
+        : saldoDisponivel > 0 ? "Marque para abater seu saldo do valor da compra." : "Você ainda não tem saldo disponível para usar como desconto.";
+    $("saldoDescontoResumo").classList.toggle("saldo-desconto__ativo", descontoSaldo > 0);
     $("totalPedido").textContent = brl(total(base, p));
     $("btnPagar").textContent = "Pagar " + brl(total(base, p));
     $("campos-cartao").hidden = metodo() !== "cartao";
@@ -134,9 +181,14 @@ function atualizarTotal() {
 
 /* ---------- PAGAR ---------- */
 async function pagar() {
+    if (pedidoCheckoutInvalido || !pedido) return;
     limparErros(); erroCampo("geral", "");
     const m = metodo(), parcelas = m === "cartao" ? +$("cParcelas").value : 1;
-    const baseDescontada = Math.max(0, Number(pedido.valor) - Number(cupomAplicado?.desconto || 0));
+    const subtotalComCupom = Math.max(0, Number(pedido.valor) - Number(cupomAplicado?.desconto || 0));
+    const descontoSaldo = $("usarSaldoBoaPay").checked
+        ? Math.min(Math.max(0, Number(estado.saldo) || 0), Math.max(0, subtotalComCupom - 0.01))
+        : 0;
+    const baseDescontada = Math.max(0, subtotalComCupom - descontoSaldo);
     const valor = Math.round(total(baseDescontada, parcelas) * 100) / 100;
     let final = null, status = "aprovado", motivo = null;
 
@@ -154,24 +206,26 @@ async function pagar() {
         if (final === "0000") { status = "recusado"; motivo = "Cartão recusado pelo banco emissor (simulação)."; }
         else if (final === "2222") { status = "pendente"; motivo = "Em análise de segurança (simulação)."; }
         $("cNumero").value = $("cCvv").value = ""; // nunca guardamos número completo nem CVV
-    } else if (m === "saldo") {
-        if (estado.saldo < valor) { status = "recusado"; motivo = "Saldo insuficiente na carteira BoaPay."; }
     } else status = "pendente"; // pix e boleto aguardam o "pagamento"
 
-    const pag = { id: idPag(), tipo: "compra", descricao: pedido.titulo, valor, subtotal: Number(pedido.valor), descontoCupom: Number(cupomAplicado?.desconto || 0), descontoPercentual: Number(cupomAplicado?.percentual || 0), cupomCodigo: cupomAplicado?.codigo || null, metodo: m, parcelas, cartaoFinal: final, bandeira: final ? bandeira($("cNumero").dataset.b || "") : null, status, motivo, criadoEm: new Date().toISOString() };
+    const pag = { id: idPag(), tipo: "compra", descricao: pedido.titulo, valor, subtotal: Number(pedido.valor), descontoCupom: Number(cupomAplicado?.desconto || 0), descontoSaldo, descontoPercentual: Number(cupomAplicado?.percentual || 0), cupomCodigo: cupomAplicado?.codigo || null, metodo: m, parcelas, cartaoFinal: final, bandeira: final ? bandeira($("cNumero").dataset.b || "") : null, status, motivo, criadoEm: new Date().toISOString() };
     const viagem = status === "recusado" ? null : novaViagem(pag, status);
     $("btnPagar").disabled = true;
     try {
-        await Armazem.registrar(pag, viagem, pedido);
+        await Armazem.registrar(pag, viagem, { ...pedido, descontoSaldo, descontoCupom: Number(cupomAplicado?.desconto || 0) });
         render(); abrirResultado(pag, viagem);
     } catch (e) { erroCampo("geral", e.message || "Não foi possível registrar o pagamento."); }
     $("btnPagar").disabled = false;
 }
 
 function novaViagem(pag, status) {
-    return { id: "VG-" + pag.id.slice(3), idPagamento: pag.id, titulo: pedido.titulo, origem: pedido.origem, destino: pedido.destino, ida: pedido.ida, volta: pedido.volta,
+    const vooSelecionado = (Array.isArray(pedido.itens) ? pedido.itens : []).find(item => item.tipo === "voo" || item.categoria === "voo");
+    return { id: "VG-" + pag.id.slice(3), idPagamento: pag.id, titulo: pedido.titulo,
+        origem: vooSelecionado?.origem || pedido.origem || "", destino: vooSelecionado?.destino || pedido.destino || "",
+        ida: vooSelecionado?.dataSaida || pedido.ida || "", volta: pedido.volta || "",
         imagem: pedido.imagem || "", itens: pedido.itens || [], comprador: pedido.comprador || {}, viajantes: pedido.viajantes || [], ods: pedido.ods || [],
-        codigoVoo: "BT" + aleat(4, "0123456789"), codigoAviao: "PR-" + aleat(3, "ABCDEFGHJKLMNPQRSTUVWXYZ"), // fictícios (PASSO 6)
+        codigoVoo: vooSelecionado?.numeroVoo || vooSelecionado?.codigoVoo || ("BT" + aleat(4, "0123456789")),
+        codigoAviao: "PR-" + aleat(3, "ABCDEFGHJKLMNPQRSTUVWXYZ"),
         status: status === "aprovado" ? "confirmada" : "aguardando pagamento" };
 }
 
@@ -184,19 +238,80 @@ async function recarregarSaldo() {
 }
 
 // confirma um Pix/boleto pendente (o "cliente pagou")
+function prazoPagamento(pag) {
+    const criadoEm = new Date(pag.criadoEm).getTime();
+    return (Number.isFinite(criadoEm) ? criadoEm : Date.now()) + DURACAO_PAGAMENTO_MS;
+}
+
+function textoContagem(ms) {
+    const totalSegundos = Math.max(0, Math.ceil(ms / 1000));
+    const minutos = String(Math.floor(totalSegundos / 60)).padStart(2, "0");
+    const segundos = String(totalSegundos % 60).padStart(2, "0");
+    return minutos + ":" + segundos;
+}
+
+async function expirarPagamento(pag) {
+    if (!pag || pag.status !== "pendente" || pagamentosExpirando.has(pag.id)) return;
+    pagamentosExpirando.add(pag.id);
+    pag.status = "cancelada";
+    pag.motivo = "Prazo de pagamento expirado após cinco minutos.";
+    const viagem = estado.viagens.find(item => item.idPagamento === pag.id);
+    if (viagem) viagem.status = "cancelada";
+    try {
+        await Armazem.registrar(pag, viagem || null, {});
+    } catch (erro) {
+        console.error("Não foi possível sincronizar o cancelamento do pagamento:", erro);
+    }
+    render();
+    if (pagamentoAtivoId === pag.id && $("modal").classList.contains("ativo")) abrirResultado(pag, viagem || null);
+    pagamentosExpirando.delete(pag.id);
+}
+
+function atualizarContagemPagamento(pag) {
+    const relogio = $("prazoPagamento");
+    if (!relogio || pag.status !== "pendente") return;
+    const restante = prazoPagamento(pag) - Date.now();
+    relogio.textContent = "Este pagamento será cancelado em " + textoContagem(restante) + ".";
+    if (restante <= 0) expirarPagamento(pag);
+}
+
+function iniciarMonitorVencimentos() {
+    const verificar = async () => {
+        const agora = Date.now();
+        for (const pag of [...estado.pagamentos]) {
+            if (pag.status === "pendente" && prazoPagamento(pag) <= agora) await expirarPagamento(pag);
+        }
+        const pagamentoAtivo = estado.pagamentos.find(item => item.id === pagamentoAtivoId);
+        if (pagamentoAtivo?.status === "pendente") atualizarContagemPagamento(pagamentoAtivo);
+    };
+    verificar();
+    window.setInterval(verificar, 1000);
+}
+
 async function confirmar(id) {
-    const pag = estado.pagamentos.find(p => p.id === id); if (!pag) return;
+    const pag = estado.pagamentos.find(p => p.id === id);
+    if (!pag || pag.status !== "pendente") return;
+    if (Date.now() >= prazoPagamento(pag)) {
+        await expirarPagamento(pag);
+        return;
+    }
     pag.status = "aprovado"; pag.motivo = null;
     const viagem = estado.viagens.find(v => v.idPagamento === id);
     if (viagem) viagem.status = "confirmada";
     await Armazem.registrar(pag, viagem || null, pedido);
+    if (pag.status === "cancelada") {
+        render(); abrirResultado(pag, viagem || null);
+        return;
+    }
     window.location.href = "../index.html";
 }
 
 /* ---------- RENDER ---------- */
-const ROTULO = { pix: "Pix", cartao: "Cartão", boleto: "Boleto", saldo: "Saldo BoaPay" };
+const ROTULO = { pix: "Pix", cartao: "Cartão", boleto: "Boleto" };
 function render() {
-    $("saldo").textContent = $("saldoMetodo").textContent = brl(estado.saldo);
+    $("saldo").textContent = brl(estado.saldo);
+    $("usarSaldoBoaPay").disabled = Number(estado.saldo) <= 0;
+    if ($("usarSaldoBoaPay").disabled) $("usarSaldoBoaPay").checked = false;
     $("resumo").innerHTML = `<div><dt>Pedido atual</dt><dd>${pedido?.titulo || "Compra BoaTour"}</dd></div>
         <div><dt>Valor do pedido</dt><dd>${brl(pedido?.valor || 0)}</dd></div>`;
     const cupons = $("listaCuponsBoaPay");
@@ -210,9 +325,18 @@ function render() {
 
 /* ---------- MODAL (resultado / comprovante) ---------- */
 function abrirResultado(pag, viagem) {
-    const titulo = { aprovado: "Pagamento aprovado!", pendente: "Aguardando pagamento", recusado: "Pagamento recusado" }[pag.status];
+    pagamentoAtivoId = pag.id;
+    const titulo = { aprovado: "Pagamento aprovado!", pendente: "Aguardando pagamento", recusado: "Pagamento recusado", cancelada: "Pagamento cancelado" }[pag.status];
     const c = $("modalConteudo");
-    c.innerHTML = `<h3>${titulo}</h3><p>${pag.motivo || (pag.status === "aprovado" ? "Tudo certo. Este é o seu comprovante." : "Conclua o pagamento abaixo para confirmar.")}</p>`;
+    const mensagemPadrao = pag.status === "aprovado" ? "Tudo certo. Este é o seu comprovante." : pag.status === "cancelada" ? "O prazo de cinco minutos terminou. A compra foi cancelada." : "Conclua o pagamento antes do fim do prazo.";
+    c.innerHTML = "<h3>" + titulo + "</h3><p>" + (pag.motivo || mensagemPadrao) + "</p>";
+    if (pag.status === "pendente") {
+        const prazo = document.createElement("p");
+        prazo.id = "prazoPagamento";
+        prazo.className = "prazo-pagamento";
+        c.appendChild(prazo);
+        atualizarContagemPagamento(pag);
+    }
     if (pag.status === "pendente" && pag.metodo === "pix") {
         const cod = `00020126BOATOUR-SIMULACAO-${pag.id}-${pag.valor.toFixed(2)}`;
         c.appendChild(qrFalso(cod));
@@ -239,6 +363,7 @@ function abrirResultado(pag, viagem) {
 
 /* ---------- INICIAR ---------- */
 document.querySelectorAll('input[name="metodo"]').forEach(r => r.onchange = atualizarTotal);
+$("usarSaldoBoaPay").onchange = atualizarTotal;
 $("aplicarCupomPagamento").onclick = aplicarCupom;
 $("listaCuponsBoaPay")?.addEventListener("click", evento => {
     const botaoCupom = evento.target.closest("[data-cupom]");
@@ -248,72 +373,10 @@ $("listaCuponsBoaPay")?.addEventListener("click", evento => {
 });
 $("cParcelas").onchange = atualizarTotal;
 $("btnPagar").onclick = pagar; $("btnRecarga").onclick = recarregarSaldo;
-$("modalFechar").onclick = () => $("modal").classList.remove("ativo");
-$("modal").onclick = e => { if (e.target === $("modal")) $("modal").classList.remove("ativo"); };
+$("modalFechar").onclick = () => { $("modal").classList.remove("ativo"); pagamentoAtivoId = null; };
+$("modal").onclick = e => { if (e.target === $("modal")) { $("modal").classList.remove("ativo"); pagamentoAtivoId = null; } };
 $("cNumero").oninput = e => { const n = e.target.value.replace(/\D/g, "").slice(0, 16); e.target.dataset.b = n; e.target.value = n.replace(/(.{4})/g, "$1 ").trim(); };
 $("cValidade").oninput = e => { const n = e.target.value.replace(/\D/g, "").slice(0, 4); e.target.value = n.length > 2 ? n.slice(0, 2) + "/" + n.slice(2) : n; };
-
-function mostrarLogin(mensagem = "Entre na sua conta BoaTour para acessar seus pagamentos.") {
-    let overlay = document.getElementById("loginObrigatorio");
-    if (!overlay) {
-        overlay = document.createElement("div");
-        overlay.id = "loginObrigatorio";
-        overlay.style.cssText = "position:fixed;inset:0;z-index:99999;background:rgba(8,18,38,.82);display:grid;place-items:center;padding:20px;";
-        overlay.innerHTML = `
-          <form id="formLoginObrigatorio" style="box-sizing:border-box;width:min(420px,100%);background:#fff;color:#172033;border-radius:18px;padding:28px;box-shadow:0 20px 60px #0005;font-family:Arial,sans-serif">
-            <h2 style="margin:0 0 8px">Entre na BoaTour</h2>
-            <p id="mensagemLoginObrigatorio" style="margin:0 0 18px;line-height:1.5"></p>
-            <label for="loginCpf" style="display:block;margin:12px 0 6px">CPF</label>
-            <input id="loginCpf" inputmode="numeric" autocomplete="username" maxlength="14" required placeholder="Digite seu CPF" style="box-sizing:border-box;width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px">
-            <label for="loginSenha" style="display:block;margin:12px 0 6px">Senha</label>
-            <input id="loginSenha" type="password" autocomplete="current-password" required placeholder="Sua senha" style="box-sizing:border-box;width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px">
-            <p id="erroLoginObrigatorio" role="alert" style="color:#b42318;min-height:20px;margin:10px 0"></p>
-            <button id="btnLoginObrigatorio" type="submit" style="width:100%;padding:13px;border:0;border-radius:8px;background:#1455c0;color:white;font-weight:bold;cursor:pointer">Entrar e abrir pagamentos</button>
-            <p style="font-size:12px;color:#64748b;line-height:1.4;margin-bottom:0">Use o CPF e a senha da sua conta cadastrada. Nenhum dado de cartão é solicitado aqui.</p>
-          </form>`;
-        document.body.appendChild(overlay);
-        const form = document.getElementById("formLoginObrigatorio");
-        const cpf = document.getElementById("loginCpf");
-        cpf.addEventListener("input", () => {
-            const n = cpf.value.replace(/\D/g, "").slice(0, 11);
-            cpf.value = n.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})\.(\d{3})(\d)/, "$1.$2.$3").replace(/(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})$/, "$1.$2.$3-$4");
-        });
-        form.addEventListener("submit", async event => {
-            event.preventDefault();
-            const botao = document.getElementById("btnLoginObrigatorio");
-            const erroEl = document.getElementById("erroLoginObrigatorio");
-            botao.disabled = true;
-            botao.textContent = "Entrando...";
-            erroEl.textContent = "";
-            try {
-                const resposta = await fetch(API + "/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ cpf: cpf.value.replace(/\D/g, ""), senha: document.getElementById("loginSenha").value })
-                });
-                const dados = await resposta.json();
-                if (!resposta.ok || !dados.session_token || !dados.usuario) {
-                    throw new Error(dados.error || "Não foi possível entrar. Confira o CPF e a senha.");
-                }
-                usuario = dados.usuario;
-                token = dados.session_token;
-                localStorage.setItem("boatourUsuario", JSON.stringify(usuario));
-                localStorage.setItem("boatourSessionToken", token);
-                CHAVE = "boatourPagamentos:" + (usuario.id_usuario || "visitante");
-                overlay.remove();
-                await iniciarPagamentos();
-            } catch (erro) {
-                erroEl.textContent = erro.message || "Falha ao conectar à API. Confira se o servidor está rodando.";
-            } finally {
-                if (document.body.contains(botao)) {
-                    botao.disabled = false;
-                    botao.textContent = "Entrar e abrir pagamentos";
-                }
-            }
-        });
-    }
-    document.getElementById("mensagemLoginObrigatorio").textContent = mensagem;
-}
 
 async function iniciarPagamentos() {
     try {
@@ -321,52 +384,20 @@ async function iniciarPagamentos() {
         carregarPedido();
         render();
     } catch (e) {
-        if (USAR_API && (e.status === 401 || !token)) {
+        if (USAR_API && e.status === 401) {
             localStorage.removeItem("boatourSessionToken");
             token = null;
-            mostrarLogin("Sua sessão expirou ou você ainda não entrou. Faça login novamente para carregar o histórico.");
-            return;
-        }
-        erroCampo("geral", (e.message || "Erro ao carregar pagamentos.") + " Confira se o MySQL e o servidor estão ativos.");
-        carregarPedido();
-        render();
-    }
-}
-
-if (USAR_API && !token) {
-    mostrarLogin();
-} else {
-    iniciarPagamentos();
-}
-
-//Temporizador do pagamento, efetuado com 5 minutos
-let tempoRestante = 5 * 60;
-
-const 
-  timerElement = document.getElementById('contador-pagamento');
-
-function iniciarTemporizador() {
-    const intervalo = setInterval(() => {
-        let minutos = Math.floor(tempoRestante / 60);
-        let segundos = tempoRestante % 60;
-
-        // Formata para o padrão MM:SS (ex: 05:00)
-        minutos = minutos < 10 ? '0' + minutos : minutos;
-        segundos = segundos < 10 ? '0' + segundos : segundos;
-
-        if (timerElement) {
-            timerElement.textContent = `${minutos}:${segundos}`;
-        }
-
-        if (tempoRestante <= 0) {
-            clearInterval(intervalo);
-            alert("O tempo para efetuar o pagamento expirou! O voo foi liberado.");
-            window.location.href = "../../VOOS/index.html"; // Redireciona de volta para os voos
+            USAR_API = false;
+            erroSessao = "Sua sessão expirou. Esta simulação será salva neste navegador.";
+            try { estado = await Armazem.carregar(); }
+            catch { estado = { saldo: 0, pagamentos: [], viagens: [], cupons: [] }; }
         } else {
-            tempoRestante--;
+            erroCampo("geral", (e.message || "Erro ao carregar pagamentos.") + " Confira se o MySQL e o servidor estão ativos.");
         }
-    }, 1000);
+    }
+    carregarPedido();
+    render();
+    if (erroSessao) erroCampo("geral", erroSessao);
 }
 
-// Inicia a contagem assim que a página carregar
-window.onload = iniciarTemporizador;
+iniciarPagamentos().then(iniciarMonitorVencimentos);

@@ -7,7 +7,7 @@
 // Se true, voos que não estão na janela de horário (ex.: viagem em 2027)
 // mostram o avião "voando" num ciclo de 6 minutos, para a demonstração ficar viva.
 // Mude para false para mostrar "Aguardando embarque" / "Voo concluído" de verdade.
-const MODO_DEMONSTRACAO = true;
+const MODO_DEMONSTRACAO = false;
 const CICLO_DEMO_MS = 6 * 60 * 1000;
 
 const VELOCIDADE_KMH = 830;

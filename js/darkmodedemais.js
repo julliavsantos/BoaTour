@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const atualizarTema = ativo => {
         document.body.classList.toggle("dark-mode", ativo);
         botao.innerHTML = ativo
-            ? '<img src="../img/icones/sol.png" alt="Modo claro">'
-            : '<img src="../img/icones/lua.png" alt="Modo escuro">';
-        if (logo) logo.src = ativo ? "../img/logo/logodarkmode.png" : "../img/logo/logo.png";
+            ? '<img src="/img/icones/sol.png" alt="Modo claro">'
+            : '<img src="/img/icones/lua.png" alt="Modo escuro">';
+        if (logo) logo.src = ativo ? "/img/logo/logodarkmode.png" : "/img/logo/logo.png";
     };
     const obterModoAtivo = () => {
-        const preferencia = localStorage.getItem("boatour-theme-preference") || lerPreferenciaCookie();
+        const preferencia = lerPreferenciaCookie() || localStorage.getItem("boatour-theme-preference");
         if (preferencia === "escuro") return true;
         if (preferencia === "claro") return false;
         if (preferencia === "sistema") return mediaSistema.matches;

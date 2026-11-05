@@ -1,4 +1,4 @@
-fetch('http://localhost:3000/destinos/praias-populares')
+fetch('/destinos/praias-populares')
     .then(response => response.json())
     .then(destinos => {
 

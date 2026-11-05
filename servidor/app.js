@@ -36,16 +36,22 @@ const transportadorEmail = remetenteEmail && senhaEmail
     : null;
 
 
-// CORS - desenvolvimento local
+// CORS para os servidores locais do site, Live Server e chatbot.
 function setCors(res, req) {
     const origin = req.headers.origin || '';
-    const permitido =
-        origin === 'http://localhost:5500' ||
-        origin === 'http://127.0.0.1:5500' ||
-        origin === 'http://localhost:3000' ||
-        origin === 'http://127.0.0.1:3000';
+    let origemValida = false;
+    try {
+        const origem = new URL(origin);
+        const hostnameRequisicao = String(req.headers.host || '').split(':')[0].toLowerCase();
+        const hostnameOrigem = origem.hostname.toLowerCase();
+        const portaOrigem = Number(origem.port || (origem.protocol === 'https:' ? 443 : 80));
+        const hostsLocais = ['localhost', '127.0.0.1', '::1'];
+        const mesmoHost = hostnameOrigem === hostnameRequisicao;
+        const hostLocal = hostsLocais.includes(hostnameOrigem) && hostsLocais.includes(hostnameRequisicao);
+        origemValida = (mesmoHost || hostLocal) && [3000, 3001, 5500].includes(portaOrigem);
+    } catch {}
 
-    res.setHeader('Access-Control-Allow-Origin', permitido ? origin : 'http://localhost:5500');
+    if (origemValida) res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Session-Token');
@@ -953,7 +959,12 @@ const callback = (req, res) => {
 //SERVIDOR
 const server = http.createServer(callback);
 PagamentosBD.inicializar()
-    .then(() => console.log('Tabelas de pagamentos e recompensas verificadas.'))
+    .then(() => {
+        console.log('Tabelas de pagamentos e recompensas verificadas.');
+        PagamentosBD.expirarPendentes().catch(() => {});
+        const verificadorVencimentos = setInterval(() => PagamentosBD.expirarPendentes().catch(() => {}), 15000);
+        verificadorVencimentos.unref?.();
+    })
     .catch(erro => console.error('Tabelas de pagamentos/recompensas não foram criadas. Confira a conexão com boatour_bd:', erro.message))
     .finally(() => server.listen(PORT, () => {
         console.log(`Servidor BoaTour rodando em http://localhost:${PORT}`);

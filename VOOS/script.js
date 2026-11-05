@@ -270,7 +270,7 @@ async function carregarVoos() {
         // --- BUSCAR NO SERVIDOR ---
 
         let url =
-            "http://localhost:3000/voos";
+            "/voos";
 
 
         const query =
@@ -752,7 +752,7 @@ async function carregarAeroportos() {
 
         const resposta =
             await fetch(
-                "http://localhost:3000/aeroportos"
+                "/aeroportos"
             );
 
 

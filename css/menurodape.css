@@ -552,6 +552,88 @@ body.dark-mode #modalSenhaSairConta .login {
 .fechar:hover {
     color: var(--text);
 }
+
+/* Fechamentos de modais e galerias compartilham a mesma área e o mesmo X. */
+.fechar-perfil,
+.fechar,
+.fechar-oferta,
+.fechar-boas-vindas,
+.fechar-notificacoes,
+.fechar-editar,
+.fechar-galeria-banners,
+.fechar-modal,
+.fechar-modal-viajante,
+.fechar-modal-adicionar,
+.config-dialog-fechar,
+.rastreador-fechar,
+.remover-item-compra {
+    box-sizing: border-box !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    border: 1px solid var(--border, rgba(20, 55, 60, .14)) !important;
+    border-radius: 50% !important;
+    background: var(--surface-strong, #eef3f2) !important;
+    color: var(--text, #244247) !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: color .18s ease, background-color .18s ease, border-color .18s ease, transform .18s ease !important;
+}
+
+.fechar-perfil:hover,
+.fechar:hover,
+.fechar-oferta:hover,
+.fechar-boas-vindas:hover,
+.fechar-notificacoes:hover,
+.fechar-editar:hover,
+.fechar-galeria-banners:hover,
+.fechar-modal:hover,
+.fechar-modal-viajante:hover,
+.fechar-modal-adicionar:hover,
+.config-dialog-fechar:hover,
+.rastreador-fechar:hover {
+    background: var(--primary, #0b9995) !important;
+    border-color: var(--primary, #0b9995) !important;
+    color: #fff !important;
+    transform: rotate(90deg) !important;
+}
+
+.remover-item-compra {
+    background: var(--surface, #fff) !important;
+    color: var(--erro, #c83f3f) !important;
+}
+
+.remover-item-compra:hover {
+    background: var(--erro, #c83f3f) !important;
+    border-color: var(--erro, #c83f3f) !important;
+    color: #fff !important;
+    transform: rotate(90deg) !important;
+}
+
+.fechar-perfil:focus-visible,
+.fechar:focus-visible,
+.fechar-oferta:focus-visible,
+.fechar-boas-vindas:focus-visible,
+.fechar-notificacoes:focus-visible,
+.fechar-editar:focus-visible,
+.fechar-galeria-banners:focus-visible,
+.fechar-modal:focus-visible,
+.fechar-modal-viajante:focus-visible,
+.fechar-modal-adicionar:focus-visible,
+.config-dialog-fechar:focus-visible,
+.rastreador-fechar:focus-visible,
+.remover-item-compra:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--primary, #0b9995) 40%, transparent) !important;
+    outline-offset: 2px !important;
+}
 .footer {
     width: 100%;
     padding: 25px 55px;

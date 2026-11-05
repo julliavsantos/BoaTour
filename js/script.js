@@ -84,7 +84,7 @@ async function carregarAeroportos() {
 
     try {
 
-        const resposta = await fetch("http://localhost:3000/aeroportos");
+        const resposta = await fetch("/aeroportos");
 
         if (!resposta.ok) {
             throw new Error("Erro ao buscar aeroportos");

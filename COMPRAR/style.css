@@ -999,8 +999,19 @@ body {
 .campos-data-compra input[type="date"] {
     display: none;
 }
-.seletor-data-compra { display: flex; height: 45px; overflow: hidden; border: 1px solid #c5cdce; border-radius: 8px; background: var(--surface); transition: border-color .2s ease, box-shadow .2s ease; }
-.seletor-data-compra:focus-within { border-color: #518d93; box-shadow: 0 0 0 3px rgba(81, 141, 147, .15); }
+.seletor-data-compra {
+    display: flex;
+    height: 45px;
+    overflow: hidden;
+    border: 1px solid #c5cdce;
+    border-radius: 8px;
+    background: var(--surface);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.seletor-data-compra:focus-within {
+    border-color: #518d93;
+    box-shadow: 0 0 0 3px rgba(81, 141, 147, .15);
+}
 .seletor-data-compra input { height: 100%; min-height: 0; padding: 0 13px; border: 0; border-radius: 0; background: transparent; color: var(--text); font-family: "Plus Jakarta Sans", sans-serif; font-size: 13px; cursor: pointer; outline: none; }
 .abrir-calendario-compra { display: grid; width: 52px; height: 45px; flex: 0 0 52px; place-items: center; padding: 0; border: 0; background: var(--surface); cursor: pointer; }
 .abrir-calendario-compra img { width: 31px; height: 31px; object-fit: contain; }
@@ -1767,11 +1778,11 @@ body.dark-mode .fundo { background-image: url('../img/banners/fundo04dark.png');
 .etiqueta-imagem-compra { z-index: 1; top: 10px; right: auto; bottom: auto; left: 10px; width: max-content; height: auto; padding: 6px 10px; border: 1px solid rgba(255,255,255,.44); border-radius: 999px; background: rgba(14, 39, 43, .72); color: #fff; font-size: 10px; font-weight: 700; white-space: nowrap; backdrop-filter: blur(8px); }
 .controles-itens-compra { position: absolute; z-index: 2; inset: auto 10px 10px; display: grid; grid-template-columns: 34px 1fr 34px; align-items: center; gap: 8px; }
 .controles-itens-compra[hidden] { display: none; }
-.controles-itens-compra button { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(13, 38, 42, .72); color: #fff; font-size: 23px; line-height: 1; cursor: pointer; backdrop-filter: blur(8px); transition: transform .18s ease, background .18s ease; }
+.controles-itens-compra button { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(13, 38, 42, .72); color: #fff; font-size: 23px; line-height: 0; cursor: pointer; backdrop-filter: blur(8px); transition: transform .18s ease, background .18s ease; }
 .controles-itens-compra button:hover { transform: scale(1.06); background: rgba(13, 38, 42, .95); }
-.controles-itens-compra span { justify-self: center; padding: 5px 10px; border: 1px solid rgba(255,255,255,.42); border-radius: 999px; background: rgba(13, 38, 42, .62); color: #fff; font-size: 10px; font-weight: 700; backdrop-filter: blur(8px); }
+.controles-itens-compra span { justify-self: center; padding: 0px 10px; border: 1px solid rgba(255,255,255,.42); border-radius: 999px; background: rgba(13, 38, 42, .62); color: #fff; font-size: 10px; font-weight: 700; backdrop-filter: blur(8px); }
 .remover-item-compra { position: absolute; z-index: 3; top: 10px; right: 10px; display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid rgba(255,255,255,.58); border-radius: 50%; background: rgba(13,38,42,.76); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; backdrop-filter: blur(8px); transition: transform .18s ease, background .18s ease; }
-.remover-item-compra:hover { transform: scale(1.07); background: #b54545; }
+.remover-item-compra:hover { transform: scale(1.07);}
 .remover-item-compra:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .dados-compra .compra-info { flex: 1 1 auto; min-width: 0; width: auto; margin: 0; align-items: stretch; }
 .dados-compra .compra-info > h3 { margin: 4px 0 5px; color: var(--heading); font-size: 18px; line-height: 1.25; }

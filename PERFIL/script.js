@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API = "http://localhost:3000";
+    const API = "";
 
     const getUsuario = () => {
         try {
@@ -583,7 +583,7 @@ async function carregarFavoritosPerfil() {
     try {
         // Busca os favoritos do usuário
         const respostaFavoritos = await fetch(
-            'http://localhost:3000/favoritos',
+            '/favoritos',
             {
                 method: 'GET',
                 headers: {
@@ -614,10 +614,10 @@ async function carregarFavoritosPerfil() {
 
         // Busca os dados dos quatro tipos de favoritos
         const [respostaDestinos, respostaOfertas, respostaHoteis, respostaAtividades] = await Promise.all([
-            fetch('http://localhost:3000/destinos'),
-            fetch('http://localhost:3000/ofertas'),
-            fetch('http://localhost:3000/hoteis'),
-            fetch('http://localhost:3000/atividades')
+            fetch('/destinos'),
+            fetch('/ofertas'),
+            fetch('/hoteis'),
+            fetch('/atividades')
         ]);
 
         const destinos = await respostaDestinos.json();
@@ -739,6 +739,37 @@ async function carregarFavoritosPerfil() {
 }
 
 
+function imagemDaViagem(viagem) {
+    const caminho = String(viagem.imagem || viagem.dados?.pedido?.imagem || viagem.pedido?.imagem || "").trim();
+    if (!caminho) return "../img/ofertas/cancun.jpg";
+    if (/^(https?:|data:|\/)/i.test(caminho)) return caminho;
+    return caminho.startsWith("../") ? caminho : "../" + caminho.replace(/^\.\//, "");
+}
+
+function tituloDaCompra(viagem) {
+    const pedido = viagem.dados?.pedido || viagem.pedido || {};
+    const primeiroItem = Array.isArray(pedido.itens) ? pedido.itens.find(item => item.nome) : null;
+    return String(primeiroItem?.nome || viagem.titulo || "Compra BoaTour").split(/\s+\+\s+/)[0];
+}
+
+function criarResumoViagem(viagem) {
+    const card = document.createElement("article");
+    card.className = "card-viagem02";
+    const imagem = document.createElement("div");
+    imagem.className = "imagem-viagem";
+    const foto = document.createElement("img");
+    foto.src = imagemDaViagem(viagem);
+    foto.alt = tituloDaCompra(viagem);
+    imagem.append(foto);
+    const info = document.createElement("div");
+    info.className = "info-viagem02";
+    const titulo = document.createElement("h3");
+    titulo.textContent = tituloDaCompra(viagem);
+    info.append(titulo);
+    card.append(imagem, info);
+    return card;
+}
+
 async function carregarViagensPerfil() {
     const grid = document.getElementById("minhasViagensGrid");
     if (!grid) return;
@@ -748,7 +779,7 @@ async function carregarViagensPerfil() {
         return;
     }
     try {
-        const resposta = await fetch("http://localhost:3000/pagamentos/historico", { headers: { "X-Session-Token": token } });
+        const resposta = await fetch("/pagamentos/historico", { headers: { "X-Session-Token": token } });
         const dados = await resposta.json();
         if (!resposta.ok) throw new Error(dados.error || "Não foi possível carregar suas viagens.");
         const viagens = Array.isArray(dados.viagens) ? dados.viagens : [];
@@ -757,57 +788,17 @@ async function carregarViagensPerfil() {
             grid.innerHTML = '<p class="sem-viagens">Suas compras aparecerão aqui depois da simulação de pagamento.</p>';
             return;
         }
-        const formatarDataViagem = valor => {
-            if (!valor) return "";
-            const data = new Date(`${String(valor).slice(0, 10)}T12:00:00`);
-            return Number.isNaN(data.getTime()) ? "" : data.toLocaleDateString("pt-BR");
-        };
-        viagens.forEach(viagem => {
-            const card = document.createElement("article");
-            card.className = "card-viagem";
-            const imagem = document.createElement("div");
-            imagem.className = "imagem-viagem";
-            const foto = document.createElement("img");
-            const caminho = String(viagem.imagem || "").trim();
-            foto.src = !caminho ? "../img/ofertas/cancun.jpg"
-                : /^(https?:|data:|\/)/i.test(caminho) ? caminho
-                    : caminho.startsWith("../") ? caminho : `../${caminho.replace(/^\.\//, "")}`;
-            foto.alt = viagem.titulo || "Viagem BoaTour";
-            imagem.append(foto);
-            const info = document.createElement("div");
-            info.className = "info-viagem";
-            const titulo = document.createElement("h3");
-            titulo.textContent = viagem.titulo || "Viagem BoaTour";
-            const datas = [formatarDataViagem(viagem.ida), formatarDataViagem(viagem.volta)].filter(Boolean).join(" → ");
-            const periodo = document.createElement("p");
-            periodo.textContent = datas || "Datas a confirmar";
-            const codigo = document.createElement("p");
-            codigo.textContent = `Reserva: ${viagem.id || viagem.id_viagem || "—"}`;
-            const voo = document.createElement("p");
-            voo.textContent = viagem.codigoVoo ? `Voo ${viagem.codigoVoo} · avião ${viagem.codigoAviao || "—"}` : (viagem.status || "");
-            const dadosPedido = viagem.dados?.pedido || {};
-            const nomesItens = (Array.isArray(dadosPedido.itens) ? dadosPedido.itens : []).map(item => item.nome).filter(Boolean);
-            const resumoItens = document.createElement("p");
-            resumoItens.textContent = nomesItens.length ? `Itens: ${nomesItens.join(" · ")}` : "";
-            const nomesViajantes = (Array.isArray(dadosPedido.viajantes) ? dadosPedido.viajantes : []).map(passageiro => passageiro.nome).filter(Boolean);
-            const resumoViajantes = document.createElement("p");
-            resumoViajantes.textContent = nomesViajantes.length ? `Viajantes: ${nomesViajantes.join(", ")}` : "";
-            const estado = document.createElement("p");
-            estado.className = "status-viagem";
-            estado.textContent = viagem.status === "confirmada" ? "Pagamento aprovado" : viagem.status || "Aguardando pagamento";
-            info.append(titulo, periodo, codigo, voo);
-            if (nomesItens.length) info.append(resumoItens);
-            if (nomesViajantes.length) info.append(resumoViajantes);
-            info.append(estado);
-            card.append(imagem, info);
-            grid.append(card);
-        });
+        viagens.slice(0, 4).forEach(viagem => grid.append(criarResumoViagem(viagem)));
     } catch (erro) {
-        grid.innerHTML = `<p class="sem-viagens">${String(erro.message || "Não foi possível carregar suas viagens.")}</p>`;
+        grid.innerHTML = "";
+        const mensagem = document.createElement("p");
+        mensagem.className = "sem-viagens";
+        mensagem.textContent = erro.message || "Não foi possível carregar suas viagens.";
+        grid.append(mensagem);
     }
 }
-
 // Carrega os favoritos e viagens quando a página termina de carregar
+document.getElementById("btnVerTodasViagens")?.addEventListener("click", () => { window.location.href = "viagens.html"; });
 document.addEventListener('DOMContentLoaded', () => {
     carregarFavoritosPerfil();
     carregarViagensPerfil();

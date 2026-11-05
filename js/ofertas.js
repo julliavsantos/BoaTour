@@ -13,7 +13,7 @@ async function carregarFavoritos() {
     try {
 
         const resposta = await fetch(
-            "http://localhost:3000/favoritos",
+            "/favoritos",
             {
                 method: "GET",
                 headers: {
@@ -44,7 +44,7 @@ async function carregarFavoritos() {
 }
 carregarFavoritos().then(() => {
 
-    return fetch('http://localhost:3000/ofertas');
+    return fetch('/ofertas');
 
 })
 .then(response => {
@@ -387,7 +387,7 @@ carregarFavoritos().then(() => {
 
         const resposta =
             await fetch(
-                "http://localhost:3000/favoritos",
+                "/favoritos",
                 {
                     method: metodo,
 

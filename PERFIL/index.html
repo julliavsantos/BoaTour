@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil</title>
     <link rel="stylesheet" href="../css/menurodape.css">
-    <link rel="stylesheet" href="style.css?v=sync-rewards-20261103">
+    <link rel="stylesheet" href="style.css?v=trip-preview-20261104">
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="stylesheet" href="../css/assistente.css">
     <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
-    <link rel="stylesheet" href="../css/forms.css?v=dark-inputs-20261029">
+    <link rel="stylesheet" href="../css/forms.css?v=select-popup-20261104">
 </head>
 <body>
     <div class="nav">
@@ -196,13 +196,12 @@
                 
                 <div class="viagens-text" id="viagens">
                     <p>Minhas Viagens</p>
-                    <h6 class="prev">Ver todas</h6>
+                    <button class="prev" id="btnVerTodasViagens" type="button">Ver todas</button>
                 </div>
-                <div class="viagens">
-                    
+                <div class="viagens" id="resumoViagensPerfil">
                     <div class="viagens-grid" id="minhasViagensGrid" aria-live="polite"></div>
-            
-            </div>
+                </div>
+
 
                 <div class="viagens-text" id="favoritos">
     <p>Favoritos</p>
@@ -240,32 +239,32 @@
                         type="button"
                         aria-pressed="true"
                         title="Cancún"
-                        data-banner="../img/ofertas/cancun.jpg" data-banner-nome="Cancún">
-                    <img src="../img/ofertas/cancun.jpg" alt="Praia de Cancún">
+                        data-banner="../img/banners/banner1.jpg" data-banner-nome="Cancún">
+                    <img src="../img/banners/banner1.jpg" alt="Praia de Cancún">
                 </button>
 
                 <button class="banner-opcao"
                         type="button"
                         aria-pressed="false"
                         title="Fernando de Noronha"
-                        data-banner="../img/destinos/fernando.jpg" data-banner-nome="Fernando de Noronha">
-                    <img src="../img/destinos/fernando.jpg" alt="Praia em Fernando de Noronha">
+                        data-banner="../img/banners/banner2.jpg" data-banner-nome="Fernando de Noronha">
+                    <img src="../img/banners/banner2.jpg" alt="Praia em Fernando de Noronha">
                 </button>
 
                 <button class="banner-opcao"
                         type="button"
                         aria-pressed="false"
                         title="Foz do Iguaçu"
-                        data-banner="../img/destinos/foz.jpg" data-banner-nome="Foz do Iguaçu">
-                    <img src="../img/destinos/foz.jpg" alt="Cataratas do Iguaçu">
+                        data-banner="../img/banners/banner3.jpg" data-banner-nome="Foz do Iguaçu">
+                    <img src="../img/banners/banner3.jpg" alt="Cataratas do Iguaçu">
                 </button>
 
                 <button class="banner-opcao"
                         type="button"
                         aria-pressed="false"
                         title="Santorini"
-                        data-banner="../img/ofertas/santorini2.jpg" data-banner-nome="Santorini">
-                    <img src="../img/ofertas/santorini2.jpg" alt="Paisagem de Santorini">
+                        data-banner="../img/banners/banner4.jpg" data-banner-nome="Santorini">
+                    <img src="../img/banners/banner4.jpg" alt="Paisagem de Santorini">
                 </button>
 
             </div>
@@ -598,7 +597,7 @@
 
 
 
-    <script src="script.js?v=sync-rewards-20261103"></script>
+    <script src="script.js?v=trips-page-20261104"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>
     <script src="../js/darkmodedemais.js?v=theme-preference-sync-20261029"></script>

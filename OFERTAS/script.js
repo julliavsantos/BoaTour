@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             const resposta = await fetch(
-                "http://localhost:3000/favoritos",
+                "/favoritos",
                 {
                     method: "GET",
                     headers: {
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- BUSCAR OFERTAS DO SERVIDOR ---
 
-    fetch("http://localhost:3000/ofertas")
+    fetch("/ofertas")
 
         .then(response => {
 
@@ -590,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
 
         const resposta = await fetch(
-            "http://localhost:3000/favoritos",
+            "/favoritos",
             {
                 method: metodo,
                 headers: {
