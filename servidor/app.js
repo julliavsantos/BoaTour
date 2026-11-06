@@ -17,6 +17,7 @@ const HotelBD = require('./database/HoteisBD');
 const AtividadesBD = require('./database/AtividadesBD');
 const { rastrearVoo, ErroRastreador } = require('./rastreador');
 const PagamentosBD = require('./database/PagamentosBD');
+const NotificacoesBD = require('./database/NotificacoesBD');
 
 const PORT = Number(process.env.PORT || 3000);
 const sessions = new Map();
@@ -48,7 +49,7 @@ function setCors(res, req) {
         const hostsLocais = ['localhost', '127.0.0.1', '::1'];
         const mesmoHost = hostnameOrigem === hostnameRequisicao;
         const hostLocal = hostsLocais.includes(hostnameOrigem) && hostsLocais.includes(hostnameRequisicao);
-        origemValida = (mesmoHost || hostLocal) && [3000, 3001, 5500].includes(portaOrigem);
+        origemValida = (mesmoHost || hostLocal) && [3000, 3001].includes(portaOrigem);
     } catch {}
 
     if (origemValida) res.setHeader('Access-Control-Allow-Origin', origin);
@@ -775,6 +776,72 @@ function rastreiaVoo(res, query) {
         });
 }
 
+function listarNotificacoes(req, res) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+
+    NotificacoesBD.listar(sessao.id_usuario, (erro, notificacoes) => {
+        if (erro) {
+            console.error('Erro ao listar notificações:', erro);
+            return json(res, 500, { error: 'Não foi possível carregar suas notificações.' });
+        }
+        return json(res, 200, { notificacoes });
+    });
+}
+
+function marcarNotificacaoComoLida(req, res, id) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+    const idNotificacao = Number(id);
+    if (!Number.isInteger(idNotificacao) || idNotificacao <= 0) {
+        return json(res, 400, { error: 'ID de notificação inválido.' });
+    }
+
+    NotificacoesBD.marcarComoLida(sessao.id_usuario, idNotificacao, (erro, resultado) => {
+        if (erro) {
+            console.error('Erro ao marcar notificação como lida:', erro);
+            return json(res, 500, { error: 'Não foi possível atualizar a notificação.' });
+        }
+        if (!resultado.affectedRows) {
+            return json(res, 404, { error: 'Notificação não encontrada para este usuário.' });
+        }
+        return json(res, 200, { sucesso: true });
+    });
+}
+
+function marcarTodasNotificacoesComoLidas(req, res) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+
+    NotificacoesBD.marcarTodasComoLidas(sessao.id_usuario, (erro, resultado) => {
+        if (erro) {
+            console.error('Erro ao marcar todas as notificações como lidas:', erro);
+            return json(res, 500, { error: 'Não foi possível atualizar as notificações.' });
+        }
+        return json(res, 200, { sucesso: true, atualizadas: resultado.affectedRows });
+    });
+}
+
+function excluirNotificacao(req, res, id) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+    const idNotificacao = Number(id);
+    if (!Number.isInteger(idNotificacao) || idNotificacao <= 0) {
+        return json(res, 400, { error: 'ID de notificação inválido.' });
+    }
+
+    NotificacoesBD.excluir(sessao.id_usuario, idNotificacao, (erro, resultado) => {
+        if (erro) {
+            console.error('Erro ao excluir notificação:', erro);
+            return json(res, 500, { error: 'Não foi possível excluir a notificação.' });
+        }
+        if (!resultado.affectedRows) {
+            return json(res, 404, { error: 'Notificação não encontrada para este usuário.' });
+        }
+        return json(res, 200, { sucesso: true });
+    });
+}
+
 // ROTAS
 const callback = (req, res) => {
     setCors(res, req);
@@ -811,6 +878,25 @@ const callback = (req, res) => {
 
     if (req.method === 'POST' && p === '/redefinirSenha') {
         return redefinirSenhaPorCodigo(req, res);
+    }
+
+    // Notificações do usuário autenticado
+    if (req.method === 'GET' && p === '/notificacoes') {
+        return listarNotificacoes(req, res);
+    }
+
+    if (req.method === 'PUT' && p === '/notificacoes/lidas') {
+        return marcarTodasNotificacoesComoLidas(req, res);
+    }
+
+    const notificacaoMatch = p.match(/^\/notificacoes\/(\d+)\/lida$/);
+    if (notificacaoMatch && req.method === 'PUT') {
+        return marcarNotificacaoComoLida(req, res, notificacaoMatch[1]);
+    }
+
+    const excluirNotificacaoMatch = p.match(/^\/notificacoes\/(\d+)$/);
+    if (excluirNotificacaoMatch && req.method === 'DELETE') {
+        return excluirNotificacao(req, res, excluirNotificacaoMatch[1]);
     }
 
     if (req.method === 'POST' && p === '/favoritos') {
@@ -943,6 +1029,7 @@ const callback = (req, res) => {
         p.startsWith('/PAGAMENTOS/') ||
         p.startsWith('/FAVORITOS/') ||
         p.startsWith('/COMPRAR/') ||
+        p.startsWith('/COMPRAR FINAL/') ||
         p.startsWith('/TURISMO CONSCIENTE/') ||
         p.startsWith('/CHATBOT/public/') ||
         p.endsWith('.html')
@@ -970,3 +1057,4 @@ PagamentosBD.inicializar()
         console.log(`Servidor BoaTour rodando em http://localhost:${PORT}`);
         console.log('Rotas de usuários: /registro, /login, /usuarios/me, /usuarios/:id, /usuarios/senha, /upload-foto, /logout');
     }));
+

@@ -15,6 +15,13 @@
 })();
 document.addEventListener("DOMContentLoaded", () => {
 
+    if (["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "3001") {
+        const destinoChatbot = window.location.protocol + "//" + window.location.hostname + ":3001/";
+        document.querySelectorAll('a[href="/CHATBOT/public/index.html"]').forEach(link => {
+            link.href = destinoChatbot;
+        });
+    }
+
     const nav = document.querySelector(".nav");
 
     const btnPerfil =
@@ -405,3 +412,4 @@ function atualizarBannerMenu(usuario) {
     topo.style.backgroundSize = "cover";
     topo.style.backgroundPosition = "center";
 }
+

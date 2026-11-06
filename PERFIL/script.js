@@ -95,16 +95,187 @@ document.addEventListener("DOMContentLoaded", () => {
         const usuario = evento.detail?.usuario || getUsuario();
         preencherPerfil(usuario);
         await carregarFavoritosPerfil();
+        await carregarNotificacoes();
     });
 
-    // --- NOTIFICAÇÕES ---
+    // --- NOTIFICAÇÕES REAIS DO BANCO ---
     const btnNotificacoes = document.getElementById("btnNotificacoes");
     const modalNotificacoes = document.getElementById("modalNotificacoes");
     const fecharNotificacoes = document.getElementById("fecharNotificacoes");
+    const listaNotificacoes = document.getElementById("listaNotificacoes");
+    const contadorNotificacoes = document.getElementById("contadorNotificacoes");
+    const contadorNotificacoesModal = document.getElementById("contadorNotificacoesModal");
+    const marcarTodasNotificacoesLidas = document.getElementById("marcarTodasNotificacoesLidas");
 
-    btnNotificacoes?.addEventListener("click", e => {
+    function dataNotificacao(data) {
+        if (!data) return "";
+        const valor = String(data).replace(" ", "T");
+        const dataObj = new Date(valor);
+        if (Number.isNaN(dataObj.getTime())) return "";
+        return dataObj.toLocaleString("pt-BR", {
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "2-digit", minute: "2-digit"
+        });
+    }
+
+    function iconeNotificacao(tipo) {
+        const icones = {
+            oferta: "🏷️",
+            pagamento: "💳",
+            compra: "🧳",
+            pontos: "⭐",
+            recompensa: "🎁",
+            favorito: "❤️",
+            sistema: "🔔"
+        };
+        return icones[String(tipo || "sistema").toLowerCase()] || "🔔";
+    }
+
+    function atualizarContadorNotificacoes(quantidade) {
+        if (contadorNotificacoes) {
+            contadorNotificacoes.textContent = quantidade > 99 ? "99+" : String(quantidade);
+            contadorNotificacoes.hidden = quantidade <= 0;
+        }
+        if (contadorNotificacoesModal) {
+            contadorNotificacoesModal.textContent = quantidade
+                ? `${quantidade} notificação(ões) não lida(s)`
+                : "Você não tem notificações não lidas.";
+        }
+    }
+
+    function renderizarNotificacoes(notificacoes) {
+        if (!listaNotificacoes) return;
+        listaNotificacoes.replaceChildren();
+
+        if (!notificacoes.length) {
+            const vazio = document.createElement("p");
+            vazio.className = "notificacoes-vazias";
+            vazio.textContent = "Você ainda não possui notificações.";
+            listaNotificacoes.append(vazio);
+            return;
+        }
+
+        notificacoes.forEach(notificacao => {
+            const item = document.createElement("article");
+            item.className = `notificacao${Number(notificacao.lida) === 0 ? " nao-lida" : ""}`;
+
+            const icone = document.createElement("div");
+            icone.className = "icone-notificacao";
+            icone.textContent = iconeNotificacao(notificacao.tipo);
+
+            const conteudo = document.createElement("div");
+            conteudo.className = "conteudo-notificacao";
+
+            const titulo = document.createElement("strong");
+            titulo.textContent = notificacao.titulo || "Notificação BoaTour";
+
+            const mensagem = document.createElement("p");
+            mensagem.textContent = notificacao.mensagem || "";
+
+            const data = document.createElement("small");
+            data.textContent = dataNotificacao(notificacao.data_criacao);
+
+            conteudo.append(titulo, mensagem, data);
+            item.append(icone, conteudo);
+
+            if (Number(notificacao.lida) === 0) {
+                const botaoLida = document.createElement("button");
+                botaoLida.type = "button";
+                botaoLida.className = "btn-notificacao-lida";
+                botaoLida.textContent = "Marcar como lida";
+                botaoLida.addEventListener("click", () => marcarNotificacaoLida(notificacao.id_notificacao));
+                item.append(botaoLida);
+            }
+
+            if (notificacao.link) {
+                const abrir = document.createElement("a");
+                abrir.className = "link-notificacao";
+                abrir.href = notificacao.link;
+                abrir.textContent = "Ver detalhes";
+                abrir.addEventListener("click", async (evento) => {
+                    evento.preventDefault();
+                    if (Number(notificacao.lida) === 0) {
+                        await marcarNotificacaoLida(notificacao.id_notificacao, false);
+                    }
+                    window.location.href = notificacao.link;
+                });
+                conteudo.append(abrir);
+            }
+
+            listaNotificacoes.append(item);
+        });
+    }
+
+    async function carregarNotificacoes() {
+        if (!listaNotificacoes) return;
+        const token = getToken();
+        if (!token) {
+            renderizarNotificacoes([]);
+            if (listaNotificacoes) {
+                listaNotificacoes.innerHTML = '<p class="notificacoes-vazias">Entre na sua conta para ver suas notificações.</p>';
+            }
+            atualizarContadorNotificacoes(0);
+            return;
+        }
+
+        try {
+            const resposta = await fetch(`${API}/notificacoes`, {
+                headers: { "X-Session-Token": token }
+            });
+            const dados = await resposta.json();
+            if (resposta.status === 401) throw new Error("Sua sessão expirou. Entre novamente.");
+            if (!resposta.ok) throw new Error(dados.error || "Não foi possível carregar as notificações.");
+
+            const notificacoes = Array.isArray(dados.notificacoes) ? dados.notificacoes : [];
+            const naoLidas = notificacoes.filter(item => Number(item.lida) === 0).length;
+            atualizarContadorNotificacoes(naoLidas);
+            renderizarNotificacoes(notificacoes);
+        } catch (erro) {
+            listaNotificacoes.innerHTML = "";
+            const mensagem = document.createElement("p");
+            mensagem.className = "notificacoes-vazias";
+            mensagem.textContent = erro.message || "Não foi possível carregar suas notificações.";
+            listaNotificacoes.append(mensagem);
+            atualizarContadorNotificacoes(0);
+        }
+    }
+
+    async function marcarNotificacaoLida(id, recarregar = true) {
+        const token = getToken();
+        if (!token) return;
+        try {
+            const resposta = await fetch(`${API}/notificacoes/${encodeURIComponent(id)}/lida`, {
+                method: "PUT",
+                headers: { "X-Session-Token": token }
+            });
+            const dados = await resposta.json();
+            if (!resposta.ok) throw new Error(dados.error || "Não foi possível atualizar a notificação.");
+            if (recarregar) await carregarNotificacoes();
+        } catch (erro) {
+            alert(erro.message || "Não foi possível atualizar a notificação.");
+        }
+    }
+
+    marcarTodasNotificacoesLidas?.addEventListener("click", async () => {
+        const token = getToken();
+        if (!token) return;
+        try {
+            const resposta = await fetch(`${API}/notificacoes/lidas`, {
+                method: "PUT",
+                headers: { "X-Session-Token": token }
+            });
+            const dados = await resposta.json();
+            if (!resposta.ok) throw new Error(dados.error || "Não foi possível atualizar as notificações.");
+            await carregarNotificacoes();
+        } catch (erro) {
+            alert(erro.message || "Não foi possível atualizar as notificações.");
+        }
+    });
+
+    btnNotificacoes?.addEventListener("click", async e => {
         e.preventDefault();
         modalNotificacoes?.classList.add("ativo");
+        await carregarNotificacoes();
     });
 
     fecharNotificacoes?.addEventListener("click", () => {
@@ -552,6 +723,7 @@ document.addEventListener("DOMContentLoaded", () => {
     (async () => {
         const usuario = await sincronizarUsuario();
         preencherPerfil(usuario);
+        await carregarNotificacoes();
     })();
 });
 // --- FAVORITOS NO PERFIL ---

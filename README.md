@@ -83,8 +83,11 @@ Banco de dados utilizado:
 
 `boatour_bd`
 
-A integração com PHP permite realizar operações de consulta, cadastro, atualização e gerenciamento das informações.
+### Tabela de notificações
 
+Na base `boatour_bd`, importe `servidor/database/migracao_notificacoes.sql` pelo phpMyAdmin ou execute o arquivo no cliente MariaDB. A migração usa `CREATE TABLE IF NOT EXISTS`, não cria nem apaga bancos e não insere a notificação de teste do dump.
+
+A integração com PHP permite realizar operações de consulta, cadastro, atualização e gerenciamento das informações.
 ---
 
 ## 🚀 Como executar o projeto
@@ -200,3 +203,5 @@ Desenvolvido como um projeto de aplicação web, reunindo conhecimentos de progr
   <br>
   <i>O mundo está esperando por você. Comece a explorar!</i>
 </p>
+
+

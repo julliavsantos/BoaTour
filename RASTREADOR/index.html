@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="../css/menurodape.css">
     <link rel="stylesheet" href="../css/assistente.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=zoom-controls-20261105">
 </head>
 <body class="pagina-rastreador">
-
 <div class="nav">
 
     <div class="logo">
@@ -43,21 +42,19 @@
     <div class="perfil-menu" id="perfilMenu">
 
             <div class="perfil-topo">
+                <div class="avatar">
+                    <img class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
+                </div>
+                <div>
+                    <h3 id="nomePerfil">Olá, viajante!</h3>
+                    <p id="descricaoPerfil">Acesse sua conta</p>
+                </div>
 
-    <div class="avatar">
-        <img id="fotoMenuPerfil" class="foto-viajante" src="../img/icones/perfil.png" alt="Perfil">
-    </div>
+                <button class="fechar-perfil" id="fecharPerfil">
+                    &times;
+                </button>
 
-    <div>
-        <h3 id="nomePerfil">Olá, viajante!</h3>
-        <p id="descricaoPerfil">Acesse sua conta</p>
-    </div>
-
-    <button class="fechar-perfil" id="fecharPerfil">
-        &times;
-    </button>
-
-</div>
+            </div>
 
             <div class="perfil-login">
                 <button id="abrirLoginPerfil">
@@ -66,14 +63,14 @@
             </div>
 
             <div class="perfil-links">
-                <a href="../PERFIL/index.html#viagens">
+                <a href="#viagens">
                     <span>✈</span>
                     <div>
                         <strong>Minhas viagens</strong>
                         <small>Veja suas reservas</small>
                     </div>
                 </a>
-                <a href="../PERFIL/index.html#favoritos">
+                <a href="#favoritos">
                     <span>❤︎</span>
                     <div>
                         <strong>Favoritos</strong>
@@ -100,10 +97,11 @@
                 <p>Viaje com a BoaTour ✈</p>
             </div>
         </div>
+
 <main class="rastreador">
     <div id="mapa" aria-label="Mapa da rota do voo"></div>
 
-    <button type="button" class="btn-abrir-modal" id="btnAbrirModal">&#9992; Rastrear voo</button>
+    <button type="button" class="btn-abrir-modal" id="btnAbrirModal" aria-haspopup="dialog" aria-controls="modalRastreador" aria-expanded="true">&#9992; Rastrear voo</button>
 
     <!-- Painel com os dados do voo (aparece depois da verificação) -->
     <aside class="painel-voo" id="painelVoo" hidden>
@@ -148,7 +146,7 @@
 </main>
 
 <!-- MODAL: pede o código do voo e o código do avião -->
-<div class="rastreador-modal ativo" id="modalRastreador" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+<div class="rastreador-modal ativo" id="modalRastreador" role="dialog" aria-modal="true" aria-hidden="false" aria-labelledby="modalTitulo">
     <div class="rastreador-caixa">
         <button type="button" class="rastreador-fechar" id="fecharModal" aria-label="Fechar">&times;</button>
 
@@ -169,8 +167,14 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js?v=api-host-fix-20261104"></script>
+<script src="script.js?v=modal-zoom-style-20261105"></script>
 <script src="../js/darkmodedemais.js"></script>
 <script src="../js/assistente-flutuante.js"></script>
+<script src="../js/menu.js"></script>
+<script src="../js/modais.js"></script>
+
 </body>
 </html>
+
+
+

@@ -348,3 +348,69 @@ body.dark-mode .leaflet-container {
     font-size: 12px;
     opacity: 0.8;
 }
+
+/* Controles de zoom Leaflet */
+.pagina-rastreador .leaflet-top.leaflet-right {
+    top: 12px;
+    right: 16px;
+}
+
+.pagina-rastreador .leaflet-control-zoom.leaflet-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 6px;
+    overflow: visible;
+    border: 1px solid rgba(255, 255, 255, .82);
+    border-radius: 19px;
+    background: rgba(255, 255, 255, .76);
+    box-shadow: 0 10px 28px rgba(18, 53, 58, .2);
+    backdrop-filter: blur(12px);
+}
+
+.pagina-rastreador .leaflet-control-zoom a,
+.pagina-rastreador .leaflet-control-zoom a:hover {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 0;
+    border-radius: 13px;
+    background: var(--card);
+    color: var(--primary-strong);
+    font: 700 23px/1 "Plus Jakarta Sans", sans-serif;
+    text-decoration: none;
+    box-shadow: 0 3px 9px rgba(18, 53, 58, .12);
+    transition: color .18s ease, background-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.pagina-rastreador .leaflet-control-zoom a:hover {
+    transform: translateY(-1px);
+    background: var(--primary-strong);
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(18, 53, 58, .22);
+}
+
+.pagina-rastreador .leaflet-control-zoom a:focus-visible {
+    z-index: 1;
+    outline: 3px solid #f4bd50;
+    outline-offset: 2px;
+}
+
+body.dark-mode .pagina-rastreador .leaflet-control-zoom.leaflet-bar {
+    border-color: rgba(255, 255, 255, .12);
+    background: rgba(16, 23, 25, .82);
+}
+
+@media (max-width: 700px) {
+    .pagina-rastreador .leaflet-top.leaflet-right {
+        top: 10px;
+        right: 10px;
+    }
+
+    .pagina-rastreador .leaflet-control-zoom a,
+    .pagina-rastreador .leaflet-control-zoom a:hover {
+        width: 40px;
+        height: 40px;
+    }
+}

@@ -20,10 +20,22 @@ const erroVoo = document.getElementById("erroVoo");
 const erroAviao = document.getElementById("erroAviao");
 const erroGeral = document.getElementById("erroGeral");
 const btnConfirmar = document.getElementById("btnConfirmar");
+const btnAbrirModal = document.getElementById("btnAbrirModal");
 const painel = document.getElementById("painelVoo");
 
 /* ---------- mapa (Leaflet + OpenStreetMap, sem chave de API) ---------- */
-const mapa = L.map("mapa", { worldCopyJump: true, minZoom: 2 }).setView([-15, -50], 3);
+const limitesMapa = L.latLngBounds(
+    L.latLng(-85.05112878, -180),
+    L.latLng(85.05112878, 180)
+);
+const mapa = L.map("mapa", {
+    maxBounds: limitesMapa,
+    maxBoundsViscosity: 1.0,
+    worldCopyJump: false,
+    minZoom: 3,
+    zoomControl: false
+}).setView([-15, -50], 3);
+L.control.zoom({ position: "topright" }).addTo(mapa);
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 18,
@@ -105,14 +117,19 @@ function iconeAviao(rumo) {
 
 /* ---------- modal ---------- */
 function abrirModal() {
+    limparErros();
     modal.classList.add("ativo");
-    inputVoo.focus();
+    modal.setAttribute("aria-hidden", "false");
+    btnAbrirModal.setAttribute("aria-expanded", "true");
+    inputVoo.focus({ preventScroll: true });
 }
 
 function fecharModal() {
     modal.classList.remove("ativo");
+    modal.setAttribute("aria-hidden", "true");
+    btnAbrirModal.setAttribute("aria-expanded", "false");
+    btnAbrirModal.focus({ preventScroll: true });
 }
-
 function limparErros() {
     [erroVoo, erroAviao, erroGeral].forEach(e => (e.textContent = ""));
     [inputVoo, inputAviao].forEach(i => i.classList.remove("invalido"));
@@ -132,7 +149,7 @@ function mostrarErro(campo, mensagem) {
     }
 }
 
-document.getElementById("btnAbrirModal").addEventListener("click", abrirModal);
+btnAbrirModal.addEventListener("click", abrirModal);
 document.getElementById("fecharModal").addEventListener("click", fecharModal);
 document.addEventListener("keydown", e => { if (e.key === "Escape") fecharModal(); });
 
@@ -362,3 +379,5 @@ function preencherPainel(dados, km) {
 }
 
 inputVoo.focus();
+
+

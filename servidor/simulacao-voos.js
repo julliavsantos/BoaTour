@@ -200,7 +200,7 @@ const inicioDemo = new Map();            // código do voo -> instante em que "d
 function faseDoVoo(f) {
     if (f < 0.04) return 'decolagem';
     if (f < 0.12) return 'subida';
-    if (f < 0.88) return 'cruzeiro';
+    if (f < 0.88) return 'trânsito';
     if (f < 0.97) return 'descida';
     return 'aproximacao';
 }
@@ -209,7 +209,7 @@ const TEXTO_FASE = {
     embarque: 'Aguardando embarque',
     decolagem: 'Decolando',
     subida: 'Em subida',
-    cruzeiro: 'Em cruzeiro',
+    transito: 'Em trânsito',
     descida: 'Em descida',
     aproximacao: 'Em aproximação final',
     pousou: 'Pousou'

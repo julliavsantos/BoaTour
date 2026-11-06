@@ -1,4 +1,4 @@
-const API = "";
+const API = "http://localhost:3000";
 
 async function lerRespostaApi(resposta) {
     const tipoConteudo = resposta.headers.get("content-type") || "";

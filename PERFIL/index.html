@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil</title>
     <link rel="stylesheet" href="../css/menurodape.css">
-    <link rel="stylesheet" href="style.css?v=trip-preview-20261104">
+    <link rel="stylesheet" href="style.css?v=notifications-20261105">
     <link rel="stylesheet" href="../css/modal-theme.css">
     <link rel="stylesheet" href="../css/assistente.css">
-    <link rel="icon" type="img" href="../img/logo/apenaslogo.png">
+    <link rel="icon" type="image/png" href="../img/logo/apenaslogo.png">
     <title>BoaTour</title>
     <link rel="stylesheet" href="../css/forms.css?v=select-popup-20261104">
 </head>
@@ -134,7 +134,7 @@
                 <a href="#" id="btnNotificacoes">
                     <span><img src="../img/icones/sino.png" alt=""></span>
                     <div>
-                        <strong>Notificações</strong>
+                        <strong>Notificações</strong><span id="contadorNotificacoes" hidden>0</span>
                     </div>
                 </a>
                 <a href="#">
@@ -522,34 +522,13 @@
 
         <h2>Notificações</h2>
 
-        <div class="notificacao">
-            <div class="icone-notificacao" style="color: white; font-size: 24px;">&#x1F56D</div>
-
-            <div>
-                <strong>Novidades na BoaTour!</strong>
-                <p>Confira nossos novos destinos e ofertas especiais.</p>
-                <small>Agora</small>
-            </div>
+        <div class="cabecalho-notificacoes">
+            <p id="contadorNotificacoesModal">Carregando notificações...</p>
+            <button type="button" id="marcarTodasNotificacoesLidas">Marcar todas como lidas</button>
         </div>
 
-        <div class="notificacao">
-            <div class="icone-notificacao" style="color: white; font-size: 20px;">&#9992;</div>
-
-            <div>
-                <strong>Prepare sua próxima viagem</strong>
-                <p>Explore destinos incríveis para sua próxima aventura.</p>
-                <small>Há 2 horas</small>
-            </div>
-        </div>
-
-        <div class="notificacao">
-            <div class="icone-notificacao" style="color: white; font-size: 20px;">&#x1F3D9</div>
-
-            <div>
-                <strong>Novas ofertas disponíveis</strong>
-                <p>Aproveite condições especiais para sua próxima viagem.</p>
-                <small>Ontem</small>
-            </div>
+        <div id="listaNotificacoes" class="lista-notificacoes">
+            <p class="notificacoes-vazias">Carregando...</p>
         </div>
 
     </div>
@@ -597,7 +576,7 @@
 
 
 
-    <script src="script.js?v=trips-page-20261104"></script>
+    <script src="script.js?v=notifications-20261105"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/modais.js"></script>
     <script src="../js/darkmodedemais.js?v=theme-preference-sync-20261029"></script>
@@ -607,3 +586,4 @@
     <script src="../js/feedback.js"></script>
 </body>
 </html>
+

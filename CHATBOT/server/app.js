@@ -33,6 +33,10 @@ app.use("/CHATBOT/public", express.static(pastaPublic));
 app.use("/global-img", express.static(pastaImgUniversal));
 app.use("/global-css", express.static(pastaCssUniversal));
 app.use("/global-js", express.static(pastaJsUniversal));
+// Compatibilidade com os caminhos absolutos compartilhados pelas páginas BoaTour.
+app.use("/img", express.static(pastaImgUniversal));
+app.use("/css", express.static(pastaCssUniversal));
+app.use("/js", express.static(pastaJsUniversal));
 
 // Arquivos universais do BoaTour
 
@@ -259,3 +263,4 @@ app.listen(PORT, () => {
     console.log("================================");
 
 });
+

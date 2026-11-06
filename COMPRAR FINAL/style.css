@@ -2015,3 +2015,9 @@ button.btn-editar-padrao:active { opacity: .7; transform: none; box-shadow: none
     .galeria-resumo { flex: 0 0 auto; width: 100%; min-width: 0; max-width: none; height: 220px; }
     .dados-compra .compra-info { width: 100%; padding: 2px; }
 }
+#tipoCadastroViajante {
+    padding-top: 12px !important;
+    padding-bottom: 0 !important;
+    height: 44px;
+    box-sizing: border-box;
+}

@@ -5,9 +5,13 @@
         const caminhoBase = document.currentScript?.src
             ? new URL("../", document.currentScript.src)
             : new URL("../", window.location.href);
+        const estaNoServidorChatbot = window.location.port === "3001";
+        const caminhoSite = estaNoServidorChatbot
+            ? new URL("/", window.location.protocol + "//" + window.location.hostname + ":3000")
+            : caminhoBase;
         const botaoRastreador = document.createElement("a");
         botaoRastreador.className = "assistente-flutuante rastreador-flutuante";
-        botaoRastreador.href = new URL("RASTREADOR/index.html", caminhoBase).href;
+        botaoRastreador.href = new URL("RASTREADOR/index.html", caminhoSite).href;
         botaoRastreador.setAttribute("aria-label", "Rastrear um voo");
         botaoRastreador.innerHTML = `<img src="${new URL("img/icones/mascote03.png", caminhoBase).href}" alt=""><span>Rastrear voos</span>`;
         if (window.location.pathname.includes("/RASTREADOR/")) {
@@ -24,14 +28,19 @@
         botao.className = "assistente-flutuante";
         const hostname = window.location.hostname || "localhost";
         const protocolo = window.location.protocol === "https:" ? "https:" : "http:";
-        const urlChatbot = new URL("/CHATBOT/public/index.html", window.location.origin);
+        const estaNoChatbot = window.location.pathname.startsWith("/CHATBOT/public/") || window.location.port === "3001";
+        const hostLocal = ["localhost", "127.0.0.1"].includes(hostname);
+        const urlChatbot = estaNoChatbot
+            ? new URL("/", window.location.origin)
+            : hostLocal
+                ? new URL("/", protocolo + "//" + hostname + ":3001")
+                : new URL("/CHATBOT/public/index.html", window.location.origin);
         const atualizarLinkComTema = () => {
             const escuro = document.body.classList.contains("dark-mode")
                 || document.cookie.split("; ").includes("boatour-dark-mode=ativo");
             urlChatbot.searchParams.set("tema", escuro ? "ativo" : "desativado");
             botao.href = urlChatbot.href;
         };
-        const estaNoChatbot = window.location.pathname.startsWith("/CHATBOT/public/") || window.location.port === "3001";
         atualizarLinkComTema();
         if (estaNoChatbot) {
             botao.href = "#mensagem";
@@ -57,3 +66,5 @@
         adicionarBotaoAssistente();
     }
 })();
+
+

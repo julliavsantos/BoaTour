@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Julianinha - Boatur</title>
-    <link rel="stylesheet" href="/global-css/menurodape.css">
+    <link rel="stylesheet" href="/css/menurodape.css">
     <link rel="stylesheet" href="/CHATBOT/public/css/style.css?v=boatour-chatbot-20261104">
-    <link rel="stylesheet" href="/global-css/modal-theme.css">
+    <link rel="stylesheet" href="/css/modal-theme.css">
+    <link rel="stylesheet" href="/global-css/assistente.css?v=assistente-global-20261105">
     <link rel="icon" type="image/png" href="/global-img/logo/apenaslogo.png">
 </head>
  
@@ -137,9 +138,14 @@
 
   <div class="folder">
 
-    <img src="/img/img1.png" class="imagem ativa">
-    <img src="/img/img2.png" class="imagem">
-    <img src="/img/img3.png" class="imagem">
+    <img src="/global-img/chatbot/img01.png" class="imagem ativa">
+    <img src="/global-img/chatbot/img02.png" class="imagem">
+    <img src="/global-img/chatbot/img03.png" class="imagem">
+    <img src="/global-img/chatbot/img04.png" class="imagem">
+    <img src="/global-img/chatbot/img05.png" class="imagem">
+    <img src="/global-img/chatbot/img06.png" class="imagem">
+    <img src="/global-img/chatbot/img07.png" class="imagem">
+    <img src="/global-img/chatbot/img08.png" class="imagem">
 
 </div>
 
@@ -198,7 +204,7 @@
     
             <div class="footer-links">
                 <h3>Institucional</h3>
-                <a href="../../index.html#sobre">Sobre nós</a>
+                <a href="/index.html#sobre">Sobre nós</a>
                 <a href="#">Trabalhe conosco</a>
                 <a href="#">Política de privacidade</a>
                 <a href="#">Termos de uso</a>
@@ -251,9 +257,12 @@
     <script src="script.js"> </script>
     <script src="darkmodedemais.js"></script>
     <script src="/global-js/menu.js"></script>
-    <script>document.querySelectorAll("a[href^=\"/\"]").forEach(link => { if (link.getAttribute("href") !== "/") link.href = `${location.protocol}//${location.hostname}:3000${link.getAttribute("href")}`; });</script>
+    <script>document.querySelectorAll("a[href^=\"/\"]").forEach(link => { const href = link.getAttribute("href"); if (href === "/") return; const porta = href === "/CHATBOT/public/index.html" ? 3001 : 3000; link.href = `${location.protocol}//${location.hostname}:${porta}${porta === 3001 ? "/" : href}`; });</script>
     <script src="/global-js/modais.js"></script>
+    <script src="/global-js/assistente-flutuante.js?v=assistente-global-20261105"></script>
 
 
 </body>
 </html>
+
+
