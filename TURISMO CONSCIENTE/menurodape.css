@@ -78,7 +78,7 @@ body .assistente-flutuante {
     width: 300px;
     display: flex;
     align-items: center;
-    margin-left: 20px;
+    margin-left: -14px;
     transition:
         width 0.35s ease,
         margin 0.35s ease;
@@ -780,7 +780,7 @@ body.dark-mode .perfil-links a > span {
 }
 
 body.dark-mode .footer-texto input {
-    background: var(--card);
+    background: var(--surface-strong);
     color: var(--text);
 }
 
@@ -827,4 +827,31 @@ body.dark-mode .dark-mode-btn {
 }
 body.dark-mode .dark-mode-btn:hover {
     background: #2b393c;
+}
+.btn-voltar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    min-width: 33px;
+    margin-right: 0;
+    margin-left: 30px;
+    margin-top: -3px;
+    background: rgba(81, 147, 92, 0.07);
+    border: 1px solid rgba(81, 147, 81, 0.16);
+    border-radius: 30%;
+    color: var(--chatbot-border);
+    font-size: 23px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+.btn-voltar span{
+    margin-top: -5px;
+}
+.btn-voltar:hover {
+    background: rgba(81, 147, 90, 0.14);
+    border-color: rgba(81, 141, 147, 0.25);
+    color: #51935c;
+    transform: translateX(-3px);
 }

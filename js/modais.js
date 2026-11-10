@@ -111,6 +111,45 @@ const URL_API_BOATOUR = window.location.port === "3001" ? window.location.protoc
         modal.hidden = false;
         modal.querySelector(".modal-favorito-login__abrir-login").focus();
     }, true);
+
+    // Protege ações de conta e as etapas finais do checkout. O listener em
+    // captura impede que a página abra formulários ou altere dados antes do aviso.
+    window.addEventListener("click", evento => {
+        const alvo = evento.target instanceof Element ? evento.target : null;
+        const acao = alvo?.closest([
+            "#btnEditarPerfil",
+            "#btnAlterarSenha",
+            "#editarComprador",
+            "#abrirModalPagamento",
+            ".btn-editar-passageiro",
+            ".btn-editar-comprador",
+            ".btn-editar-pagamento",
+            ".finalizaeButton",
+            'a[href*="PERFIL/index.html"]',
+            '.sidebar-links a[href="#viagens"], .sidebar-links a[href="#favoritos"]',
+            '.perfil-links a[href="#viagens"], .perfil-links a[href="#favoritos"]'
+        ].join(","));
+        if (!acao || localStorage.getItem("boatourSessionToken")) return;
+
+        evento.preventDefault();
+        evento.stopImmediatePropagation();
+
+        let mensagem = "Para continuar, entre na sua conta BoaTour.";
+        if (acao.matches("#btnEditarPerfil, #btnAlterarSenha")) {
+            mensagem = "Para editar seu perfil ou alterar sua senha, você precisa entrar na sua conta BoaTour.";
+        } else if (acao.matches('a[href*="PERFIL/index.html"], .sidebar-links a[href="#viagens"], .sidebar-links a[href="#favoritos"], .perfil-links a[href="#viagens"], .perfil-links a[href="#favoritos"]')) {
+            mensagem = "Para consultar suas viagens, favoritos e dados do perfil, entre na sua conta BoaTour.";
+        } else if (acao.matches("#editarComprador, .btn-editar-comprador, .btn-editar-passageiro")) {
+            mensagem = "Para editar os dados dos viajantes, entre na sua conta BoaTour.";
+        } else if (acao.matches("#abrirModalPagamento, .btn-editar-pagamento, .finalizaeButton")) {
+            mensagem = "Para escolher o pagamento e concluir a compra, você precisa entrar na sua conta BoaTour.";
+        }
+
+        const modal = criarModalFavoritoLogin();
+        modal.querySelector(".modal-favorito-login__mensagem").textContent = mensagem;
+        modal.hidden = false;
+        modal.querySelector(".modal-favorito-login__abrir-login").focus();
+    }, true);
 })();
 
 // --- RECUPERAÇÃO DE SENHA ---
@@ -892,19 +931,28 @@ document.addEventListener(
 
         const linhaDetalhes = document.querySelector(".linha-detalhes");
         if (tipoModal === "ofertas") {
+            const pacote = card.dataset.tipoAlvo === "pacote";
             const passagem = card.dataset.passagem;
             const hospedagem = card.dataset.hospedagem;
             const passeios = card.dataset.passeios;
             const dias = card.dataset.dias;
             if (linhaDetalhes) linhaDetalhes.style.display = "";
             [modalPassagem, modalHospedagem, modalPasseios].forEach((item, index) => {
-                if (item) item.style.display = [passagem, hospedagem, passeios][index] === "1" ? "" : "none";
+                if (!item) return;
+                item.style.display = pacote && [passagem, hospedagem, passeios][index] === "1" ? "" : "none";
+                const texto = item.querySelector("p");
+                const detalhe = [card.dataset.voos, card.dataset.hoteis, card.dataset.atividades][index];
+                if (texto) {
+                    const rotulos = ["Passagem aérea", "Hospedagem", "Passeios"];
+                    texto.textContent = pacote && detalhe ? `${rotulos[index]}: ${detalhe}` : rotulos[index];
+                }
             });
             if (modalDias) {
                 const textoDias = modalDias.querySelector("p");
-                if (textoDias) textoDias.textContent = `${dias || 0} dias`;
-                modalDias.style.display = "";
+                if (textoDias) textoDias.textContent = dias ? `${dias} dias` : "";
+                modalDias.style.display = dias ? "" : "none";
             }
+            if (linhaDetalhes) linhaDetalhes.style.display = pacote || dias ? "" : "none";
         } else if (linhaDetalhes) {
             const itens = [...linhaDetalhes.children];
             const detalhes = tipoModal === "hotel"

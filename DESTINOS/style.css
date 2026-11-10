@@ -492,3 +492,41 @@ body {
     50% { transform: translateY(-5px) scale(1.02); }
 }
 }
+
+/* O balão do filtro TC também precisa funcionar abaixo de 1440px. */
+.filtro-tc { position: relative; }
+.filtro-tc-alerta {
+    display: inline-grid;
+    width: 16px;
+    height: 16px;
+    margin-left: 3px;
+    place-items: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+.filtro-tc[data-tooltip]::after {
+    position: absolute;
+    z-index: 1002;
+    top: calc(100% + 8px);
+    left: 0;
+    display: none;
+    width: min(320px, 80vw);
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    content: attr(data-tooltip);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.45;
+    text-align: left;
+    white-space: normal;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 24%);
+    pointer-events: none;
+}
+.filtro-tc[data-tooltip]:hover::after,
+.filtro-tc[data-tooltip]:focus-visible::after { display: block; }

@@ -528,6 +528,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         modalViajante.hidden = false;
         document.getElementById("nomeViajante").focus();
     };
+    document.getElementById("euSouPassageiro")?.addEventListener("click", () => {
+        const nome = document.getElementById("nomeUsuario").value.trim();
+        const cpf = document.getElementById("cpfUsuario").value.trim();
+        if (!nome || !cpf) {
+            alert("Preencha primeiro seu nome e CPF nos dados do comprador.");
+            document.getElementById(!nome ? "nomeUsuario" : "cpfUsuario").focus();
+            return;
+        }
+        if (viajantes.some(viajante => apenasNumeros(viajante.cpf) === apenasNumeros(cpf))) {
+            alert("Seus dados já estão cadastrados como passageiro.");
+            return;
+        }
+        abrirModalViajante(null);
+        document.getElementById("nomeViajante").value = nome;
+        document.getElementById("cpfViajante").value = mascararCpf(cpf);
+        const usuario = lerUsuarioLocal();
+        const nascimento = usuario?.data_nascimento || usuario?.nascimento || "";
+        if (/^\d{4}-\d{2}-\d{2}$/.test(nascimento)) {
+            document.getElementById("nascimentoViajante").value = nascimento;
+            document.getElementById("nascimentoViajanteDisplay").value = formatarData(nascimento);
+        }
+    });
     const fecharModalViajante = () => { modalViajante.hidden = true; };
     const renderizarViajantes = () => {
         if (!listaViajantes) return;
@@ -744,16 +766,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             atualizarDataResumo();
             return;
         }
-        document.getElementById("linhaSeguroCompra").hidden = false;
         const precoHotel = ehHospedagem ? precoDiariaHotel * noites * quantidadeViajantes : 0;
         const base = ehHospedagem ? precoHotel : precoBaseCompra * quantidadeViajantes;
         const vooValor = tipo === "voo" ? precoBaseCompra * quantidadeViajantes : 0;
-        const baseExtras = base;
-        const valorAlimentacao = baseExtras * 0.15;
-        const valorAtividades = tipo === "atividade" || ofertaIncluiPasseios ? 0 : baseExtras * 0.08;
-        const valorTransporte = baseExtras * 0.05;
+        const tipoProdutoCompra = tipo === "oferta"
+            ? (itemCarregado.tipo_alvo === "pacote" ? "pacote" : itemCarregado.tipo_produto)
+            : tipo;
+        const extrasAplicaveis = ["destino", "hotel", "pacote"].includes(tipoProdutoCompra);
+        const baseExtras = extrasAplicaveis ? base : 0;
+        // Estimativas de viagem reduzidas para um terço das taxas anteriores.
+        const valorAlimentacao = baseExtras * 0.05;
+        const valorAtividades = tipo === "atividade" || ofertaIncluiPasseios ? 0 : baseExtras * (0.08 / 3);
+        const valorTransporte = baseExtras * (0.05 / 3);
         const subtotal = base + valorAlimentacao + valorAtividades + valorTransporte;
-        const seguro = subtotal * 0.10;
+        const seguro = extrasAplicaveis ? subtotal * (0.10 / 3) : 0;
         const valorItensAdicionais = itensPacote
             .filter(item => item.chave !== `${tipo}:${idItem}`)
             .reduce((soma, item) => {
@@ -812,15 +838,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("precoHotelCompra").textContent = "Incluso";
         }
 
-        document.getElementById("linhaAlimentacaoCompra").hidden = baseExtras <= 0;
-        document.getElementById("linhaAtividadesCompra").hidden = baseExtras <= 0 || tipo === "atividade";
+        document.getElementById("linhaAlimentacaoCompra").hidden = !extrasAplicaveis || baseExtras <= 0;
+        document.getElementById("linhaAtividadesCompra").hidden = !extrasAplicaveis || baseExtras <= 0 || tipo === "atividade";
         const labelAtividades = document.querySelector("#linhaAtividadesCompra p");
         if (labelAtividades) {
             labelAtividades.innerHTML = ofertaIncluiPasseios
                 ? "Atividades inclusas"
-                : 'Atividades <small>8%</small>';
+                : 'Atividades <small>2,7%</small>';
         }
-        document.getElementById("linhaTransporteCompra").hidden = baseExtras <= 0;
+        document.getElementById("linhaTransporteCompra").hidden = !extrasAplicaveis || baseExtras <= 0;
+        document.getElementById("linhaSeguroCompra").hidden = !extrasAplicaveis;
         document.getElementById("precoAlimentacaoCompra").textContent = formatarMoeda(valorAlimentacao);
         document.getElementById("precoAtividadesCompra").textContent = ofertaIncluiPasseios ? "Inclusas" : formatarMoeda(valorAtividades);
         document.getElementById("precoTransporteCompra").textContent = formatarMoeda(valorTransporte);

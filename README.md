@@ -87,6 +87,8 @@ Banco de dados utilizado:
 
 Na base `boatour_bd`, importe `servidor/database/migracao_notificacoes.sql` pelo phpMyAdmin ou execute o arquivo no cliente MariaDB. A migração usa `CREATE TABLE IF NOT EXISTS`, não cria nem apaga bancos e não insere a notificação de teste do dump.
 
+Para habilitar a edição da avaliação nas publicações da galeria já existentes, execute também `servidor/database/migracao_nota_publicacoes.sql` na base `boatour_bd`. A migração só adiciona a coluna `nota_experiencia` quando ela ainda não existe.
+
 A integração com PHP permite realizar operações de consulta, cadastro, atualização e gerenciamento das informações.
 ---
 

@@ -13,11 +13,13 @@ const UsuariosBD = require('./database/UsuariosBD');
 const FavoritosBD = require('./database/FavoritosBD');
 const AeroportosBD = require('./database/AeroportosBD');
 const VoosBD = require('./database/VoosBD');
+const AeroDataBoxVoos = require('./services/voosAeroDataBox');
 const HotelBD = require('./database/HoteisBD');
 const AtividadesBD = require('./database/AtividadesBD');
 const { rastrearVoo, ErroRastreador } = require('./rastreador');
 const PagamentosBD = require('./database/PagamentosBD');
 const NotificacoesBD = require('./database/NotificacoesBD');
+const PublicacoesBD = require('./database/PublicacoesBD');
 
 const PORT = Number(process.env.PORT || 3000);
 const sessions = new Map();
@@ -236,7 +238,8 @@ function buscaVoos(res, query) {
         destino: query.destino,
         data: query.data,
         precoMin: query.precoMin,
-        precoMax: query.precoMax
+        precoMax: query.precoMax,
+        passageiros: query.passageiros
     };
     const possuiFiltros = Object.values(filtros).some(
         valor => valor !== undefined && valor !== ''
@@ -256,6 +259,29 @@ function buscaVoos(res, query) {
     }
 
     return VoosBD.buscaVoos(responder);
+}
+
+function buscaVoosReais(res, query) {
+    AeroDataBoxVoos.buscarVoos({
+        origem: query.origem,
+        destino: query.destino,
+        data: query.data
+    }).then(voos => json(res, 200, {
+        fonte: 'AeroDataBox',
+        compravel: false,
+        voos
+    })).catch(erro => {
+        if (erro.code === 'PARAMETROS_INVALIDOS') {
+            return json(res, 400, { error: erro.message, code: erro.code });
+        }
+        if (erro.code === 'AERODATABOX_DESLIGADA' || erro.code === 'AERODATABOX_SEM_CHAVE') {
+            return json(res, 503, { error: erro.message, code: erro.code });
+        }
+        console.error('Erro ao consultar a AeroDataBox:', erro.message);
+        return json(res, erro.status === 429 ? 429 : 502, {
+            error: 'Não foi possível consultar os horários de voo agora.'
+        });
+    });
 }
 
 
@@ -842,6 +868,336 @@ function excluirNotificacao(req, res, id) {
     });
 }
 
+function criarPublicacao(req, res) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+
+    const pastaUploads = path.join(__dirname, '..', 'uploads', 'viagens');
+    fs.mkdirSync(pastaUploads, { recursive: true });
+
+    const form = formidable({
+        uploadDir: pastaUploads,
+        keepExtensions: true,
+        maxFileSize: 5 * 1024 * 1024,
+        maxFiles: 5,
+        multiples: true,
+        maxTotalFileSize: 25 * 1024 * 1024
+    });
+
+    form.parse(req, async (erro, campos, arquivos) => {
+        if (erro) {
+            return json(res, 400, {
+                error: 'Erro no envio. Use no máximo 5 fotos de até 5 MB cada.'
+            });
+        }
+
+        const campo = nome => {
+            const valor = campos[nome];
+            return Array.isArray(valor) ? valor[0] : valor;
+        };
+
+        const titulo = campo('titulo');
+        const descricao = campo('descricao');
+        let cidade = campo('cidade');
+        let pais = campo('pais');
+        const notaExperiencia = Number(campo('nota_experiencia'));
+        const idPagamento = campo('id_pagamento');
+
+        const fotosRecebidas = arquivos.fotos
+            ? (Array.isArray(arquivos.fotos)
+                ? arquivos.fotos
+                : [arquivos.fotos])
+            : [];
+
+        if (fotosRecebidas.length < 1 || fotosRecebidas.length > 5) {
+            fotosRecebidas.forEach(foto => {
+                try { fs.unlinkSync(foto.filepath); } catch {}
+            });
+            return json(res, 400, {
+                error: 'Envie pelo menos 1 foto e no máximo 5 fotos por publicação.'
+            });
+        }
+
+        if (!titulo || !descricao || !cidade || !pais || !Number.isInteger(notaExperiencia) || notaExperiencia < 1 || notaExperiencia > 5) {
+            fotosRecebidas.forEach(foto => {
+                try { fs.unlinkSync(foto.filepath); } catch {}
+            });
+
+            return json(res, 400, {
+                error: 'Preencha o título, a descrição, o local e uma avaliação de 1 a 5 estrelas.'
+            });
+        }
+
+        try {
+            const compraValidada = await PagamentosBD.compraAprovadaDoUsuario(sessao.id_usuario, idPagamento);
+            if (!compraValidada) {
+                fotosRecebidas.forEach(foto => { try { fs.unlinkSync(foto.filepath); } catch {} });
+                return json(res, 403, { error: 'Selecione uma compra aprovada da sua conta para publicar na galeria.' });
+            }
+            const destinoCompra = String(compraValidada.pedido?.destino || compraValidada.pedido?.titulo || compraValidada.descricao || '').trim();
+            const partesDestino = destinoCompra.split(',').map(parte => parte.trim()).filter(Boolean);
+            // O local publicado vem do pedido aprovado, não de campos manipuláveis no navegador.
+            cidade = partesDestino[0] || destinoCompra || 'Viagem BoaTour';
+            pais = partesDestino[1] || compraValidada.pedido?.pais || 'Viagem BoaTour';
+        } catch (erroCompra) {
+            console.error('Erro ao validar compra da publicação:', erroCompra);
+            fotosRecebidas.forEach(foto => { try { fs.unlinkSync(foto.filepath); } catch {} });
+            return json(res, 500, { error: 'Não foi possível validar a compra selecionada.' });
+        }
+
+        if (fotosRecebidas.length > 5) {
+            fotosRecebidas.forEach(foto => {
+                try { fs.unlinkSync(foto.filepath); } catch {}
+            });
+
+            return json(res, 400, {
+                error: 'Você pode enviar no máximo 5 fotos.'
+            });
+        }
+
+        const extensoesPermitidas = {
+            'image/jpeg': '.jpg',
+            'image/png': '.png',
+            'image/webp': '.webp'
+        };
+
+        const fotosInvalidas = fotosRecebidas.some(foto =>
+            !extensoesPermitidas[String(foto.mimetype || '').toLowerCase()]
+        );
+
+        if (fotosInvalidas) {
+            fotosRecebidas.forEach(foto => {
+                try { fs.unlinkSync(foto.filepath); } catch {}
+            });
+
+            return json(res, 400, {
+                error: 'Use apenas imagens JPG, PNG ou WEBP.'
+            });
+        }
+
+        const fotosParaSalvar = fotosRecebidas.map((foto, indice) => ({
+            arquivo: foto,
+            caminho: `uploads/viagens/viagem_${Date.now()}_${sessao.id_usuario}_${indice + 1}${extensoesPermitidas[String(foto.mimetype).toLowerCase()]}`
+        }));
+
+        PublicacoesBD.criarPublicacao(
+            sessao.id_usuario,
+            { titulo, descricao, cidade, pais, nota_experiencia: notaExperiencia },
+            (erroCriacao, idPublicacao) => {
+                if (erroCriacao) {
+                    fotosRecebidas.forEach(foto => {
+                        try { fs.unlinkSync(foto.filepath); } catch {}
+                    });
+
+                    return json(res, 500, {
+                        error: 'Erro ao criar publicação.'
+                    });
+                }
+
+                const salvarFoto = indice => {
+                    if (indice >= fotosParaSalvar.length) {
+                        return json(res, 201, {
+                            id_publicacao: idPublicacao,
+                            mensagem: 'Publicação criada com sucesso!',
+                            quantidade_fotos: fotosParaSalvar.length
+                        });
+                    }
+
+                    const item = fotosParaSalvar[indice];
+                    const destino = path.join(__dirname, '..', item.caminho);
+
+                    fs.rename(item.arquivo.filepath, destino, erroArquivo => {
+                        if (erroArquivo) {
+                            console.error('Erro ao mover foto:', erroArquivo);
+                            return json(res, 500, {
+                                error: 'Publicação criada, mas houve erro ao salvar uma foto.',
+                                id_publicacao: idPublicacao
+                            });
+                        }
+
+                        PublicacoesBD.adicionarFoto({
+                            id_publicacao: idPublicacao,
+                            caminho_foto: item.caminho.replace(/\\/g, '/'),
+                            ordem: indice + 1
+                        }, erroFoto => {
+                            if (erroFoto) {
+                                console.error('Erro ao registrar foto:', erroFoto);
+                                return json(res, 500, {
+                                    error: 'Publicação criada, mas houve erro ao registrar uma foto.',
+                                    id_publicacao: idPublicacao
+                                });
+                            }
+
+                            salvarFoto(indice + 1);
+                        });
+                    });
+                };
+
+                salvarFoto(0);
+            }
+        );
+    });
+}
+
+
+/* =========================================
+   COMUNIDADE DE VIAJANTES
+========================================= */
+
+// GET /publicacoes
+function listarPublicacoes(req, res) {
+    const sessao = obterSessao(req);
+    PublicacoesBD.listarPublicacoes((erro, publicacoes) => {
+        if (erro) {
+            console.error('Erro ao listar publicações:', erro);
+            return json(res, 500, {
+                error: 'Erro ao carregar as publicações.'
+            });
+        }
+
+        return json(res, 200, publicacoes.map(publicacao => ({
+            ...publicacao,
+            minha_publicacao: Boolean(sessao && Number(publicacao.id_usuario) === Number(sessao.id_usuario))
+        })));
+    });
+}
+
+// GET /publicacoes/:id
+function buscarPublicacao(req, res, id) {
+    const idPublicacao = Number(id);
+
+    if (!Number.isInteger(idPublicacao) || idPublicacao <= 0) {
+        return json(res, 400, {
+            error: 'ID da publicação inválido.'
+        });
+    }
+
+    const sessao = obterSessao(req);
+
+    PublicacoesBD.buscarPorId(idPublicacao, sessao?.id_usuario, (erro, publicacao) => {
+        if (erro) {
+            console.error('Erro ao buscar publicação:', erro);
+            return json(res, 500, {
+                error: 'Erro ao buscar a publicação.'
+            });
+        }
+
+        if (!publicacao) {
+            return json(res, 404, {
+                error: 'Publicação não encontrada.'
+            });
+        }
+
+        return json(res, 200, {
+            ...publicacao,
+            minha_publicacao: Boolean(sessao && Number(publicacao.id_usuario) === Number(sessao.id_usuario))
+        });
+    });
+}
+
+function avaliarPublicacao(req, res, id) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+
+    const idPublicacao = Number(id);
+    if (!Number.isInteger(idPublicacao) || idPublicacao <= 0) {
+        return json(res, 400, { error: 'ID da publicação inválido.' });
+    }
+
+    readJson(req, (erro, dados) => {
+        if (erro) return json(res, 400, { error: 'Dados da avaliação inválidos.' });
+
+        const nota = Number(dados.nota);
+        if (!Number.isInteger(nota) || nota < 1 || nota > 5) {
+            return json(res, 400, { error: 'A avaliação deve ser de 1 a 5 estrelas.' });
+        }
+
+        PublicacoesBD.avaliarPublicacao(
+            idPublicacao,
+            sessao.id_usuario,
+            nota,
+            (erroAvaliacao, resumo) => {
+                if (erroAvaliacao) {
+                    console.error('Erro ao salvar avaliação:', erroAvaliacao);
+                    return json(res, 500, { error: 'Não foi possível salvar sua avaliação.' });
+                }
+
+                if (!resumo) {
+                    return json(res, 404, { error: 'Publicação não encontrada.' });
+                }
+
+                return json(res, 200, resumo);
+            }
+        );
+    });
+}
+
+function atualizarPublicacao(req, res, id) {
+    const sessao = exigirSessao(req, res);
+    if (!sessao) return;
+    const idPublicacao = Number(id);
+    if (!Number.isInteger(idPublicacao) || idPublicacao <= 0) {
+        return json(res, 400, { error: 'ID da publicação inválido.' });
+    }
+    readJson(req, (erroBody, dados) => {
+        if (erroBody) return json(res, 400, { error: 'Dados da publicação inválidos.' });
+        const titulo = String(dados.titulo || '').trim();
+        const descricao = String(dados.descricao || '').trim();
+        const nota = Number(dados.nota_experiencia);
+        if (!titulo || titulo.length > 150 || !descricao || !Number.isInteger(nota) || nota < 1 || nota > 5) {
+            return json(res, 400, { error: 'Informe um título de até 150 caracteres, uma descrição e uma avaliação de 1 a 5 estrelas.' });
+        }
+        PublicacoesBD.atualizarPublicacao(idPublicacao, sessao.id_usuario,
+            { titulo, descricao, nota_experiencia: nota }, (erro, atualizada) => {
+                if (erro) {
+                    console.error('Erro ao editar publicação:', erro);
+                    return json(res, 500, { error: 'Não foi possível editar a publicação.' });
+                }
+                if (!atualizada) return json(res, 404, { error: 'Publicação não encontrada ou não pertence a você.' });
+                return json(res, 200, { mensagem: 'Publicação atualizada com sucesso.' });
+            }
+        );
+    });
+}
+
+// DELETE /publicacoes/:id
+function excluirPublicacao(req, res, id) {
+    const sessao = exigirSessao(req, res);
+
+    if (!sessao) return;
+
+    const idPublicacao = Number(id);
+
+    if (!Number.isInteger(idPublicacao) || idPublicacao <= 0) {
+        return json(res, 400, {
+            error: 'ID da publicação inválido.'
+        });
+    }
+
+    PublicacoesBD.excluirPublicacao(
+        idPublicacao,
+        sessao.id_usuario,
+        (erro, excluida) => {
+            if (erro) {
+                console.error('Erro ao excluir publicação:', erro);
+                return json(res, 500, {
+                    error: 'Erro ao excluir a publicação.'
+                });
+            }
+
+            if (!excluida) {
+                return json(res, 404, {
+                    error: 'Publicação não encontrada ou não pertence a você.'
+                });
+            }
+
+            return json(res, 200, {
+                mensagem: 'Publicação excluída com sucesso.'
+            });
+        }
+    );
+}
+
 // ROTAS
 const callback = (req, res) => {
     setCors(res, req);
@@ -857,6 +1213,28 @@ const callback = (req, res) => {
         p = decodeURIComponent(rota.pathname);
     } catch {
         return json(res, 400, { error: 'Caminho inválido.' });
+    }
+
+    // GALERIA DE VIAJANTES
+    if (req.method === 'GET' && p === '/publicacoes') {
+        return listarPublicacoes(req, res);
+    }
+    const publicacaoMatchGaleria = p.match(/^\/publicacoes\/(\d+)$/);
+    if (publicacaoMatchGaleria && req.method === 'GET') {
+        return buscarPublicacao(req, res, publicacaoMatchGaleria[1]);
+    }
+    if (publicacaoMatchGaleria && req.method === 'PUT') {
+        return atualizarPublicacao(req, res, publicacaoMatchGaleria[1]);
+    }
+    if (publicacaoMatchGaleria && req.method === 'DELETE') {
+        return excluirPublicacao(req, res, publicacaoMatchGaleria[1]);
+    }
+    const avaliacaoMatchGaleria = p.match(/^\/publicacoes\/(\d+)\/avaliacoes$/);
+    if (avaliacaoMatchGaleria && req.method === 'POST') {
+        return avaliarPublicacao(req, res, avaliacaoMatchGaleria[1]);
+    }
+    if (req.method === 'POST' && p === '/publicacoes') {
+        return criarPublicacao(req, res);
     }
 
     // Usuários
@@ -977,6 +1355,10 @@ const callback = (req, res) => {
     //voos
     if (req.method === 'GET' && p === '/voos') {
     return buscaVoos(res, rota.query);
+    }
+
+    if (req.method === 'GET' && p === '/voos/reais') {
+        return buscaVoosReais(res, rota.query);
     }
 
     if (req.method === 'GET' && p === '/pagamentos/historico') return historicoPagamentos(req, res);

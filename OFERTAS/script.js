@@ -362,6 +362,16 @@ document.addEventListener("DOMContentLoaded", () => {
             card.dataset.abrangencia = oferta.abrangencia || "";
             card.dataset.tipoProduto = oferta.tipo_produto || "";
 
+            card.dataset.dias = oferta.dias || "";
+            card.dataset.quantidadePaises = oferta.quantidade_paises || "";
+            card.dataset.destinos = oferta.destinos_inclusos || "";
+            card.dataset.voos = oferta.voos_inclusos || "";
+            card.dataset.hoteis = oferta.hoteis_inclusos || "";
+            card.dataset.atividades = oferta.atividades_inclusas || "";
+            card.dataset.passagem = Number(oferta.passagem_aerea) ? "1" : "0";
+            card.dataset.hospedagem = Number(oferta.hospedagem) ? "1" : "0";
+            card.dataset.passeios = Number(oferta.passeios) ? "1" : "0";
+
             card.dataset.descricao =
                 oferta.descricao || "";
 

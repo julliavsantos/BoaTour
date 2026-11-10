@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css?v=tooltip-theme-layer-20261026">
-    <link rel="stylesheet" href="css/menurodape.css">
+    <link rel="stylesheet" href="css/menurodape.css?v=chatbot-auth-link-20261106">
     <link rel="stylesheet" href="css/modal-theme.css">
     <link rel="stylesheet" href="css/assistente.css">
     <link rel="icon" type="image/png" href="img/logo/apenaslogo.png">
     <title>BoaTour</title>
     <link rel="stylesheet" href="css/forms.css?v=select-popup-20261104">
+    <link rel="stylesheet" href="css/galeria.css">
 </head>
 <body>
     <!-- MODAL DE BOAS-VINDAS -->
@@ -51,7 +52,8 @@
     <div class="cont" id="inicio">
     <div class="container">
         <div class="nav">
-
+<button class="btn-voltar" onclick="history.back()" aria-label="Voltar à página anterior">
+    <span><</span></button>
     <div class="logo">
         <img id="logoBoatour" src="img/logo/logo.png" alt="BOATOUR">
     </div>
@@ -402,6 +404,171 @@
     </button>
 </section>
 
+        <section class="galeria-viajantes" id="viajantes">
+
+    <!-- Cabeçalho -->
+    <div class="galeria-cabecalho">
+
+        <div class="galeria-titulo">
+            <span class="galeria-subtitulo">
+                COMUNIDADE BOATOUR
+            </span>
+
+            <h2>Momentos pelo mundo</h2>
+
+            <p>Histórias e destinos de quem já viajou.</p>
+        </div>
+
+        <div class="botoes-galeria">
+
+            <button
+                type="button"
+                id="abrirFormularioPublicacao"
+                class="btn-publicar-viagem">
+                + Compartilhar minha viagem
+            </button>
+
+            <a href="#viajantes" class="btn-mais-viajantes">
+                Ver mais viajantes <span>⟶</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Formulário: fica fora do holder dos cards -->
+    <form
+        id="formPublicacaoViagem"
+        class="form-publicacao-viagem"
+        enctype="multipart/form-data"
+        hidden>
+
+        <h3>Compartilhe sua viagem</h3>
+
+        <label for="compraViagem">Viagem comprada</label>
+        <select id="compraViagem" name="id_pagamento" required>
+            <option value="">Selecione uma compra aprovada</option>
+        </select>
+        <input type="hidden" name="cidade">
+        <input type="hidden" name="pais">
+        <p class="ajuda-upload" id="ajudaCompraViagem">As publicações da galeria precisam estar vinculadas a uma compra aprovada.</p>
+
+        <label for="tituloViagem">Título da viagem</label>
+        <input
+            type="text"
+            id="tituloViagem"
+            name="titulo"
+            maxlength="150"
+            required
+            placeholder="Ex.: Minhas férias no Rio">
+
+        <label for="descricaoViagem">
+            Conte como foi sua experiência
+        </label>
+        <textarea
+            id="descricaoViagem"
+            name="descricao"
+            required
+            placeholder="Conte o que você conheceu..."
+            rows="4"></textarea>
+
+        <fieldset class="campo-nota-experiencia">
+            <legend>Como você avalia esta experiência? Escolha de 1 a 5 estrelas</legend>
+            <div class="seletor-estrelas-publicacao" role="radiogroup" aria-label="Nota da experiência">
+                <label class="opcao-estrela-publicacao">
+                    <input type="radio" name="nota_experiencia" value="1" required>
+                    <span aria-hidden="true">★</span><span class="texto-acessivel">1 estrela</span>
+                </label>
+                <label class="opcao-estrela-publicacao">
+                    <input type="radio" name="nota_experiencia" value="2" required>
+                    <span aria-hidden="true">★</span><span class="texto-acessivel">2 estrelas</span>
+                </label>
+                <label class="opcao-estrela-publicacao">
+                    <input type="radio" name="nota_experiencia" value="3" required>
+                    <span aria-hidden="true">★</span><span class="texto-acessivel">3 estrelas</span>
+                </label>
+                <label class="opcao-estrela-publicacao">
+                    <input type="radio" name="nota_experiencia" value="4" required>
+                    <span aria-hidden="true">★</span><span class="texto-acessivel">4 estrelas</span>
+                </label>
+                <label class="opcao-estrela-publicacao">
+                    <input type="radio" name="nota_experiencia" value="5" required>
+                    <span aria-hidden="true">★</span><span class="texto-acessivel">5 estrelas</span>
+                </label>
+            </div>
+            <p class="ajuda-nota-experiencia">Selecione a nota que representa a sua viagem.</p>
+        </fieldset>
+
+        <label for="fotosViagem" class="rotulo-anexar-fotos">＋ Anexar fotos da viagem</label>
+        <input
+            type="file"
+            id="fotosViagem"
+            name="fotos"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            required>
+        <p class="ajuda-upload" id="avisoFotoObrigatoria" role="note">É obrigatório enviar pelo menos 1 foto (até 5 por publicação).</p>
+        <span class="nome-arquivos-viagem" id="nomeArquivosViagem">Nenhum arquivo selecionado</span>
+
+        <p class="ajuda-upload">
+            JPG, PNG ou WEBP. Até 5 MB por foto.
+        </p>
+
+        <div
+            id="previaFotosViagem"
+            class="previa-fotos-viagem">
+        </div>
+
+        <p id="mensagemPublicacao"
+           role="status"
+           aria-live="polite"></p>
+
+        <div class="acoes-form-publicacao">
+            <button type="button" id="cancelarPublicacao">
+                Cancelar
+            </button>
+
+            <button type="submit" id="enviarPublicacao">
+                Publicar viagem
+            </button>
+        </div>
+
+    </form>
+
+    <!-- Carrossel de publicações -->
+    <div class="galeria-carrossel">
+
+        <button
+            type="button"
+            class="seta-carrossel seta-anterior"
+            aria-label="Viajantes anteriores">
+            &#10094;
+        </button>
+
+        <!-- Deve existir apenas um holder -->
+        <div class="galeria-holder">
+            <p>Carregando publicações...</p>
+        </div>
+
+        <button
+            type="button"
+            class="seta-carrossel seta-proxima"
+            aria-label="Próximos viajantes">
+            &#10095;
+        </button>
+
+    </div>
+
+    <div
+        class="galeria-indicadores"
+        aria-label="Posição do carrossel">
+    </div>
+
+    <p class="galeria-instrucao">
+        Deslize para descobrir mais
+    </p>
+
+</section>
+
     <div class="container04" id="sobre">
         <p>Sobre a BOATOUR<br>
         <span>A BoaTour é uma agência de turismo que busca tornar o
@@ -629,16 +796,18 @@
 
 
     <script src="js/script.js?v=home-flight-search-20261026"></script>
-    <script src="js/menu.js"></script>
+    <script src="js/menu.js?v=chatbot-auth-link-20261106"></script>
     <script src="js/modais.js"></script>
     <script src="js/ofertas.js"></script>
     <script src="js/darkmode.js?v=theme-preference-sync-20261026"></script>
     <script src="js/destinos.js"></script>
 
     
-    <script src="js/assistente-flutuante.js?v=rastreador-floating-button-20261103"></script>
+    <script src="js/assistente-flutuante.js?v=floating-root-path-20261106"></script>
 
     <script src="js/feedback.js"></script>
+    <script src="js/galeria.js?v=gallery-owner-rating-fix-20261106-2"></script>
+    <script src="js/form-publicacao.js"></script>
 </body>
 </html>
 

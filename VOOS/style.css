@@ -947,3 +947,30 @@ body {
 @media (max-width: 640px) {
     .folder img { width: min(85%, 420px); }
 }
+.pagina-voos .btn-voltar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    min-width: 33px;
+    margin-right: 0;
+    margin-left: 30px;
+    margin-top: -3px;
+    background: rgba(81, 141, 147, 0.07);
+    border: 1px solid rgba(81, 141, 147, 0.16);
+    border-radius: 30%;
+    color: var(--accent);
+    font-size: 20px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+.pagina-voos .btn-voltar span{
+    margin-top: 2px;
+}
+.pagina-voos .btn-voltar:hover {
+    background: rgba(81, 141, 147, 0.14);
+    border-color: rgba(81, 141, 147, 0.25);
+    color: #518d93;
+    transform: translateX(-3px);
+}

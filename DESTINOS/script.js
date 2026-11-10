@@ -14,8 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // VARIÁVEIS
     let todosDestinos = [];
     let destinosFiltrados = [];
-    let filtroAtual = "todas";
-    let buscaAtual = "";
+    const parametrosURL = new URLSearchParams(window.location.search);
+
+let filtroAtual = parametrosURL.get("filtro") || "todas";
+let buscaAtual = "";
 
     // Quantidade de destinos que aparecem
     let quantidadeVisivel = 8;
@@ -85,7 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let passouNoFiltro = true;
 
-                if (filtroAtual !== "todas") {
+                if (filtroAtual === "turismo-consciente") {
+
+                    passouNoFiltro =
+                        Number(destino.ods8) === 1 || destino.ods8 === true ||
+                        Number(destino.ods12) === 1 || destino.ods12 === true;
+
+                } else if (filtroAtual !== "todas") {
 
                     const categoriasDestino =
                         Array.isArray(destino.categorias)
@@ -655,6 +663,28 @@ document.addEventListener("click", async (event) => {
 
     }
 
+    // --- ATIVAR FILTRO RECEBIDO PELA URL ---
+
+if (filtroAtual !== "todas") {
+
+    const botaoFiltroURL = Array.from(botoesFiltro).find(botao =>
+        normalizarTexto(botao.dataset.filtro) === normalizarTexto(filtroAtual)
+    );
+
+    if (botaoFiltroURL) {
+
+        botoesFiltro.forEach(btn => {
+            btn.classList.remove("ativo");
+        });
+
+        botaoFiltroURL.classList.add("ativo");
+
+        filtroAtual = botaoFiltroURL.dataset.filtro;
+
+    } else {
+        filtroAtual = "todas";
+    }
+}
 
     // --- BOTÕES DE FILTRO ---
 

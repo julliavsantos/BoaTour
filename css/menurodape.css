@@ -74,7 +74,7 @@ body, .nav, .perfil-menu, .login, .calendario, .passageiros-menu,
     width: 300px;
     display: flex;
     align-items: center;
-    margin-left: 20px;
+    margin-left: -14px;
     transition:
         width 0.35s ease,
         margin 0.35s ease;
@@ -940,9 +940,138 @@ body.dark-mode .copy {
 .dark-mode-btn:hover img {
     transform: scale(1.1);
 }
+
+/* Transições compartilhadas para os modais do site. */
+@media (prefers-reduced-motion: no-preference) {
+    :is(.modal-oferta, .modal-boas-vindas, #modalSaidaConta, .modal-galeria-banners, .rastreador-modal,
+        .modal-overlay, .modal-favorito-login, .modal-sem-compras-galeria, .modal-viajante,
+        .modal-adicionar-pedido, .modal-publicacao, dialog.config-dialog) {
+        transition: opacity .24s ease, display .24s allow-discrete;
+        transition-behavior: allow-discrete;
+    }
+
+    :is(.modal-oferta, .modal-boas-vindas, #modalSaidaConta, .modal-galeria-banners, .rastreador-modal) {
+        opacity: 0;
+    }
+    :is(.modal-oferta, .modal-boas-vindas, #modalSaidaConta, .modal-galeria-banners, .rastreador-modal).ativo {
+        opacity: 1;
+    }
+
+    :is(.modal-favorito-login, .modal-sem-compras-galeria, .modal-viajante, .modal-adicionar-pedido)[hidden] {
+        opacity: 0;
+    }
+    :is(.modal-favorito-login, .modal-sem-compras-galeria, .modal-viajante, .modal-adicionar-pedido):not([hidden]) {
+        opacity: 1;
+    }
+
+    .modal-overlay { opacity: 0; }
+    .modal-overlay.ativo { opacity: 1; }
+    .modal-publicacao { opacity: 1; }
+    .modal-publicacao.fechando { opacity: 0; }
+
+    :is(.modal-favorito-login__painel, .modal-sem-compras-galeria__painel, .modal-viajante-conteudo,
+        .modal-adicionar-pedido__conteudo, .galeria-banners, .config-dialog) {
+        transition: opacity .24s ease, transform .24s ease;
+    }
+    :is(.modal-oferta:not(.ativo) .oferta-detalhes,
+        .modal-boas-vindas:not(.ativo) .modal-boas-vindas-conteudo,
+        #modalSaidaConta:not(.ativo) .login,
+        .rastreador-modal:not(.ativo) .rastreador-caixa,
+        .modal-galeria-banners:not(.ativo) .galeria-banners) {
+        opacity: 0;
+        transform: translateY(10px) scale(.99);
+    }
+    :is(.modal-oferta.ativo .oferta-detalhes,
+        .modal-boas-vindas.ativo .modal-boas-vindas-conteudo,
+        #modalSaidaConta.ativo .login,
+        .rastreador-modal.ativo .rastreador-caixa,
+        .modal-galeria-banners.ativo .galeria-banners) {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        transition: opacity .24s ease, transform .24s ease;
+    }
+    :is(.modal-favorito-login[hidden] .modal-favorito-login__painel,
+        .modal-sem-compras-galeria[hidden] .modal-sem-compras-galeria__painel,
+        .modal-viajante[hidden] .modal-viajante-conteudo,
+        .modal-adicionar-pedido[hidden] .modal-adicionar-pedido__conteudo) {
+        opacity: 0;
+        transform: translateY(9px) scale(.99);
+    }
+    :is(.modal-favorito-login:not([hidden]) .modal-favorito-login__painel,
+        .modal-sem-compras-galeria:not([hidden]) .modal-sem-compras-galeria__painel,
+        .modal-viajante:not([hidden]) .modal-viajante-conteudo,
+        .modal-adicionar-pedido:not([hidden]) .modal-adicionar-pedido__conteudo) {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    dialog.config-dialog { opacity: 0; transform: translateY(9px) scale(.99); }
+    dialog.config-dialog[open] { opacity: 1; transform: translateY(0) scale(1); }
+    dialog.config-dialog::backdrop { transition: background-color .24s ease; }
+
+    @starting-style {
+        :is(.modal-oferta.ativo, .modal-boas-vindas.ativo, #modalSaidaConta.ativo,
+            .modal-galeria-banners.ativo, .rastreador-modal.ativo, .modal-overlay.ativo) { opacity: 0; }
+        :is(.modal-favorito-login:not([hidden]) .modal-favorito-login__painel,
+            .modal-sem-compras-galeria:not([hidden]) .modal-sem-compras-galeria__painel,
+            .modal-viajante:not([hidden]) .modal-viajante-conteudo,
+            .modal-adicionar-pedido:not([hidden]) .modal-adicionar-pedido__conteudo,
+            dialog.config-dialog[open]) {
+            opacity: 0;
+            transform: translateY(9px) scale(.99);
+        }
+        :is(.modal-oferta.ativo .oferta-detalhes, .modal-boas-vindas.ativo .modal-boas-vindas-conteudo,
+            #modalSaidaConta.ativo .login, .rastreador-modal.ativo .rastreador-caixa,
+            .modal-galeria-banners.ativo .galeria-banners) {
+            opacity: 0;
+            transform: translateY(10px) scale(.99);
+        }
+    }
+}
+
+@keyframes modalPublicacaoEntrar {
+    from { opacity: 0; transform: translateY(9px) scale(.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes modalPublicacaoSair {
+    to { opacity: 0; transform: translateY(9px) scale(.99); }
+}
+.modal-publicacao-conteudo { animation: modalPublicacaoEntrar .24s ease both; }
+.modal-publicacao.fechando .modal-publicacao-conteudo { animation: modalPublicacaoSair .24s ease both; }
+@media (prefers-reduced-motion: reduce) {
+    .modal-publicacao-conteudo,
+    .modal-publicacao.fechando .modal-publicacao-conteudo { animation: none; }
+}
 body.dark-mode .dark-mode-btn {
     background: #202a2d;
 }
 body.dark-mode .dark-mode-btn:hover {
     background: #2b393c;
+}
+.btn-voltar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    min-width: 33px;
+    margin-right: 0;
+    margin-left: 30px;
+    margin-top: -3px;
+    background: rgba(81, 141, 147, 0.07);
+    border: 1px solid rgba(81, 141, 147, 0.16);
+    border-radius: 30%;
+    color: var(--accent);
+    font-size: 23px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+.btn-voltar span{
+    margin-top: -5px;
+}
+.btn-voltar:hover {
+    background: rgba(81, 141, 147, 0.14);
+    border-color: rgba(81, 141, 147, 0.25);
+    color: #518d93;
+    transform: translateX(-3px);
 }

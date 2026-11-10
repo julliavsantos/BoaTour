@@ -162,6 +162,19 @@ async function historico(idUsuario) {
     } finally { conexao.end(); }
 }
 
+async function compraAprovadaDoUsuario(idUsuario, idPagamento) {
+    await inicializar();
+    const conexao = criarConexao();
+    await new Promise((resolve, reject) => conexao.connect(erro => erro ? reject(erro) : resolve()));
+    try {
+        const resultados = await query(conexao, `SELECT id_pagamento, descricao, dados_pedido FROM boatour_pagamentos_simulados
+            WHERE id_pagamento = ? AND id_usuario = ? AND status = 'aprovado' AND tipo <> 'recarga' LIMIT 1`,
+        [String(idPagamento || ''), idUsuario]);
+        if (!resultados.length) return null;
+        return { ...resultados[0], pedido: jsonSeguro(resultados[0].dados_pedido) };
+    } finally { conexao.end(); }
+}
+
 function obterItensOds(pedido) {
     const itens = Array.isArray(pedido?.itens) ? pedido.itens : [];
     return itens.map((item, indice) => {
@@ -373,4 +386,4 @@ async function validarCupom(idUsuario, codigo, subtotal) {
     } finally { conexao.end(); }
 }
 
-module.exports = { inicializar, historico, registrar, validarCupom, expirarPendentes, percentualCupomOds8, percentualCashbackOds12 };
+module.exports = { inicializar, historico, compraAprovadaDoUsuario, registrar, validarCupom, expirarPendentes, percentualCupomOds8, percentualCashbackOds12 };

@@ -7,6 +7,7 @@ let quantidadeVisivel = 6;
 let filtroPrecoAtual = "todos";
 let requisicaoVoosAtual = 0;
 let imagemDestinoInicial = "";
+let quantidadePassageirosBusca = 1;
 
 function normalizarBuscaVoo(valor) {
     return String(valor || "")
@@ -235,6 +236,8 @@ async function carregarVoos() {
 
         const parametros =
             new URLSearchParams();
+
+        parametros.set("passageiros", String(quantidadePassageirosBusca));
 
 
         if (partida !== "") {
@@ -581,10 +584,8 @@ function renderizarVoos() {
 
         // --- PREÇO ---
 
-        const preco =
-            formatarPreco(
-                voo.preco
-            );
+        const precoUnitario = Number(voo.preco) || 0;
+        const preco = formatarPreco(precoUnitario * quantidadePassageirosBusca);
 
 
         // --- COMPANHIA ---
@@ -656,7 +657,7 @@ function renderizarVoos() {
                     <span class="preco-anterior">R$ ${formatarPreco(voo.preco_anterior)}</span>
                 ` : ""}
                 <strong>R$ ${preco}</strong>
-                <span class="preco-legenda">A partir de</span>
+                <span class="preco-legenda">Total para ${quantidadePassageirosBusca} ${quantidadePassageirosBusca === 1 ? "passageiro" : "passageiros"} · ${formatarPreco(precoUnitario)} por pessoa</span>
                 <button type="button" class="btn-comprar-voo" data-id-voo="${voo.id_voo}">Comprar voo</button>
             </div>
         `;
@@ -2557,6 +2558,7 @@ document.addEventListener(
             else if (passageiros.criancas) passageiros.criancas--;
             else passageiros.adultos--;
         }
+        quantidadePassageirosBusca = passageiros.adultos + passageiros.criancas + passageiros.bebes;
 
         const classeInicial = parametrosPassageiros.get("classe");
         let classeSelecionada = Array.from(
@@ -2789,6 +2791,10 @@ document.addEventListener(
 
                 inputPassageiros.value =
                     texto;
+
+                quantidadePassageirosBusca = total;
+                quantidadeVisivel = 6;
+                carregarVoos();
 
 
                 menuPassageiros.classList.remove(

@@ -38,6 +38,8 @@ class VoosBD {
 
     const sql = `
         ${VoosBD.consultaBase()}
+        WHERE v.ativo = 1
+          AND v.data_saida >= CURDATE()
         ORDER BY v.data_saida, v.horario_saida
     `
 
@@ -69,10 +71,17 @@ class VoosBD {
 
         let sql = `
             ${VoosBD.consultaBase()}
-            WHERE 1 = 1
+            WHERE v.ativo = 1
+              AND v.data_saida >= CURDATE()
         `
 
         const valores = []
+
+        if (filtros.passageiros !== undefined && filtros.passageiros !== '') {
+            const quantidade = Math.min(9, Math.max(1, Number.parseInt(filtros.passageiros, 10) || 1));
+            sql += ` AND v.assentos_disponiveis >= ? `;
+            valores.push(quantidade);
+        }
 
 
         // --- PESQUISA ---

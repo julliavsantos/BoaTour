@@ -14,14 +14,6 @@
     window.fetch = fetchRoteado;
 })();
 document.addEventListener("DOMContentLoaded", () => {
-
-    if (["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "3001") {
-        const destinoChatbot = window.location.protocol + "//" + window.location.hostname + ":3001/";
-        document.querySelectorAll('a[href="/CHATBOT/public/index.html"]').forEach(link => {
-            link.href = destinoChatbot;
-        });
-    }
-
     const nav = document.querySelector(".nav");
 
     const btnPerfil =
@@ -162,7 +154,7 @@ function prepararSaidaMenu(perfilMenu) {
         sair.id = "btnSairMenu";
         sair.className = "perfil-link-botao";
         const imagemSair = window.location.port === "3001"
-            ? "/global-img/icones/sair.png"
+            ? "/img/icones/sair.png"
             : new URL("/img/icones/sair.png", window.location.origin).href;
         sair.innerHTML = `<span aria-hidden="true"><img src="${imagemSair}" alt=""></span><div><strong>Sair</strong><small>Encerrar sessão da conta</small></div>`;
         links.appendChild(sair);
