@@ -758,6 +758,18 @@ body {
     height: 100%;
     object-fit: cover;
 }
+.galeria-fotos-hotel {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 12px 16px 14px;
+    background: linear-gradient(transparent, rgb(0 0 0 / 78%) 22%);
+}
+.galeria-fotos-hotel-titulo { margin: 0 0 8px; color: #fff; font-size: 12px; font-weight: 700; }
+.galeria-fotos-hotel-miniaturas { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.miniatura-foto-hotel { flex: 0 0 72px; width: 72px; height: 58px; padding: 0; overflow: hidden; border: 2px solid transparent; border-radius: 8px; background: var(--surface, #e9eeee); cursor: pointer; }
+.miniatura-foto-hotel[aria-pressed="true"] { border-color: var(--primary-strong); }
+.miniatura-foto-hotel img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.miniatura-foto-hotel:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .modal-desconto {
     position: absolute;
     top: 20px;

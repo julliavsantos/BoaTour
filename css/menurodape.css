@@ -707,6 +707,14 @@ body.dark-mode #modalSenhaSairConta .login {
 .redes a {
     color: white;
     text-decoration: none;
+    display: inline-block;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+    border-radius: 8px;
+}
+.redes a:hover {
+    color: white;
+    text-decoration: none;
+    transform: scale(1.03);
 }
 .redes img{
     width: 30px;

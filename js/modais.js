@@ -624,6 +624,76 @@ const modalCategoria =
 const modalOds =
     document.getElementById("modalOds");
 
+const galeriaFotosHotel = document.getElementById("galeriaFotosHotel");
+const miniaturasGaleriaHotel = document.getElementById("miniaturasGaleriaHotel");
+const tituloGaleriaHotel = document.getElementById("tituloGaleriaHotel");
+const fotosHotelCache = new Map();
+
+async function carregarGaleriaHotel(card, imagemPrincipal) {
+    if (!galeriaFotosHotel || !miniaturasGaleriaHotel || card.dataset.modalTipo !== "hotel") {
+        if (galeriaFotosHotel) galeriaFotosHotel.hidden = true;
+        return;
+    }
+
+    const idHotel = card.dataset.idHotel;
+    if (!idHotel) return;
+    galeriaFotosHotel.dataset.hotelId = idHotel;
+    miniaturasGaleriaHotel.replaceChildren();
+    galeriaFotosHotel.hidden = false;
+    if (tituloGaleriaHotel) tituloGaleriaHotel.textContent = "Carregando fotos…";
+
+    try {
+        let fotos = fotosHotelCache.get(idHotel);
+        if (!fotos) {
+            const resposta = await fetch(`/hoteis/${encodeURIComponent(idHotel)}/fotos`);
+            if (!resposta.ok) throw new Error("Não foi possível carregar as fotos do hotel.");
+            const dados = await resposta.json();
+            fotos = Array.isArray(dados) ? dados : [];
+            fotosHotelCache.set(idHotel, fotos);
+        }
+        if (galeriaFotosHotel.dataset.hotelId !== idHotel) return;
+
+        const lista = [
+            ...(imagemPrincipal ? [{ caminho_foto: imagemPrincipal, legenda: "Foto principal" }] : []),
+            ...fotos
+        ].map(foto => ({
+            src: new URL(
+                /^(https?:\/\/|\/)/i.test(String(foto.caminho_foto || ""))
+                    ? String(foto.caminho_foto)
+                    : `../${String(foto.caminho_foto || "").replace(/^\.\//, "")}`,
+                document.baseURI
+            ).href,
+            legenda: foto.legenda || "Foto do hotel"
+        })).filter((foto, indice, todas) => foto.src && todas.findIndex(item => item.src === foto.src) === indice);
+
+        miniaturasGaleriaHotel.replaceChildren();
+        galeriaFotosHotel.hidden = lista.length < 2;
+        if (tituloGaleriaHotel) tituloGaleriaHotel.textContent = `${lista.length} ${lista.length === 1 ? "foto" : "fotos"} do hotel`;
+        lista.forEach((foto, indice) => {
+            const botao = document.createElement("button");
+            botao.type = "button";
+            botao.className = "miniatura-foto-hotel";
+            botao.setAttribute("aria-label", `Exibir foto ${indice + 1}: ${foto.legenda}`);
+            botao.setAttribute("aria-pressed", indice === 0 ? "true" : "false");
+            const miniatura = document.createElement("img");
+            miniatura.src = foto.src;
+            miniatura.alt = "";
+            miniatura.loading = "lazy";
+            botao.append(miniatura);
+            botao.addEventListener("click", () => {
+                modalImagemOferta.src = foto.src;
+                modalImagemOferta.alt = foto.legenda;
+                miniaturasGaleriaHotel.querySelectorAll("button").forEach(item => item.setAttribute("aria-pressed", String(item === botao)));
+            });
+            miniaturasGaleriaHotel.append(botao);
+        });
+    } catch (erro) {
+        if (galeriaFotosHotel.dataset.hotelId !== idHotel) return;
+        galeriaFotosHotel.hidden = true;
+        console.warn("Galeria de fotos do hotel indisponível:", erro);
+    }
+}
+
 
 // --- INFORMAÇÕES DO MODAL ---
 
@@ -753,6 +823,8 @@ document.addEventListener(
                 imagem.alt;
 
         }
+
+        carregarGaleriaHotel(card, imagem?.src || "");
 
 
         // --- DESCONTO ---
