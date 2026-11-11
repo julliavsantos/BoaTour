@@ -46,7 +46,7 @@ class UsuariosBD {
             calcularDigito(cpf.slice(0, 10), 11) === Number(cpf[10]);
     }
 
-    static nascimentoValido(dataNascimento) {
+    static nascimentoValido(dataNascimento, idadeMinima = 16) {
         const match = String(dataNascimento || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
         if (!match) return false;
         const ano = Number(match[1]);
@@ -57,7 +57,7 @@ class UsuariosBD {
         const hoje = new Date();
         let idade = hoje.getFullYear() - ano;
         if (hoje.getMonth() + 1 < mes || (hoje.getMonth() + 1 === mes && hoje.getDate() < dia)) idade--;
-        return nascimento <= new Date(Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) && idade >= 16;
+        return nascimento <= new Date(Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) && idade >= idadeMinima;
     }
 
     static emailCadastrado(email, callback) {
@@ -117,15 +117,19 @@ class UsuariosBD {
             return callback({ error: 'Digite um e-mail válido.' });
         }
 
+        const telefoneOriginal = String(usuario.telefone || '').trim();
+        const telefone = telefoneOriginal.replace(/\D/g, '');
         const dataNascimento = String(usuario.data_nascimento || '').trim();
         if (!dataNascimento) return callback({ error: 'Informe sua data de nascimento.' });
-        if (!UsuariosBD.nascimentoValido(dataNascimento)) {
-            return callback({ error: 'É necessário ter pelo menos 16 anos e informar uma data de nascimento válida.' });
+        const telefoneCoreia = telefoneOriginal.startsWith('+82');
+        if (!UsuariosBD.nascimentoValido(dataNascimento, telefoneCoreia ? 17 : 16)) {
+            return callback({ error: telefoneCoreia ? 'Para usar um telefone da Coreia do Sul, é necessário ter mais de 16 anos e informar uma data válida.' : 'É necessário ter pelo menos 16 anos e informar uma data de nascimento válida.' });
         }
 
-        const telefone = String(usuario.telefone || '').replace(/\D/g, '');
-        if (telefone && ![10, 11].includes(telefone.length)) {
-            return callback({ error: 'Digite um telefone com DDD e 10 ou 11 números.' });
+        const telefoneBrasileiro = !telefoneOriginal.startsWith('+') && [10, 11].includes(telefone.length);
+        const telefoneInternacional = /^\+[1-9]\d{7,14}$/.test(telefoneOriginal);
+        if (telefoneOriginal && !telefoneBrasileiro && !telefoneInternacional) {
+            return callback({ error: 'Digite um telefone brasileiro com DDD ou um número internacional com código do país, como +5511999999999.' });
         }
 
         if (senha.length < 6) {

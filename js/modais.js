@@ -776,7 +776,7 @@ document.addEventListener(
         if (modalResumo) {
             const resumoOferta = [
                 card.dataset.dias ? `${card.dataset.dias} dias` : "",
-                card.dataset.quantidadePaises ? `${card.dataset.quantidadePaises} países` : "",
+                card.dataset.quantidadePaises ? `${card.dataset.quantidadePaises} ${Number(card.dataset.quantidadePaises) === 1 ? "país" : "países"}` : "",
                 card.dataset.destinos ? `Destinos: ${card.dataset.destinos}` : "",
                 card.dataset.voos ? `Voos: ${card.dataset.voos}` : "",
                 card.dataset.hoteis ? `Hotéis: ${card.dataset.hoteis}` : "",

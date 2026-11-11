@@ -59,6 +59,22 @@ const senhaCadastroConfirmar =
 const termo =
     document.getElementById("Termo");
 
+const modalDocumentoCadastro = document.getElementById("modalDocumentoCadastro");
+const abrirDocumentoCadastro = (titulo, texto) => {
+    document.getElementById("tituloDocumentoCadastro").textContent = titulo;
+    document.getElementById("textoDocumentoCadastro").replaceChildren(...texto.map(item => {
+        const p = document.createElement("p"); p.textContent = item; return p;
+    }));
+    modalDocumentoCadastro?.showModal();
+};
+const abrirTermosCadastro = document.getElementById("abrirTermosCadastro");
+const abrirPrivacidadeCadastro = document.getElementById("abrirPrivacidadeCadastro");
+abrirTermosCadastro?.addEventListener("click", evento => { evento.preventDefault(); evento.stopPropagation(); abrirDocumentoCadastro("Termos de Uso", ["A BoaTour reúne informações de destinos e serviços para apoiar o planejamento de viagens. A disponibilidade, os preços e as condições de cada serviço devem ser conferidos no momento da compra.", "Ao criar uma conta, você declara que os dados informados são corretos e que tem pelo menos 16 anos. Mantenha seus dados de acesso protegidos e use a plataforma de forma responsável."]); });
+abrirPrivacidadeCadastro?.addEventListener("click", evento => { evento.preventDefault(); evento.stopPropagation(); abrirDocumentoCadastro("Política de Privacidade", ["Os dados solicitados no cadastro, como nome, CPF, e-mail, telefone e data de nascimento, são usados para criar e administrar sua conta e prestar os serviços da plataforma.", "A BoaTour deve proteger esses dados e limitar seu uso às finalidades do serviço e às obrigações aplicáveis. Para solicitar informações sobre seus dados, use os canais de contato exibidos no site."]); });
+for (const el of [abrirTermosCadastro, abrirPrivacidadeCadastro]) el?.addEventListener("keydown", evento => { if (evento.key === "Enter" || evento.key === " ") el.click(); });
+document.getElementById("fecharDocumentoCadastro")?.addEventListener("click", () => modalDocumentoCadastro?.close());
+document.getElementById("okDocumentoCadastro")?.addEventListener("click", () => modalDocumentoCadastro?.close());
+
 function aplicarMascara(input, limite, formatar) {
     if (!input) return;
 
@@ -66,7 +82,7 @@ function aplicarMascara(input, limite, formatar) {
         const posicao = input.selectionStart ?? input.value.length;
         const digitosAntes = input.value.slice(0, posicao).replace(/\D/g, "").length;
         const digitos = input.value.replace(/\D/g, "").slice(0, limite);
-        const valorFormatado = formatar(digitos);
+        const valorFormatado = formatar(digitos, input.value);
         input.value = valorFormatado;
 
         let novaPosicao = 0;
@@ -84,7 +100,9 @@ function aplicarMascara(input, limite, formatar) {
     });
 }
 
-function formatarTelefone(digitos) {
+function formatarTelefone(digitos, valorOriginal = "") {
+    if (String(valorOriginal).trim().startsWith("+")) return digitos ? `+${digitos}` : "+";
+    if (![10, 11].includes(digitos.length)) return digitos;
     if (digitos.length <= 2) return digitos ? `(${digitos}` : "";
     const tamanhoPrefixo = digitos.length > 10 ? 5 : 4;
     const prefixo = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 2 + tamanhoPrefixo)}`;
@@ -99,7 +117,7 @@ function formatarDataNascimento(digitos) {
     return valor;
 }
 
-aplicarMascara(telefoneCadastro, 11, formatarTelefone);
+aplicarMascara(telefoneCadastro, 15, formatarTelefone);
 aplicarMascara(nascimentoCadastro, 8, formatarDataNascimento);
 
 function capitalizarNomeCompleto(nome) {
@@ -155,7 +173,7 @@ function validarNascimento(valor) {
     }
     let idade = hoje.getFullYear() - ano;
     if (hoje.getMonth() < mes - 1 || (hoje.getMonth() === mes - 1 && hoje.getDate() < dia)) idade--;
-    return { valido: true, maioridadeMinima: idade >= 16, iso: `${String(ano).padStart(4, "0")}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}` };
+    return { valido: true, idade, maioridadeMinima: idade >= 16, iso: `${String(ano).padStart(4, "0")}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}` };
 }
 
 
@@ -172,7 +190,9 @@ if (btnCadastro) {
         const email = emailCadastro.value.trim().toLocaleLowerCase("pt-BR");
         emailCadastro.value = email;
 
-        const telefone = telefoneCadastro.value.replace(/\D/g, "");
+        const telefone = telefoneCadastro.value.trim();
+        const telefoneDigitos = telefone.replace(/\D/g, "");
+        const telefoneCoreia = telefone.startsWith("+82");
         const nascimento = validarNascimento(nascimentoCadastro.value.trim());
 
         const senha =
@@ -246,14 +266,16 @@ if (btnCadastro) {
             return;
         }
 
-        if (!nascimento.maioridadeMinima) {
-            window.boatourFieldError(nascimentoCadastro, "É necessário ter pelo menos 16 anos para criar uma conta.");
+        if (!nascimento.maioridadeMinima || (telefoneCoreia && nascimento.idade <= 16)) {
+            window.boatourFieldError(nascimentoCadastro, telefoneCoreia ? "Para usar um telefone da Coreia do Sul, é necessário ter mais de 16 anos." : "É necessário ter pelo menos 16 anos para criar uma conta.");
             nascimentoCadastro.focus();
             return;
         }
 
-        if (telefone && ![10, 11].includes(telefone.length)) {
-            window.boatourFieldError(telefoneCadastro, "Digite um telefone com DDD e 10 ou 11 números.");
+        const telefoneBrasileiro = !telefone.startsWith("+") && [10, 11].includes(telefoneDigitos.length);
+        const telefoneInternacional = /^\+[1-9]\d{7,14}$/.test(telefone);
+        if (telefone && !telefoneBrasileiro && !telefoneInternacional) {
+            window.boatourFieldError(telefoneCadastro, "Digite um telefone brasileiro com DDD ou um número internacional com código do país, como +5511999999999.");
             telefoneCadastro.focus();
             return;
         }

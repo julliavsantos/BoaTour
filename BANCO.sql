@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 10/11/2026 às 01:44
--- Versão do servidor: 10.11.16-MariaDB
--- Versão do PHP: 8.3.36
+-- Tempo de geração: 10/11/2026 às 20:32
+-- Versão do servidor: 10.4.32-MariaDB
+-- Versão do PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -67,7 +67,8 @@ INSERT INTO `aeroportos` (`id_aeroporto`, `nome`, `cidade`, `pais`, `codigo_iata
 (25, 'Foz do Iguaçu - Cataratas', 'Foz do Iguaçu', 'Brasil', 'IGU'),
 (26, 'Maceió - Zumbi dos Palmares', 'Maceió', 'Brasil', 'MCZ'),
 (27, 'Porto Seguro', 'Porto Seguro', 'Brasil', 'BPS'),
-(28, 'Buenos Aires - Ezeiza', 'Buenos Aires', 'Argentina', 'EZE');
+(28, 'Buenos Aires - Ezeiza', 'Buenos Aires', 'Argentina', 'EZE'),
+(29, 'Seul - Incheon', 'Seul', 'Coreia do Sul', 'ICN');
 
 -- --------------------------------------------------------
 
@@ -393,7 +394,8 @@ INSERT INTO `destinos` (`id_destino`, `nome`, `pais`, `cidade`, `descricao`, `im
 (20, 'Jalapão', 'Brasil', 'Mateiros', 'Paisagens de cerrado, fervedouros e dunas. O turismo de base local pode apoiar pequenos prestadores e incentivar o respeito às áreas naturais.', 'jalapao.jpg', 'Natureza', 1650.00, 5, 0, 0, 1, 1),
 (21, 'Ilha do Mel', 'Brasil', 'Paranaguá', 'Destino de natureza com praias e trilhas, onde deslocamentos a pé e respeito às áreas protegidas contribuem para uma visita de menor impacto.', 'ilha-do-mel.jpg', 'Praia', 890.00, 3, 1, 1, 1, 1),
 (22, 'Alter do Chão', 'Brasil', 'Santarém', 'Comunidade amazônica conhecida pelas praias fluviais e cultura regional. Experiências conduzidas por moradores valorizam a economia local.', 'alter-do-chao.jpg', 'Natureza', 1380.00, 5, 1, 0, 1, 1),
-(23, 'Serra da Canastra', 'Brasil', 'São Roque de Minas', 'Região de cerrado, nascentes e cachoeiras, com oportunidades de turismo rural, gastronomia regional e contratação de guias locais.', 'serra-da-canastra.jpg', 'Natureza', 980.00, 3, 0, 0, 1, 1);
+(23, 'Serra da Canastra', 'Brasil', 'São Roque de Minas', 'Região de cerrado, nascentes e cachoeiras, com oportunidades de turismo rural, gastronomia regional e contratação de guias locais.', 'serra-da-canastra.jpg', 'Natureza', 980.00, 3, 0, 0, 1, 1),
+(24, 'Seul', 'Coreia do Sul', 'Seul', 'Explore palácios históricos, bairros culturais, gastronomia e transporte urbano da capital sul-coreana.', 'europa.jpg', 'Cultura', 6200.00, 7, 0, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -602,20 +604,6 @@ CREATE TABLE `fotos_publicacoes` (
   `ordem` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
   `data_envio` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Despejando dados para a tabela `fotos_publicacoes`
---
-
-INSERT INTO `fotos_publicacoes` (`id_foto`, `id_publicacao`, `caminho_foto`, `ordem`, `data_envio`) VALUES
-(1, 1, 'uploads/viagens/viagem_1794244213599_1_1.jpg', 1, '2026-11-09 14:10:14'),
-(2, 1, 'uploads/viagens/viagem_1794244213599_1_2.jpg', 2, '2026-11-09 14:10:14'),
-(3, 1, 'uploads/viagens/viagem_1794244213599_1_3.jpg', 3, '2026-11-09 14:10:14'),
-(4, 2, 'uploads/viagens/viagem_1794244288448_1_1.jpg', 1, '2026-11-09 14:11:28'),
-(5, 2, 'uploads/viagens/viagem_1794244288448_1_2.jpg', 2, '2026-11-09 14:11:28'),
-(6, 2, 'uploads/viagens/viagem_1794244288448_1_3.jpg', 3, '2026-11-09 14:11:28'),
-(7, 2, 'uploads/viagens/viagem_1794244288448_1_4.jpg', 4, '2026-11-09 14:11:28'),
-(8, 2, 'uploads/viagens/viagem_1794244288448_1_5.jpg', 5, '2026-11-09 14:11:28');
 
 -- --------------------------------------------------------
 
@@ -949,14 +937,6 @@ CREATE TABLE `publicacoes_viagens` (
   `ativo` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Despejando dados para a tabela `publicacoes_viagens`
---
-
-INSERT INTO `publicacoes_viagens` (`id_publicacao`, `id_usuario`, `titulo`, `descricao`, `cidade`, `pais`, `nota_experiencia`, `data_publicacao`, `ativo`) VALUES
-(1, 1, 'FOI LINDO BTS TE AMO FOFOS', 'BTSSSSS', 'Aeromexico · BT1003', 'Viagem BoaTour', 4.0, '2026-11-09 14:10:13', 1),
-(2, 1, 'kakkakaka', 'kakakakakakakka', 'LATAM Airlines · BT1001', 'Viagem BoaTour', 2.0, '2026-11-09 14:11:28', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -984,7 +964,8 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nome`, `cpf`, `email`, `data_nascimento`, `senha`, `telefone`, `foto_perfil`, `banner_perfil`, `perfil_completo`, `termos_aceitos`, `data_cadastro`, `data_atualizacao`) VALUES
-(1, 'Jullia Volpato Santos', '15093341738', 'volpatosantosjullia@gmail.com', '2009-12-21', '$2b$12$/HVtd893vIGY5i5x7UYNNuA3Pqc1.717/AZXHsSkuxY1r35U90M8.', '48388148189', 'uploads/perfis/perfil_1_1793211783120.jpg', '../img/ofertas/santorini2.jpg', 0, 1, '2026-10-01 20:45:42', '2026-11-09 14:20:42');
+(1, 'Jullia Volpato Santos', '15093341738', 'volpatosantosjullia@gmail.com', '2009-12-21', '$2b$12$ptx9suWjZlRHAtFFd62mWuREGaJ.vqT4L7ZsOFyNdpb9ve5.8/mJu', '48388148189', 'uploads/perfis/perfil_1_1793211783120.jpg', '../img/ofertas/santorini2.jpg', 0, 1, '2026-10-01 20:45:42', '2026-11-10 15:51:25'),
+(18, 'Amanda Braz', '09772082900', 'braz.amanda05@gmail.com', '2010-02-05', '$2b$12$1w/G/ZvaOf3cc5Ow6w2LYuQjsaC1xZ3kpVlFqWXwgvyShWCU05nSO', '48996914827', NULL, NULL, 0, 1, '2026-11-10 16:07:03', '2026-11-10 16:07:03');
 
 -- --------------------------------------------------------
 
@@ -1369,7 +1350,7 @@ ALTER TABLE `boatour_cupons`
 -- AUTO_INCREMENT de tabela `boatour_saldo_movimentos`
 --
 ALTER TABLE `boatour_saldo_movimentos`
-  MODIFY `id_movimento` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_movimento` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de tabela `categorias_destino`
@@ -1399,7 +1380,7 @@ ALTER TABLE `destinos`
 -- AUTO_INCREMENT de tabela `favoritos`
 --
 ALTER TABLE `favoritos`
-  MODIFY `id_favorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id_favorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT de tabela `fotos_atividades`
@@ -1465,7 +1446,7 @@ ALTER TABLE `publicacoes_viagens`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de tabela `voos`

@@ -130,7 +130,7 @@
     <div class="linha">
         <div class="campo">
             <label for="telefoneCadastro">Telefone</label>
-            <input type="tel" id="telefoneCadastro" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel" maxlength="15">
+            <input type="tel" id="telefoneCadastro" placeholder="(00) 00000-0000 ou +55..." autocomplete="tel" inputmode="tel" maxlength="20">
         </div>
     </div>
 
@@ -180,7 +180,7 @@
         <input type="checkbox" id="Termo">
         <label for="Termo">
             Eu aceito os 
-            <span>Termos de Uso e Políticas de Privacidade</span>
+            Eu aceito os <span role="button" tabindex="0" class="link-documento" id="abrirTermosCadastro">Termos de Uso</span> e a <span role="button" tabindex="0" class="link-documento" id="abrirPrivacidadeCadastro">Política de Privacidade</span>.
         </label>
     </div>
 
@@ -282,6 +282,15 @@
             <button class="btnLogin" id="btnAvisoOk" type="button">OK</button>
         </div>
     </div>
+
+    <dialog class="modal-documento" id="modalDocumentoCadastro" aria-labelledby="tituloDocumentoCadastro">
+        <div class="conteudo-documento">
+            <button type="button" class="fechar-documento" id="fecharDocumentoCadastro" aria-label="Fechar">&times;</button>
+            <h2 id="tituloDocumentoCadastro"></h2>
+            <div id="textoDocumentoCadastro"></div>
+            <button type="button" class="btnLogin" id="okDocumentoCadastro">Entendi</button>
+        </div>
+    </dialog>
 
   <script src="../js/menu.js"></script>
   <script src="../js/modais.js"></script>

@@ -2,6 +2,89 @@
 const API_PUBLICACOES = "http://localhost:3000/publicacoes";
 const API_BASE = "http://localhost:3000";
 
+
+function confirmarExclusaoPublicacao() {
+    return new Promise((resolve) => {
+        const overlay = document.createElement("div");
+        overlay.className = "confirmacao-exclusao-overlay";
+
+        overlay.innerHTML = `
+            <div class="confirmacao-exclusao-modal"
+                 role="alertdialog"
+                 aria-modal="true"
+                 aria-labelledby="tituloConfirmacaoExclusao"
+                 aria-describedby="textoConfirmacaoExclusao">
+
+                <div class="confirmacao-exclusao-icone">
+                    <span>!</span>
+                </div>
+
+                <h2 id="tituloConfirmacaoExclusao">
+                    Excluir publicação?
+                </h2>
+
+                <p id="textoConfirmacaoExclusao">
+                    Tem certeza de que deseja excluir esta publicação?
+                    Essa ação não poderá ser desfeita.
+                </p>
+
+                <div class="confirmacao-exclusao-acoes">
+                    <button type="button" class="btn-cancelar-exclusao">
+                        Cancelar
+                    </button>
+
+                    <button type="button" class="btn-confirmar-exclusao">
+                        Excluir publicação
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const botaoCancelar = overlay.querySelector(
+            ".btn-cancelar-exclusao"
+        );
+
+        const botaoExcluir = overlay.querySelector(
+            ".btn-confirmar-exclusao"
+        );
+
+        function finalizar(resultado) {
+            document.removeEventListener("keydown", teclaEscape);
+            overlay.classList.add("fechando");
+
+            setTimeout(() => overlay.remove(), 200);
+
+            resolve(resultado);
+        }
+
+        function teclaEscape(evento) {
+            if (evento.key === "Escape") {
+                finalizar(false);
+            }
+        }
+
+        botaoCancelar.addEventListener("click", () => {
+            finalizar(false);
+        });
+
+        botaoExcluir.addEventListener("click", () => {
+            finalizar(true);
+        });
+
+        overlay.addEventListener("click", (evento) => {
+            if (evento.target === overlay) {
+                finalizar(false);
+            }
+        });
+
+        document.addEventListener("keydown", teclaEscape);
+
+        botaoCancelar.focus();
+    });
+}
+
 document.addEventListener("DOMContentLoaded", carregarGaleria);
 
 function caminhoImagem(caminho) {
@@ -301,7 +384,8 @@ async function mostrarDetalhesPublicacao(publicacao) {
             } finally { botaoSalvar.disabled = false; }
         });
         excluir.addEventListener("click", async () => {
-            if (!window.confirm("Deseja excluir esta publicação? Essa ação não pode ser desfeita.")) return;
+            const confirmou = await confirmarExclusaoPublicacao();
+            if (!confirmou) return;
             const token = localStorage.getItem("boatourSessionToken");
             if (!token) {
                 window.alert("Entre novamente para excluir sua publicação.");

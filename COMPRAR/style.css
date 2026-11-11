@@ -1003,14 +1003,14 @@ body {
     display: flex;
     height: 45px;
     overflow: hidden;
-    border: 1px solid #c5cdce;
-    border-radius: 8px;
-    background: var(--surface);
+    border: 1px solid var(--field-border, var(--border));
+    border-radius: var(--field-radius, 9px);
+    background: var(--field-bg, var(--card));
     transition: border-color .2s ease, box-shadow .2s ease;
 }
 .seletor-data-compra:focus-within {
-    border-color: #518d93;
-    box-shadow: 0 0 0 3px rgba(81, 141, 147, .15);
+    border-color: var(--field-focus, var(--primary));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--field-focus, var(--primary)) 18%, transparent);
 }
 .seletor-data-compra input {
     height: 100%; 
@@ -1536,7 +1536,6 @@ button.btn-editar-padrao:active { opacity: .7; transform: none; box-shadow: none
     height: auto;
     min-height: 48px;
     margin: 12px 0 18px;
-    border: 1.5px solid var(--primary);
     border-radius: 15px;
     background: transparent;
 }
@@ -1548,12 +1547,13 @@ button.btn-editar-padrao:active { opacity: .7; transform: none; box-shadow: none
     width: 100%;
     min-height: 48px;
     height: auto;
-    margin: 0;
+    margin-top: 10px;
     padding: 10px 16px;
     border: 0;
     border-radius: 14px;
     background: transparent;
     color: var(--primary);
+    border: 1.5px solid var(--primary);
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 17px;
     font-weight: 700;

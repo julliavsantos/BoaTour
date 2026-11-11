@@ -458,3 +458,16 @@ btnSalvarSenha.addEventListener("click", async () => {
         setCarregando(btnSalvarSenha, false, "Salvando...", "Salvar nova senha");
     }
 });
+function atualizarBannerCadastro() {
+    const imagem = document.getElementById("bannerCadastro");
+
+    if (!imagem) return;
+
+    const modoEscuro = document.body.classList.contains("dark-mode");
+
+    imagem.src = modoEscuro
+        ? "../img/banners/fundo-config-dark.jpg"
+        : "../img/banners/fundo-config.jpg";
+}
+
+atualizarBannerCadastro();

@@ -305,6 +305,13 @@ body.dark-mode .mostrar-senha {
     color: #518d93;
     font-weight: 600;
 }
+.link-documento { color: #518d93; font-weight: 600; cursor: pointer; text-decoration: underline; }
+.modal-documento { width: min(620px, calc(100vw - 32px)); max-height: min(80vh, 720px); margin: auto; padding: 0; border: 1px solid var(--border); border-radius: 18px; color: var(--text); background: var(--card); box-shadow: 0 24px 70px #0005; }
+.modal-documento::backdrop { background: #071719aa; backdrop-filter: blur(3px); }
+.conteudo-documento { position: relative; padding: 30px; overflow: auto; }
+.conteudo-documento h2 { margin: 0 35px 18px 0; color: var(--heading); }
+.conteudo-documento p { margin: 0 0 14px; color: var(--text); line-height: 1.65; }
+.fechar-documento { position: absolute; top: 10px; right: 15px; border: 0; background: transparent; color: var(--text); font-size: 30px; cursor: pointer; }
 .btnCadastro {
     width: 100%;
     height: 40px;

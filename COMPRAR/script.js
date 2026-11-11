@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         oferta: {
             endpoint: "/ofertas", campoId: "id",
             nome: item => item.titulo || "Oferta de viagem", preco: item => item.preco_atual,
-            itens: item => [item.dias ? `${item.dias} dias` : null, item.quantidade_paises > 1 ? `${item.quantidade_paises} países` : null, item.destinos_inclusos].filter(Boolean).join(" · ") || "Oferta selecionada",
+            itens: item => [item.dias ? `${item.dias} dias` : null, item.quantidade_paises ? `${item.quantidade_paises} ${Number(item.quantidade_paises) === 1 ? "país" : "países"}` : null, item.destinos_inclusos].filter(Boolean).join(" · ") || "Oferta selecionada",
             imagem: item => item.imagem_resumo || item.imagem
         },
         atividade: {
@@ -266,6 +266,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     let indiceViajanteEditado = null;
     let itensPacote = [];
     const idParticipante = viajante => String(viajante?.id || String(viajante?.cpf || "").replace(/\D/g, ""));
+    const categoriaPelaData = nascimento => {
+        const data = dataLocalCompra(nascimento);
+        if (!data || isoLocalCompra(data) !== nascimento || data > new Date()) return null;
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - data.getFullYear();
+        if (hoje.getMonth() < data.getMonth() || (hoje.getMonth() === data.getMonth() && hoje.getDate() < data.getDate())) idade--;
+        return idade <= 3 ? "Bebê" : idade <= 16 ? "Criança" : "Adulto";
+    };
     let participantesDoItemAtual = [];
     let valorPorParticipanteAtual = null;
     let indiceSliderPacote = 0;
@@ -662,8 +670,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const dados = Object.fromEntries(new FormData(formViajante));
         dados.nome = String(dados.nome || "").trim().replace(/\s+/g, " ");
         dados.cpf = mascararCpf(dados.cpf);
-        if (dados.nome.split(" ").length < 2 || !cpfValido(dados.cpf) || !dados.nascimento) {
+        const categoriaEsperada = categoriaPelaData(dados.nascimento);
+        if (dados.nome.split(" ").length < 2 || !cpfValido(dados.cpf) || !categoriaEsperada) {
             erroViajante.textContent = "Informe nome completo, CPF válido e data de nascimento.";
+            return;
+        }
+        if (dados.categoria !== categoriaEsperada) {
+            erroViajante.textContent = `Pela data de nascimento, a categoria correta é ${categoriaEsperada.toLocaleLowerCase("pt-BR")} (bebê até 3 anos, criança até 16 e adulto a partir de 17).`;
             return;
         }
         const outroComMesmoCpf = viajantes.some((viajante, indice) => indice !== indiceViajanteEditado && apenasNumeros(viajante.cpf) === apenasNumeros(dados.cpf));
@@ -895,7 +908,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const contexto = tipo === "voo"
                 ? [itemCarregado.cidade_destino || itemCarregado.destino, itemCarregado.classe_nome || itemCarregado.classe, itemCarregado.duracao].filter(Boolean)
                 : tipo === "oferta"
-                    ? [itemCarregado.dias ? `${itemCarregado.dias} dias` : "", itemCarregado.destinos_inclusos, itemCarregado.quantidade_paises > 1 ? `${itemCarregado.quantidade_paises} países` : ""].filter(Boolean)
+                    ? [itemCarregado.dias ? `${itemCarregado.dias} dias` : "", itemCarregado.destinos_inclusos, itemCarregado.quantidade_paises ? `${itemCarregado.quantidade_paises} ${Number(itemCarregado.quantidade_paises) === 1 ? "país" : "países"}` : ""].filter(Boolean)
                     : tipo === "hotel"
                         ? [itemCarregado.cidade, itemCarregado.pais, itemCarregado.quarto_hotel].filter(Boolean)
                         : tipo === "atividade"
@@ -1035,11 +1048,23 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById("adicionarViajante").focus();
                 return;
             }
+            const idsViajantes = new Set(viajantes.map(idParticipante));
+            const idsItemAtual = new Set(participantesDoItemAtual.map(String));
+            if (idsViajantes.size !== viajantes.length || idsItemAtual.size !== viajantes.length || participantesDoItemAtual.length !== viajantes.length || [...idsItemAtual].some(id => !idsViajantes.has(id))) {
+                event.preventDefault();
+                alert("Preencha e selecione os dados de todos os passageiros incluídos na compra.");
+                document.getElementById("listaViajantes")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
             const itensSemParticipantes = [...itensPacote.filter(item => item.chave !== `${tipo}:${idItem}`), resumoItemAtual()]
-                .filter(item => !(item.participantesIds || []).length);
+                .filter(item => {
+                    const idsSelecionados = (item.participantesIds || []).map(String);
+                    const conjuntoSelecionado = new Set(idsSelecionados);
+                    return conjuntoSelecionado.size !== viajantes.length || idsSelecionados.length !== viajantes.length || [...conjuntoSelecionado].some(id => !idsViajantes.has(id));
+                });
             if (itensSemParticipantes.length) {
                 event.preventDefault();
-                alert(`Escolha ao menos um participante para: ${itensSemParticipantes.map(item => item.nome).join(", ")}.`);
+                alert(`Preencha e selecione todos os passageiros para cada item: ${itensSemParticipantes.map(item => item.nome).join(", ")}.`);
                 document.getElementById("abrirAdicionarPedido").focus();
                 return;
             }
