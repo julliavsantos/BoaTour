@@ -1,6 +1,6 @@
 
-const API_PUBLICACOES = "http://localhost:3000/publicacoes";
-const API_BASE = "http://localhost:3000";
+const API_PUBLICACOES = `${window.location.origin}/publicacoes`;
+const API_BASE = window.location.origin;
 
 
 function confirmarExclusaoPublicacao() {
@@ -484,3 +484,4 @@ async function mostrarDetalhesPublicacao(publicacao) {
         }
     }
 }
+

@@ -1,9 +1,9 @@
-const API = "http://localhost:3000";
+const API = window.location.origin;
 
 async function lerRespostaApi(resposta) {
     const tipoConteudo = resposta.headers.get("content-type") || "";
     if (!tipoConteudo.includes("application/json")) {
-        throw new Error("A API BoaTour não respondeu em JSON. Confira se o servidor da API está ativo na porta 3000.");
+        throw new Error("A API BoaTour não respondeu em JSON. Confira se o servidor da API está ativo.");
     }
     return resposta.json();
 }
@@ -401,3 +401,4 @@ async function iniciarPagamentos() {
 }
 
 iniciarPagamentos().then(iniciarMonitorVencimentos);
+

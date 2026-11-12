@@ -1,12 +1,16 @@
+const apiBase = window.location.port === "3001" && ["localhost", "127.0.0.1"].includes(window.location.hostname)
+    ? window.location.protocol + "//" + window.location.hostname + ":3000"
+    : window.location.origin;
+
 (() => {
-    if (window.location.port === "3001" || window.fetch.__boatourApiRouter) return;
-    const apiBase = `${window.location.protocol}//${window.location.hostname}:3000`;
+    const hostsLocais = new Set(["localhost", "127.0.0.1"]);
+    if (!hostsLocais.has(window.location.hostname) || window.fetch.__boatourApiRouter) return;
     const fetchOriginal = window.fetch.bind(window);
     const fetchRoteado = (entrada, opcoes) => {
         if (typeof entrada !== "string" && !(entrada instanceof URL)) return fetchOriginal(entrada, opcoes);
         const requisicao = new URL(String(entrada), window.location.href);
         if (requisicao.origin === window.location.origin && window.location.port !== "3000") {
-            return fetchOriginal(`${apiBase}${requisicao.pathname}${requisicao.search}`, opcoes);
+            return fetchOriginal(apiBase + requisicao.pathname + requisicao.search, opcoes);
         }
         return fetchOriginal(entrada, opcoes);
     };
@@ -188,10 +192,10 @@ function prepararSaidaMenu(perfilMenu) {
         if (!token) return window.alert("Sua sessão expirou. Faça login novamente.");
         if (!senha?.value) return window.boatourFieldError?.(senha, "Digite sua senha para continuar.");
         try {
-            const confirmacao = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/confirmar-senha`, { method: "POST", headers: { "Content-Type": "application/json", "X-Session-Token": token }, body: JSON.stringify({ senha: senha.value }) });
+            const confirmacao = await fetch(`${apiBase}/confirmar-senha`, { method: "POST", headers: { "Content-Type": "application/json", "X-Session-Token": token }, body: JSON.stringify({ senha: senha.value }) });
             const resultado = await confirmacao.json();
             if (!confirmacao.ok || resultado.error) return window.boatourFieldError?.(senha, resultado.error || "Senha incorreta.");
-            await fetch(`${window.location.protocol}//${window.location.hostname}:3000/logout`, { method: "POST", headers: { "X-Session-Token": token } });
+            await fetch(`${apiBase}/logout`, { method: "POST", headers: { "X-Session-Token": token } });
             localStorage.removeItem("boatourUsuario");
             localStorage.removeItem("boatourSessionToken");
             window.location.href = window.location.port === "3001" ? `${window.location.protocol}//${window.location.hostname}:3000/index.html?saiu=sucesso` : new URL("/index.html?saiu=sucesso", window.location.origin).href;
@@ -364,9 +368,7 @@ function atualizarMenuUsuario() {
         urlFoto = fotoUsuario;
     } else {
         const caminho = fotoUsuario.replace(/^(\.\.\/)+/, "").replace(/^\/+/, "");
-        const origemApi = window.location.port === "3000"
-            ? window.location.origin
-            : `${window.location.protocol}//${window.location.hostname}:3000`;
+        const origemApi = apiBase;
         urlFoto = new URL(caminho, `${origemApi}/`).href;
     }
 
@@ -395,13 +397,12 @@ function atualizarBannerMenu(usuario) {
         url = caminho;
     } else {
         const caminhoRaiz = `/${String(caminho).replace(/^(\.\.\/)+/, "").replace(/^\/+/, "")}`;
-        url = window.location.port === "3001"
-            ? `${window.location.protocol}//${window.location.hostname}:3000${caminhoRaiz}`
-            : new URL(caminhoRaiz, window.location.origin).href;
+        url = apiBase + caminhoRaiz;
     }
 
     topo.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, .58), rgba(0, 0, 0, .58)), url("${url}")`;
     topo.style.backgroundSize = "cover";
     topo.style.backgroundPosition = "center";
 }
+
 

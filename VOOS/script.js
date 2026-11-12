@@ -34,6 +34,37 @@ function resolverLocalAeroporto(valor) {
 }
 
 
+function encontrarAeroportoPorLocal(valor) {
+    const busca = normalizarBuscaVoo(valor);
+    if (!busca) return null;
+    return aeroportos.find(aeroporto => {
+        const codigo = aeroporto.codigo_iata || aeroporto.iata || "";
+        return [aeroporto.cidade, aeroporto.nome, codigo].some(campo => normalizarBuscaVoo(campo) === busca);
+    }) || null;
+}
+
+function separarDataHoraApi(valor, dataFallback) {
+    const texto = String(valor || "");
+    return {
+        data: texto.match(/\d{4}-\d{2}-\d{2}/)?.[0] || dataFallback,
+        hora: texto.match(/\d{2}:\d{2}/)?.[0] || ""
+    };
+}
+
+function mapearVooRealApi(voo, dataFallback) {
+    const partida = separarDataHoraApi(voo.partida_local, dataFallback);
+    const chegada = separarDataHoraApi(voo.chegada_local, dataFallback);
+    const aeroportoOrigem = aeroportos.find(aeroporto => String(aeroporto.codigo_iata || aeroporto.iata || "").toUpperCase() === String(voo.origem || "").toUpperCase());
+    const aeroportoDestino = aeroportos.find(aeroporto => String(aeroporto.codigo_iata || aeroporto.iata || "").toUpperCase() === String(voo.destino || "").toUpperCase());
+    return {
+        fonte: "AeroDataBox", compravel: false, numero_voo: voo.numero_voo || "",
+        companhia_nome: voo.companhia_aerea || "Companhia aérea", companhia_aerea: voo.companhia_aerea || "",
+        cidade_origem: aeroportoOrigem?.cidade || aeroportoOrigem?.nome || voo.origem, codigo_origem: voo.origem || "", origem: voo.origem || "",
+        cidade_destino: aeroportoDestino?.cidade || aeroportoDestino?.nome || voo.destino, codigo_destino: voo.destino || "", destino: voo.destino || "",
+        data_saida: partida.data, data_chegada: chegada.data, horario_saida: partida.hora, horario_chegada: chegada.hora,
+        escalas: null, preco: null, status: voo.status || "Horário informado pela companhia"
+    };
+}
 // --- ELEMENTOS DA PÁGINA ---
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -308,8 +339,34 @@ async function carregarVoos() {
         const voosRecebidos = await resposta.json();
         if (requisicaoAtual !== requisicaoVoosAtual) return;
 
-        todosVoos = Array.isArray(voosRecebidos) ? voosRecebidos : [];
-        todosVoos.sort((vooA, vooB) => Number(vooA.preco) - Number(vooB.preco));
+        const voosDoBanco = Array.isArray(voosRecebidos) ? voosRecebidos : [];
+        const aeroportoOrigemApi = encontrarAeroportoPorLocal(document.getElementById("partida")?.value || "") || encontrarAeroportoPorLocal(partida);
+        const aeroportoDestinoApi = encontrarAeroportoPorLocal(document.getElementById("destino")?.value || "") || encontrarAeroportoPorLocal(destino);
+        let voosReais = [];
+
+        // Dados da API são horários informativos: ela não fornece tarifas nem compra.
+        if (data && aeroportoOrigemApi && aeroportoDestinoApi && (aeroportoOrigemApi.codigo_iata || aeroportoOrigemApi.iata) && (aeroportoDestinoApi.codigo_iata || aeroportoDestinoApi.iata)) {
+            const origemIata = aeroportoOrigemApi.codigo_iata || aeroportoOrigemApi.iata;
+            const destinoIata = aeroportoDestinoApi.codigo_iata || aeroportoDestinoApi.iata;
+            const parametrosReais = new URLSearchParams({ origem: origemIata, destino: destinoIata, data });
+            try {
+                const respostaReal = await fetch(`/voos/reais?${parametrosReais.toString()}`);
+                const dadosReais = await respostaReal.json();
+                if (!respostaReal.ok) throw new Error(dadosReais.error || "Consulta de voos reais indisponível.");
+                voosReais = (Array.isArray(dadosReais.voos) ? dadosReais.voos : []).map(voo => mapearVooRealApi(voo, data)).filter(real => !voosDoBanco.some(banco => String(banco.numero_voo || "").toUpperCase() === String(real.numero_voo || "").toUpperCase() && String(banco.data_saida || "").slice(0, 10) === real.data_saida && String(banco.horario_saida || "").slice(0, 5) === real.horario_saida));
+            } catch (erroApi) {
+                console.warn("Não foi possível complementar os resultados com horários reais:", erroApi.message);
+            }
+        }
+
+        todosVoos = [...voosDoBanco, ...voosReais];
+        todosVoos.sort((vooA, vooB) => {
+            const precoA = Number(vooA.preco);
+            const precoB = Number(vooB.preco);
+            if (!Number.isFinite(precoA)) return 1;
+            if (!Number.isFinite(precoB)) return -1;
+            return precoA - precoB;
+        });
 
 
         console.log(
@@ -576,15 +633,13 @@ function renderizarVoos() {
 
         // --- ESCALAS ---
 
-        const escalas =
-            formatarEscalas(
-                voo.escalas
-            );
+        const escalas = voo.fonte === "AeroDataBox" ? "Escalas não informadas" : formatarEscalas(voo.escalas);
 
 
         // --- PREÇO ---
 
-        const precoUnitario = Number(voo.preco) || 0;
+        const possuiTarifa = voo.preco !== null && voo.preco !== undefined && Number.isFinite(Number(voo.preco));
+        const precoUnitario = possuiTarifa ? Number(voo.preco) : 0;
         const preco = formatarPreco(precoUnitario * quantidadePassageirosBusca);
 
 
@@ -645,7 +700,7 @@ function renderizarVoos() {
             </div>
 
             <div class="voo-info">
-                <span class="categoria-voo">${Number(voo.oferta) === 1 ? "Oferta de voo · " : "Voo · "}${companhia} · ${voo.numero_voo || ""}</span>
+                <span class="categoria-voo">${voo.fonte === "AeroDataBox" ? "Horário real · " : Number(voo.oferta) === 1 ? "Oferta de voo · " : "Voo · "}${companhia} · ${voo.numero_voo || ""}</span>
                 ${etiquetasOdsVoo ? `<div class="ods-voo-tags">${etiquetasOdsVoo}</div>` : ""}
                 <strong class="rota-voo">${origem} → ${destino}</strong>
                 <p>${data}${dataChegada} <span aria-hidden="true">•</span> ${horarioSaida || "--:--"} – ${horarioChegada || "--:--"} <span aria-hidden="true">•</span> ${escalas}${voo.duracao ? ` <span aria-hidden="true">•</span> ${voo.duracao}` : ""}</p>
@@ -653,12 +708,15 @@ function renderizarVoos() {
             </div>
 
             <div class="preco">
-                ${voo.preco_anterior ? `
-                    <span class="preco-anterior">R$ ${formatarPreco(voo.preco_anterior)}</span>
-                ` : ""}
-                <strong>R$ ${preco}</strong>
-                <span class="preco-legenda">Total para ${quantidadePassageirosBusca} ${quantidadePassageirosBusca === 1 ? "passageiro" : "passageiros"} · ${formatarPreco(precoUnitario)} por pessoa</span>
-                <button type="button" class="btn-comprar-voo" data-id-voo="${voo.id_voo}">Comprar voo</button>
+                ${possuiTarifa ? `
+                    ${voo.preco_anterior ? `<span class="preco-anterior">R$ ${formatarPreco(voo.preco_anterior)}</span>` : ""}
+                    <strong>R$ ${preco}</strong>
+                    <span class="preco-legenda">Total para ${quantidadePassageirosBusca} ${quantidadePassageirosBusca === 1 ? "passageiro" : "passageiros"} · ${formatarPreco(precoUnitario)} por pessoa</span>
+                    <button type="button" class="btn-comprar-voo" data-id-voo="${voo.id_voo}">Comprar voo</button>
+                ` : `
+                    <strong>Tarifa não informada</strong>
+                    <span class="preco-legenda">${voo.status || "Consulte a companhia aérea para valores e disponibilidade."}</span>
+                `}
             </div>
         `;
 

@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
-@media screen and (min-width: 1440px) {
 * {
     margin: 0;
     padding: 0;
@@ -932,6 +931,16 @@ body.dark-mode .cont {
     font-size: 17px;
     color: var(--text);
 }
+
+.selinho-ods {
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
 .btn-ofertas {
     display: block;
     margin: 30px auto 0;
@@ -1320,7 +1329,6 @@ body.dark-mode .banner-btn {
     background: var(--primary-dark);
     color: var(--text);
 }
-}
 @media screen and (min-width: 1200px){
     .cont {
     position: relative;
@@ -1496,15 +1504,9 @@ body.dark-mode .cont {
     height: 22px;
     object-fit: contain;
 }
-.selinho-ods {
-    position: absolute;
-    right: 0;
-    bottom: 100%;
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    margin-bottom: 8px;
+
 }
+
 .modal-boas-vindas {
     display: none;
     position: fixed;
@@ -1675,4 +1677,5 @@ body.dark-mode .cont {
     background: #355f63;
     transform: translateY(-1px);
 }
-}
+
+

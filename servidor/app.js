@@ -698,15 +698,41 @@ function mostraArquivo(res, caminho, tipo) {
 }
 
 function servirArquivoPublico(res, pathname) {
-    const arquivo = path.normalize(path.join(__dirname, '..', pathname));
-    const raiz = path.normalize(path.join(__dirname, '..'));
+    const raiz = path.resolve(__dirname, '..');
+    const caminhoDecodificado = String(pathname || '').replace(/\\/g, '/');
+    const segmentos = caminhoDecodificado.split('/').filter(Boolean);
+    const pastasPublicas = new Set([
+        'css', 'js', 'img', 'uploads', 'CADASTRO', 'DESTINOS', 'VOOS',
+        'RASTREADOR', 'HOTEIS', 'ATIVIDADES', 'OFERTAS', 'PERFIL',
+        'CONFIGURAÇÕES', 'PAGAMENTOS', 'FAVORITOS', 'COMPRAR',
+        'COMPRAR FINAL', 'TURISMO CONSCIENTE', 'CHATBOT'
+    ]);
+    const raizPublica = segmentos[0];
+    const paginaInicial = caminhoDecodificado === '/index.html';
 
-    const caminhoRelativo = path.relative(raiz, arquivo);
-    if (caminhoRelativo.startsWith('..') || path.isAbsolute(caminhoRelativo)) {
+    if (
+        segmentos.some(segmento => !segmento || segmento === '.' || segmento === '..' || segmento.startsWith('.')) ||
+        (!paginaInicial && !pastasPublicas.has(raizPublica))
+    ) {
         return json(res, 403, { error: 'Acesso negado.' });
     }
 
-    const extensao = path.extname(arquivo).toLowerCase();
+    const extensao = path.extname(segmentos.at(-1) || '').toLowerCase();
+    if (raizPublica === 'uploads' && !['.jpg', '.jpeg', '.png', '.webp'].includes(extensao)) {
+        return json(res, 403, { error: 'Acesso negado.' });
+    }
+
+    const arquivo = path.resolve(raiz, `.${caminhoDecodificado}`);
+
+    const caminhoRelativo = path.relative(raiz, arquivo);
+    if (
+        caminhoRelativo === '..' ||
+        caminhoRelativo.startsWith(`..${path.sep}`) ||
+        path.isAbsolute(caminhoRelativo)
+    ) {
+        return json(res, 403, { error: 'Acesso negado.' });
+    }
+
     const tipos = {
         '.html': 'text/html; charset=utf-8',
         '.css': 'text/css; charset=utf-8',

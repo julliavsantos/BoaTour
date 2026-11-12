@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const API = "http://localhost:3000";
+    const API = window.location.origin;
     let urlsPrevias = [];
     let comprasElegiveis = [];
 
@@ -267,3 +267,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+

@@ -74,7 +74,7 @@ carregarFavoritos().then(() => {
 
         // --- CRIA OS CARDS ---
 
-        ofertas.forEach(oferta => {
+        ofertas.forEach((oferta, indice) => {
 
             const card = document.createElement('div');
 
@@ -195,6 +195,8 @@ carregarFavoritos().then(() => {
                     <img
                         src="../${imagem}"
                         alt="${oferta.titulo || "Oferta"}"
+                        loading="${indice < 8 ? "eager" : "lazy"}"
+                        decoding="async"
                     >
 
                     <!-- BOTÃO FAVORITO -->
@@ -614,4 +616,6 @@ carregarFavoritos().then(() => {
         }
 
     });
+
+
 
